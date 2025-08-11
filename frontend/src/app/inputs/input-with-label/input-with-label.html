@@ -1,0 +1,17 @@
+<div class="flex flex-col bg-transparent gap-2">
+  <label class="font-semibold text-sm">{{ label }}</label>
+
+  <input
+    class="px-[12px] py-[16px] h-[45px] w-[420px] border border-border-input placeholder-input-placeholder rounded-[30px]"
+    [type]="type"
+    [value]="value"
+    [placeholder]="placeholder"
+    [disabled]="disaled"
+    (input)="handleInput($event)"
+    (blur)="onTouched()"
+    [class.error]="hasError"
+  />
+  @if (hasError) {
+  <small class="text-red-500">{{ errorMessage }}</small>
+  }
+</div>
