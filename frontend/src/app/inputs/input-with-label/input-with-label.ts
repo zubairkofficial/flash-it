@@ -1,4 +1,11 @@
-import { Component, Input, Optional, Output, Self } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  Optional,
+  Output,
+  Self,
+} from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({
@@ -7,11 +14,11 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
   templateUrl: './input-with-label.html',
   styleUrl: './input-with-label.css',
 })
-export class InputWithLabel implements ControlValueAccessor {
+export class InputWithLabel implements ControlValueAccessor, OnInit {
   @Input() label: string = 'Label';
   @Input() type: string = 'text';
   @Input() placeholder: string = 'Enter the value';
-
+  @Input() styles: string = '';
   value: string = '';
 
   disaled: boolean = false;
@@ -20,6 +27,10 @@ export class InputWithLabel implements ControlValueAccessor {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
+  }
+  concatClass = '';
+  ngOnInit(): void {
+    this.concatClass = 'input' + ' ' + this.styles;
   }
 
   writeValue(val: any): void {

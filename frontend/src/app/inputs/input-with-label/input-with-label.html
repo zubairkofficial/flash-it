@@ -2,7 +2,7 @@
   <label class="font-semibold text-sm">{{ label }}</label>
 
   <input
-    class="px-[12px] py-[16px] h-[45px] w-[420px] border border-border-input placeholder-input-placeholder rounded-[30px]"
+    [class]="concatClass"
     [type]="type"
     [value]="value"
     [placeholder]="placeholder"

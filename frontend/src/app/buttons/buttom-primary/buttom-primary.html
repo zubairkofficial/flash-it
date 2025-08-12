@@ -1,1 +1,7 @@
-<p>buttom-primary works!</p>
+<button
+  [ngClass]="concatClass"
+  style="width: -webkit-fill-available;"
+  (click)="onClick()"
+>
+  {{ text }}
+</button>

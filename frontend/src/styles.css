@@ -39,9 +39,14 @@
 }
 
 /* ===== BUTTON UTILITIES ===== */
+
+@utility input {
+  @apply border border-border-input placeholder-input-placeholder rounded-[30px]
+}
+
 @utility btn {
-  @apply inline-flex items-center justify-center font-nunito font-bold 
-    rounded-lg px-4 py-2 transition-all duration-200 shadow-sm;
+  @apply flex items-center justify-center font-nunito font-bold 
+    rounded-[30px] px-4 py-2 transition-all duration-200 shadow-sm;
 }
 
 @utility btn-primary {
@@ -55,6 +60,10 @@
 @utility btn-outline {
   @apply border border-primary text-primary bg-transparent 
     hover:bg-primary hover:text-white;
+}
+
+@utility btn-outline-white {
+   @apply border border-secondary text-secondary bg-transparent ;
 }
 
 @utility btn-text {
