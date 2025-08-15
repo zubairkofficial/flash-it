@@ -3,6 +3,8 @@
 
 /* ===== THEME VARIABLES ===== */
 @theme {
+
+  --breakpoint-3xl: 140rem;
   /* Colors */
   --color-primary: #F36B24;
   --color-secondary: #737373;
