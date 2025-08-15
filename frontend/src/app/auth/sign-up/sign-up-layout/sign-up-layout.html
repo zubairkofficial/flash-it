@@ -1,10 +1,8 @@
-<div class="flex flex-row w-screen min-h-screen lg:h-screen">
-  <div class="relative w-full h-screen hidden lg:flex">
-    <app-flash-card-section
-      style="position: absolute; width: 100%; height: 100vh; right: 0; top: 0"
-    />
+<div class="flex flex-row w-screen min-h-screen overflow-x-none">
+  <div class="fixed top-0 left-0 w-[50vw] h-screen bg-primary hidden lg:flex">
+    <app-flash-card-section style="display: flex; width: 100%" />
   </div>
-  <div class="flex flex-col w-full lg:w-full items-center justify-center gap-5">
+  <div class="flex flex-col w-full lg:w-full items-center justify-center gap-5 lg:ml-[50vw] ">
     <div class="flex w-full ml-[20%]">
       <div class="">
         <svg
@@ -40,8 +38,10 @@
       </div>
     </div>
 
-    <div class="flex w-[90%] lg:w-[80%] items-center justify-center">
-      <!-- <app-signin-form /> -->
+    <div
+      class="flex w-[90%] lg:w-[80%] items-center justify-center overflow-y-none"
+    >
+      <app-sign-up-form />
     </div>
   </div>
 </div>
