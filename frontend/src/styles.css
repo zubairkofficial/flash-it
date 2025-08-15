@@ -40,6 +40,10 @@
 
 /* ===== BUTTON UTILITIES ===== */
 
+@utility error {
+  @apply border border-red-500
+}
+
 @utility input {
   @apply border border-border-input placeholder-input-placeholder rounded-[30px]
 }

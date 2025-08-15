@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SigninLayout } from "./signin/signin-layout/signin-layout";
+import { SigninLayout } from "./auth/signin/signin-layout/signin-layout";
 
 @Component({
   selector: 'app-root',

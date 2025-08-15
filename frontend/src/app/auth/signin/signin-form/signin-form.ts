@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { InputWithLabel } from '../../inputs/input-with-label/input-with-label';
-import { ButtomPrimary } from '../../buttons/buttom-primary/buttom-primary';
+import { InputWithLabel } from '../../../components/inputs/input-with-label/input-with-label';
+import { ButtomPrimary } from '../../../components/buttons/buttom-primary/buttom-primary';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ButtomLogoText } from "../../buttons/buttom-logo-text/buttom-logo-text";
+import { ButtomLogoText } from '../../../components/buttons/buttom-logo-text/buttom-logo-text';
 
 @Component({
   selector: 'app-signin-form',

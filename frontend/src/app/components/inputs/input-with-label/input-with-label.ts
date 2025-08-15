@@ -14,7 +14,7 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
   templateUrl: './input-with-label.html',
   styleUrl: './input-with-label.css',
 })
-export class InputWithLabel implements ControlValueAccessor, OnInit {
+export class InputWithLabel implements ControlValueAccessor {
   @Input() label: string = 'Label';
   @Input() type: string = 'text';
   @Input() placeholder: string = 'Enter the value';
@@ -28,9 +28,12 @@ export class InputWithLabel implements ControlValueAccessor, OnInit {
       this.ngControl.valueAccessor = this;
     }
   }
-  concatClass = '';
-  ngOnInit(): void {
-    this.concatClass = 'input' + ' ' + this.styles;
+  get concatClass(): string[] {
+    return [
+      'input',
+      this.hasError ? 'error' : '',
+      ...this.styles.trim().split(/\s+/),
+    ];
   }
 
   writeValue(val: any): void {
