@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { Auth } from './auth/auth';
+import { SignedOutLayout } from './layout/signed-out-layout/signed-out-layout';
+import { LandingPage } from './landing-page/landing-page';
 
 export const routes: Routes = [
   //   {
@@ -15,6 +17,16 @@ export const routes: Routes = [
   //     loadChildren: () =>
   //       import('./admin/admin-module').then((m) => m.AdminModule),
   //   },
+  {
+    path: '',
+    component: SignedOutLayout,
+    children: [
+      {
+        path: '',
+        component: LandingPage,
+      },
+    ],
+  },
   {
     path: 'auth',
     component: Auth,

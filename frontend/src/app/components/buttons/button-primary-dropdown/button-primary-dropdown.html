@@ -1,0 +1,43 @@
+<div class="relative inline-block w-full">
+  <!-- Main button -->
+  <button
+    [class]="concatClass"
+    style="width: -webkit-fill-available"
+    (click)="toggle()"
+  >
+    <span>{{ text }}: {{ active || "Select" }}</span>
+    <span class="ml-2">
+      <svg
+        width="8"
+        height="6"
+        viewBox="0 0 8 6"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.99998 5.2801C3.8566 5.2801 3.71324 5.22536 3.60393 5.1161L0.164113 1.67625C-0.0547044 1.45743 -0.0547044 1.10265 0.164113 0.883926C0.382842 0.665197 0.737546 0.665197 0.956381 0.883926L3.99998 3.9277L7.04359 0.884032C7.26241 0.665303 7.61708 0.665303 7.83579 0.884032C8.05471 1.10276 8.05471 1.45754 7.83579 1.67635L4.39602 5.11621C4.28666 5.22548 4.1433 5.2801 3.99998 5.2801Z"
+          class="fill-background"
+        />
+      </svg>
+    </span>
+  </button>
+
+  <!-- Dropdown menu -->
+  @if ( isOpen ) {
+  <div
+    class="absolute z-10 mt-2 w-full rounded-lg bg-white shadow-lg border border-gray-200"
+  >
+    <ul class="py-2">
+      @for (item of availableState; track $index) {
+      <li
+        (click)="onChange(item)"
+        class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        [class.font-bold]="item === active"
+      >
+        {{ item }}
+      </li>
+      }
+    </ul>
+  </div>
+  }
+</div>

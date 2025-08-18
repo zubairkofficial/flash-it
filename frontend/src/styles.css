@@ -52,7 +52,8 @@
 
 @utility btn {
   @apply flex items-center justify-center font-nunito font-bold 
-    rounded-[30px] px-4 py-2 transition-all duration-200 shadow-sm;
+    rounded-[30px] px-4 py-2 transition-all duration-200 shadow-sm cursor-pointer
+;
 }
 
 @utility btn-primary {
