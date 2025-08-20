@@ -15,7 +15,7 @@ import WorkSpace from './workspace.model';
 
 @Table({
   tableName: 'subscription-plans',
-  paranoid: true,
+  
 })
 export class SubscriptionPlan extends Model {
   @PrimaryKey
@@ -25,10 +25,9 @@ export class SubscriptionPlan extends Model {
   })
   declare id: number;
 
-  
   @Unique
   @Column({
-    type: DataType.ENUM,
+    type: DataType.STRING,
     values: Object.values(SUBSCRIPTION_TYPE),
     allowNull: false,
   })

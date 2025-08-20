@@ -12,6 +12,8 @@ import WorkspaceUserPermission from './models/workspace-user-permission.model';
 import FlashCard from './models/flashcard.model';
 import FlashCardRawData from './models/flashcard-raw-data.model';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { FlashcardModule } from './flashcard/flashcard.module';
 
 @Module({
   imports: [
@@ -32,14 +34,14 @@ import { ConfigModule } from '@nestjs/config';
       database: process.env.DB_NAME,
       autoLoadModels: true,
       models: [
-        User,
+        User, 
+        FlashCard,
+        FlashCardRawData,
         SubscriptionPlan,
         Invite,
         WorkSpace,
         WorkspaceUser,
         WorkspaceUserPermission,
-        FlashCard,
-        FlashCardRawData,
       ],
       synchronize: process.env.DB_SYNCHRONIZE == 'true' ? true : false,
       logging: true,
@@ -50,6 +52,8 @@ import { ConfigModule } from '@nestjs/config';
       },
       retryDelay: 3000,
     }),
+    AuthModule,
+    FlashcardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

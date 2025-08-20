@@ -15,7 +15,7 @@ import FlashCard from './flashcard.model';
 
 @Table({
   tableName: 'flashcard-raw-data',
-  paranoid: true,
+  
 })
 export default class FlashCardRawData extends Model {
   @PrimaryKey

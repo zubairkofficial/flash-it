@@ -3,10 +3,10 @@ import {
   BelongsTo,
   Column,
   DataType,
+  Default,
   ForeignKey,
   HasOne,
   Model,
-  NotNull,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
@@ -16,7 +16,6 @@ import FlashCardRawData from './flashcard-raw-data.model';
 
 @Table({
   tableName: 'flashcards',
-  paranoid: true,
 })
 export default class FlashCard extends Model {
   @PrimaryKey
@@ -26,25 +25,29 @@ export default class FlashCard extends Model {
   })
   declare id: number;
 
-  
   @Column({
     type: DataType.TEXT,
     allowNull: false,
   })
   declare file_url: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare temporary_flashcard_id: string;
+
   @ForeignKey(() => User)
-  
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
   declare user_id: number;
 
   @ForeignKey(() => WorkSpace)
-  
   @Column({
     type: DataType.INTEGER,
+    allowNull: true,
   })
   declare workspace_id: number;
 
