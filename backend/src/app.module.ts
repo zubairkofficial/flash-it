@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { BadRequestException, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -14,9 +14,49 @@ import FlashCardRawData from './models/flashcard-raw-data.model';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { FlashcardModule } from './flashcard/flashcard.module';
+import { PlanModule } from './plan/plan.module';
+import { WorkspaceModule } from './workspace/workspace.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { existsSync, mkdirSync } from 'fs';
+import { join, extname } from 'path';
+import FlashCardSlide from './models/flashcard-slide.model';
 
 @Module({
   imports: [
+    MulterModule.register({
+      storage: diskStorage({
+        destination: (req, file, callback) => {
+          const uploadPath = join(__dirname, '..', 'uploads');
+
+          // check if folder exists, if not create it
+          if (!existsSync(uploadPath)) {
+            mkdirSync(uploadPath, { recursive: true });
+          }
+
+          callback(null, uploadPath);
+        },
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          callback(
+            null,
+            file.filename + '-' + uniqueSuffix + extname(file.originalname),
+          );
+        },
+      }),
+      // ✅ Allow only PDFs
+      fileFilter: (req, file, callback) => {
+        if (!file) return callback(null, true);
+        if (file.mimetype !== 'application/pdf') {
+          return callback(
+            new BadRequestException('Only PDF files are allowed!'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -34,7 +74,7 @@ import { FlashcardModule } from './flashcard/flashcard.module';
       database: process.env.DB_NAME,
       autoLoadModels: true,
       models: [
-        User, 
+        User,
         FlashCard,
         FlashCardRawData,
         SubscriptionPlan,
@@ -42,6 +82,7 @@ import { FlashcardModule } from './flashcard/flashcard.module';
         WorkSpace,
         WorkspaceUser,
         WorkspaceUserPermission,
+        FlashCardSlide
       ],
       synchronize: process.env.DB_SYNCHRONIZE == 'true' ? true : false,
       logging: true,
@@ -54,6 +95,8 @@ import { FlashcardModule } from './flashcard/flashcard.module';
     }),
     AuthModule,
     FlashcardModule,
+    PlanModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

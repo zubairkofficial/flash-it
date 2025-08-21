@@ -30,6 +30,7 @@ export class SubscriptionPlan extends Model {
     type: DataType.STRING,
     values: Object.values(SUBSCRIPTION_TYPE),
     allowNull: false,
+    unique: true
   })
   declare plan_type: SUBSCRIPTION_TYPE;
 

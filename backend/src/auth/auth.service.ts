@@ -9,15 +9,32 @@ import { Sequelize } from 'sequelize-typescript';
 import User from 'src/models/user.model';
 import FlashCard from 'src/models/flashcard.model';
 import { Op } from 'sequelize';
+import WorkSpace from 'src/models/workspace.model';
+import { FlashcardService } from 'src/flashcard/flashcard.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private sequelize: Sequelize) {}
+  constructor(
+    private sequelize: Sequelize,
+    private flashCardService: FlashcardService,
+  ) {}
 
   async register(registerDTO: RegisterDTO) {
     const { name, email, password, temporary_flashcard_id } = registerDTO;
     const transaction = await this.sequelize.transaction();
     try {
+      const userExist = await User.findOne({
+        where: {
+          email: {
+            [Op.eq]: email,
+          },
+        },
+      });
+      if (userExist) {
+        await transaction.rollback()
+        throw new HttpException('User Already Exist', HttpStatus.BAD_REQUEST);
+      }
+
       const newUser = await User.create(
         {
           name,
@@ -29,27 +46,63 @@ export class AuthService {
         },
       );
 
-      if (temporary_flashcard_id) {
-        const tempFlashCard = await FlashCard.findOne({
-          where: {
-            [Op.and]: [
-              { temporary_flashcard_id: { [Op.eq]: temporary_flashcard_id } },
-              { temporary_flashcard_id: { [Op.ne]: null } },
-            ],
-          },
-        });
+      const defaultWorkspace = await WorkSpace.create(
+        {
+          name: newUser.name + "'s " + 'WorkSpace',
+          credit: 0,
+          admin_user_id: newUser.id,
+          plan_id: 1, // @fix make it dynamic
+        },
+        {
+          transaction,
+        },
+      );
 
-        if (tempFlashCard) {
-          await tempFlashCard.update(
-            {
-              user_id: newUser.id,
-              temporary_flashcard_id: null,
+      if (temporary_flashcard_id && defaultWorkspace) {
+        await this.flashCardService.generateFlashCard(
+          {
+            temporary_flashcard_id,
+            workspace_id: defaultWorkspace.id,
+          },
+          {
+            user: {
+              id: newUser.id,
             },
-            {
-              transaction,
-            },
-          );
-        }
+          },
+          transaction,
+        );
+
+        // const tempFlashCard = await FlashCard.findOne({
+        //   where: {
+        //     [Op.and]: [
+        //       { temporary_flashcard_id: { [Op.eq]: temporary_flashcard_id } },
+        //       { temporary_flashcard_id: { [Op.ne]: null } },
+        //       {
+        //         user_id: {
+        //           [Op.eq]: null,
+        //         },
+        //       },
+        //       {
+        //         workspace_id: {
+        //           [Op.eq]: null,
+        //         },
+        //       },
+        //     ],
+        //   },
+        // });
+
+        // if (tempFlashCard) {
+        //   await tempFlashCard.update(
+        //     {
+        //       user_id: newUser.id,
+        //       temporary_flashcard_id: null,
+        //       workspace_id: defaultWorkspace.id,
+        //     },
+        //     {
+        //       transaction,
+        //     },
+        //   );
+        // }
       }
 
       await transaction.commit();

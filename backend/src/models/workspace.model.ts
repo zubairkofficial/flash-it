@@ -28,7 +28,12 @@ export default class WorkSpace extends Model {
   })
   declare id: number; //team_id or workspace_id
 
-  
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare name: string;
+
   @Column({
     type: DataType.DECIMAL(10, 2).UNSIGNED,
     allowNull: false,
@@ -36,14 +41,12 @@ export default class WorkSpace extends Model {
   declare credit: number; //only workspace admin can do addition into it
 
   @ForeignKey(() => User)
-  
   @Column({
     type: DataType.INTEGER,
   })
   declare admin_user_id: number;
 
   @ForeignKey(() => SubscriptionPlan)
-  
   @Column({
     type: DataType.INTEGER,
   })

@@ -1,23 +1,20 @@
 import {
-  AllowNull,
   AutoIncrement,
   BelongsTo,
   Column,
   DataType,
   ForeignKey,
   Model,
-  NotNull,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { DATA_TYPE } from 'src/utils/data-type.enum';
+import { FLASHCARD_SLIDE_TYPE } from 'src/utils/flashcard-slide-type.enum';
 import FlashCard from './flashcard.model';
 
 @Table({
-  tableName: 'flashcard-raw-data',
-  
+  tableName: 'flashcard-slides',
 })
-export default class FlashCardRawData extends Model {
+export default class FlashCardSlide extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column({
@@ -26,17 +23,23 @@ export default class FlashCardRawData extends Model {
   declare id: number;
 
   @Column({
+    type: DataType.ENUM(),
+    values: Object.values(FLASHCARD_SLIDE_TYPE),
+    allowNull: false,
+  })
+  declare slide_type: FLASHCARD_SLIDE_TYPE;
+
+  @Column({
     type: DataType.TEXT,
     allowNull: false,
   })
-  declare text: string;
- 
+  declare title: string;
+
   @Column({
-    type: DataType.ENUM,
-    values: Object.values(DATA_TYPE),
-    allowNull: false,
+    type: DataType.TEXT,
+    allowNull: true,
   })
-  declare data_type: DATA_TYPE;
+  declare text: string;
 
   @ForeignKey(() => FlashCard)
   @Column({

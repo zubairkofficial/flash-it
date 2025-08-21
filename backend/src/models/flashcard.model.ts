@@ -3,8 +3,8 @@ import {
   BelongsTo,
   Column,
   DataType,
-  Default,
   ForeignKey,
+  HasMany,
   HasOne,
   Model,
   PrimaryKey,
@@ -13,6 +13,7 @@ import {
 import User from './user.model';
 import WorkSpace from './workspace.model';
 import FlashCardRawData from './flashcard-raw-data.model';
+import FlashCardSlide from './flashcard-slide.model';
 
 @Table({
   tableName: 'flashcards',
@@ -24,12 +25,6 @@ export default class FlashCard extends Model {
     type: DataType.INTEGER,
   })
   declare id: number;
-
-  @Column({
-    type: DataType.TEXT,
-    allowNull: false,
-  })
-  declare file_url: string;
 
   @Column({
     type: DataType.STRING,
@@ -59,4 +54,7 @@ export default class FlashCard extends Model {
 
   @HasOne(() => FlashCardRawData)
   declare raw_data: FlashCardRawData;
+
+  @HasMany(() => FlashCardSlide)
+  declare slides: FlashCardSlide[];
 }
