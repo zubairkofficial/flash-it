@@ -7,12 +7,11 @@ import {
   ForeignKey,
   HasMany,
   Model,
-  NotNull,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
 import User from './user.model';
-import { SubscriptionPlan } from './subscription-plan.model';
+// import { SubscriptionPlan } from './subscription-plan.model';
 import FlashCard from './flashcard.model';
 import Invite from './invite.model';
 import WorkspaceUser from './workspace-user.model';
@@ -46,17 +45,17 @@ export default class WorkSpace extends Model {
   })
   declare admin_user_id: number;
 
-  @ForeignKey(() => SubscriptionPlan)
-  @Column({
-    type: DataType.INTEGER,
-  })
-  declare plan_id: number;
+  // @ForeignKey(() => SubscriptionPlan)
+  // @Column({
+  //   type: DataType.INTEGER,
+  // })
+  // declare plan_id: number;
 
   @BelongsTo(() => User)
   declare admin: User;
 
-  @BelongsTo(() => SubscriptionPlan)
-  declare subscription_plan: SubscriptionPlan;
+  // @BelongsTo(() => SubscriptionPlan)
+  // declare subscription_plan: SubscriptionPlan;
 
   @BelongsToMany(() => User, () => WorkspaceUser)
   declare members: User[];

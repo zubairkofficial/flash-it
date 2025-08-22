@@ -2,12 +2,13 @@ import {
   AutoIncrement,
   BeforeCreate,
   BeforeUpdate,
+  BelongsTo,
   BelongsToMany,
   Column,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
-  NotNull,
   PrimaryKey,
   Table,
   Unique,
@@ -17,6 +18,7 @@ import FlashCard from './flashcard.model';
 import Invite from './invite.model';
 import WorkspaceUser from './workspace-user.model';
 import * as bcrypt from 'bcrypt';
+import { SubscriptionPlan } from './subscription-plan.model';
 
 @Table({
   tableName: 'users',
@@ -41,7 +43,7 @@ export default class User extends Model {
   })
   declare avatar_url: string;
 
-  @Unique
+  @Unique('user-unique')
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -54,6 +56,13 @@ export default class User extends Model {
   })
   declare password: string;
 
+  @ForeignKey(() => SubscriptionPlan)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  declare plan_id: number;
+
   @HasMany(() => WorkSpace)
   declare workspaces: WorkSpace[];
 
@@ -65,6 +74,9 @@ export default class User extends Model {
 
   @HasMany(() => Invite)
   declare invites: Invite[];
+
+  @BelongsTo(() => SubscriptionPlan)
+  declare plan: SubscriptionPlan;
 
   @BeforeCreate
   @BeforeUpdate

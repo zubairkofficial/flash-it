@@ -23,7 +23,7 @@
         label="Username"
         type="text"
         placeholder="Enter your username"
-        formControlName="fullName"
+        formControlName="name"
         styles="px-[12px] py-[16px] h-[45px] w-full"
       >
       </app-input-with-label>
@@ -57,6 +57,7 @@
       <div class="flex flex-col justify-center items-center gap-[10px] w-full">
         <app-buttom-primary
           (click)="submit()"
+          type="submit"
           text="SignUp"
           styles="w-full h-[45px]"
           style="width: 100%"

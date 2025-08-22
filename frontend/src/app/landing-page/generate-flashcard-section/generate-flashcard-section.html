@@ -3,11 +3,15 @@
     <div
       class="flex flex-row items-center justify-center rounded-xl w-[85%] h-[85%] shadow-md"
     >
-      <div class="flex flex-col gap-4 w-[63%] h-full rounded-xl p-10">
+      <form
+        [formGroup]="textForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4 w-[63%] h-full rounded-xl p-10"
+      >
         <div class="flex flex-row items-center justify-between">
           <div>
             <app-button-toggle
-              [availableStates]="['docs', 'text']"
+              [availableStates]="availableStates"
               [(active)]="activeState"
             ></app-button-toggle>
           </div>
@@ -22,37 +26,53 @@
           class="flex gap-1 flex-col w-full h-full items-center justify-center bg-[#F3F1ED] border-[#DFDFDF] rounded-xl cursor-pointer"
         >
           @if (activeState === 'docs') {
-          <svg
-            height="49"
-            viewBox="0 0 71 49"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          <label
+            class="flex flex-col items-center justify-center cursor-pointer w-full h-full"
           >
-            <path
-              d="M56.38 21.02C64.0677 21.02 70.3 27.2523 70.3 34.94C70.3 42.6277 64.0677 48.86 56.38 48.86H38.98V32.9014L39.9993 33.9207C41.3582 35.2797 43.5618 35.2797 44.9207 33.9207C46.2797 32.5618 46.2797 30.3582 44.9207 28.9993L37.9607 22.0393C37.2839 21.3624 36.3975 21.0228 35.5101 21.02H35.5H35.4896C35.0215 21.0214 34.5754 21.115 34.1679 21.2841C33.7576 21.454 33.373 21.7056 33.0393 22.0393L26.0793 28.9993C24.7203 30.3582 24.7203 32.5618 26.0793 33.9207C27.4382 35.2797 29.6418 35.2797 31.0007 33.9207L32.02 32.9014V48.86H18.1C8.49027 48.86 0.700012 41.0697 0.700012 31.46C0.700012 22.6462 7.25341 15.3628 15.7534 14.2169C18.575 6.02532 26.3502 0.140015 35.5 0.140015C47.0317 0.140015 56.38 9.4883 56.38 21.02Z"
-              fill="#DED9CE"
+            <svg
+              height="49"
+              viewBox="0 0 71 49"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M56.38 21.02C64.0677 21.02 70.3 27.2523 70.3 34.94C70.3 42.6277 64.0677 48.86 56.38 48.86H38.98V32.9014L39.9993 33.9207C41.3582 35.2797 43.5618 35.2797 44.9207 33.9207C46.2797 32.5618 46.2797 30.3582 44.9207 28.9993L37.9607 22.0393C37.2839 21.3624 36.3975 21.0228 35.5101 21.02H35.5H35.4896C35.0215 21.0214 34.5754 21.115 34.1679 21.2841C33.7576 21.454 33.373 21.7056 33.0393 22.0393L26.0793 28.9993C24.7203 30.3582 24.7203 32.5618 26.0793 33.9207C27.4382 35.2797 29.6418 35.2797 31.0007 33.9207L32.02 32.9014V48.86H18.1C8.49027 48.86 0.700012 41.0697 0.700012 31.46C0.700012 22.6462 7.25341 15.3628 15.7534 14.2169C18.575 6.02532 26.3502 0.140015 35.5 0.140015C47.0317 0.140015 56.38 9.4883 56.38 21.02Z"
+                fill="#DED9CE"
+              />
+            </svg>
+            <small class="text-[#8D8D8D] mb-2"
+              >Drag & drop or click to upload PDF file.</small
+            >
+            <input
+              type="file"
+              accept="application/pdf"
+              class="hidden"
+              (change)="onFileSelected($event)"
             />
-          </svg>
+            @if(selectedFileName){
+            <span class="mt-2 text-sm text-[#4A494A]"
+              >Selected file: {{ selectedFileName }}</span
+            >
 
-          <small class="text-[#8D8D8D]"
-            >Drag & drop or click to upload PDF file.</small
-          >
+            }
+          </label>
           } @if (activeState === 'text') {
           <textarea
+            formControlName="text"
             class="w-full h-full p-2 outline-none border-none resize-none rounded-xl placeholder-black"
-[placeholder]="'Enter your notes here'"          >
-          </textarea>
+            [placeholder]="'Enter your notes here'"
+          ></textarea>
           }
         </div>
         <div>
-          <app-buttom-primary text="Generate Flashcards" />
+          <app-buttom-primary type="submit" text="Generate Flashcards" />
         </div>
-      </div>
+      </form>
       <div
         id="image-section"
         class="p-2 flex items-center justify-center w-[37%] h-full p-2 rounded-xl"
       >
-        <img src="flash-card-books.png" alt="hoha" class="h-full p-0" />
+        <img src="/assets/flash-card-books.png" alt="hoha" class="h-full p-0" />
       </div>
     </div>
   </div>

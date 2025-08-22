@@ -10,6 +10,7 @@ import { SubscriptionPlanCard } from '../subscription-plan-card/subscription-pla
 export class PricePlanSection {
   plans = [
     {
+      id: 1,
       title: 'Free Plan',
       description: 'Up to 5 Flashcards',
       price: 0,
@@ -25,6 +26,7 @@ export class PricePlanSection {
       ],
     },
     {
+      id: 2,
       title: 'Pro Plan',
       description: 'Up to 30 Flashcards',
       price: 5,
@@ -43,6 +45,7 @@ export class PricePlanSection {
       ],
     },
     {
+      id: 3,
       title: 'Team Plan',
       description: 'Up to 100 Flashcards',
       price: 15,

@@ -4,13 +4,14 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDTO, RegisterDTO } from './dto/auth.dto';
-import { Sequelize } from 'sequelize-typescript';
+import { LoginDTO, RegisterDTO, UpdatePlanDTO } from './dto/auth.dto';
+import { Sequelize  } from 'sequelize-typescript';
 import User from 'src/models/user.model';
 import FlashCard from 'src/models/flashcard.model';
 import { Op } from 'sequelize';
 import WorkSpace from 'src/models/workspace.model';
 import { FlashcardService } from 'src/flashcard/flashcard.service';
+import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 
 @Injectable()
 export class AuthService {
@@ -29,9 +30,11 @@ export class AuthService {
             [Op.eq]: email,
           },
         },
+        transaction
       });
+      console.log("asdfsadfasdfasdfsadfsad=======================", userExist)
       if (userExist) {
-        await transaction.rollback()
+        await transaction.rollback();
         throw new HttpException('User Already Exist', HttpStatus.BAD_REQUEST);
       }
 
@@ -39,7 +42,8 @@ export class AuthService {
         {
           name,
           email,
-          password,
+          password: registerDTO.password,
+          plan_id: 1, // @fix make it dynamic -> call the free plan id from the database
         },
         {
           transaction,
@@ -51,7 +55,6 @@ export class AuthService {
           name: newUser.name + "'s " + 'WorkSpace',
           credit: 0,
           admin_user_id: newUser.id,
-          plan_id: 1, // @fix make it dynamic
         },
         {
           transaction,
@@ -105,15 +108,21 @@ export class AuthService {
         // }
       }
 
+      const { password, ...safeUser } = newUser;
+
       await transaction.commit();
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
           message: 'SignUP successfull',
+          token: '', // @fix generate jwt token
+          user: safeUser,
+          workspace_id: defaultWorkspace.id,
         },
       };
     } catch (error: any) {
+      console.log('erre register ----------', error);
       await transaction.rollback();
 
       throw new HttpException(
@@ -151,6 +160,16 @@ export class AuthService {
             [Op.and]: [
               { temporary_flashcard_id: { [Op.eq]: temporary_flashcard_id } },
               { temporary_flashcard_id: { [Op.ne]: null } },
+              {
+                user_id: {
+                  [Op.eq]: null,
+                },
+              },
+              {
+                workspace_id: {
+                  [Op.eq]: null,
+                },
+              },
             ],
           },
         });
@@ -159,6 +178,7 @@ export class AuthService {
           await tempFlashCard.update(
             {
               user_id: existingUser.id,
+              workspace_id: existingUser.plan_id,
               temporary_flashcard_id: null,
             },
             {
@@ -177,6 +197,7 @@ export class AuthService {
         data: {
           message: 'Login Successfull successfull',
           user: sendUserData,
+          token: '', // @fix generate jwt token
         },
       };
     } catch (error: any) {
@@ -185,6 +206,44 @@ export class AuthService {
         'Error: ' + error.message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async updateUserPlan(updatePlanDTO: UpdatePlanDTO, req: any) {
+    const { plan_id } = updatePlanDTO;
+
+    try {
+      const existingPlan = await SubscriptionPlan.findOne({
+        where: {
+          id: {
+            [Op.eq]: plan_id,
+          },
+        },
+      });
+
+      if (!existingPlan) {
+        throw new HttpException('no plan exist', HttpStatus.NOT_FOUND);
+      }
+
+      const existingUser = await User.findByPk(req.user.id);
+      if (!existingUser) {
+        throw new HttpException('no user logged IN', HttpStatus.NOT_FOUND);
+      }
+
+      await existingUser.update({
+        plan_id: existingPlan.id,
+      });
+
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Plan Updated Successfully',
+          plan: existingPlan,
+        },
+      };
+    } catch (error) {
+      throw new HttpException('Error: ' + error.message, error.status);
     }
   }
 }

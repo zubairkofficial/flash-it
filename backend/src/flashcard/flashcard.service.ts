@@ -16,10 +16,9 @@ export class FlashcardService {
     req: any,
     outsideTransaction: any,
   ) {
-    let transaction: any;
-    if (outsideTransaction) {
-      transaction = outsideTransaction;
-    } else {
+    console.log("came in flashcard generate")
+    let transaction: any = outsideTransaction;
+    if (!outsideTransaction) {
       transaction = await this.sequelize.transaction();
     }
 
@@ -93,6 +92,7 @@ export class FlashcardService {
             },
           ],
         },
+        transaction
       });
 
       if (!flashCard) {
@@ -123,6 +123,7 @@ export class FlashcardService {
           slide_type: generated[0].type,
           title: d.title,
           text: d.text,
+          flashcard_id: flashCard.id,
         })),
         {
           transaction,
@@ -137,6 +138,7 @@ export class FlashcardService {
           slide_type: generated[1].type,
           title: d.title,
           text: d.text,
+          flashcard_id: flashCard.id,
         })),
         {
           transaction,
@@ -151,6 +153,7 @@ export class FlashcardService {
           slide_type: generated[2].type,
           title: d.title,
           text: d.text,
+          flashcard_id: flashCard.id,
         })),
         {
           transaction,
@@ -172,6 +175,10 @@ export class FlashcardService {
         },
       };
     } catch (error) {
+      console.log(
+        'lola in flashacar service geenrate flash ard ========',
+        error,
+      );
       if (!outsideTransaction) {
         await transaction.rollback();
       }
@@ -184,10 +191,10 @@ export class FlashcardService {
     const { text, data_type } = rawDataUploadDTO;
 
     try {
-      const uuid = uuidv4();
+      const temp_id = uuidv4();
       const flashCard = await FlashCard.create(
         {
-          temporary_flashcard_id: uuid, // @fix generate temp id
+          temporary_flashcard_id: temp_id, // @fix generate temp id
           user_id: null,
           workspace_id: null,
         },
@@ -195,7 +202,6 @@ export class FlashcardService {
           transaction,
         },
       );
-
       if (!flashCard) {
         await transaction.rollback();
         throw new HttpException(
@@ -208,7 +214,7 @@ export class FlashcardService {
         {
           text,
           data_type,
-          flascard_id: flashCard.id,
+          flashcard_id: flashCard.id,
         },
         {
           transaction,
@@ -226,6 +232,7 @@ export class FlashcardService {
         },
       };
     } catch (error) {
+      console.log('error', error.message);
       await transaction.rollback();
       throw new HttpException('Error ' + error.message, error.status);
     }

@@ -9,13 +9,10 @@ import { Component, Input } from '@angular/core';
 export class ButtomPrimary {
   @Input() text: string = 'Primary';
   @Input() styles: string = '';
-  
+  @Input() type: string = 'button'
 
   get concatClass(): string[] {
     return ['btn', 'btn-primary', ...this.styles.trim().split(/\s+/)];
   }
 
-  onClick() {
-    console.log('button primary clicked');
-  }
 }

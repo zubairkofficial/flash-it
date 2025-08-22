@@ -29,5 +29,9 @@
     <span class="text-[#6F6C8F] text-[12px]">{{ feature }}</span>
   </div>
   }
-  <app-buttom-outlined text="Get Started" class="mt-[20px]" />
+  <app-buttom-outlined
+    text="Get Started"
+    class="mt-[20px]"
+    (click)="onClick(availablePlan.id)"
+  />
 </div>

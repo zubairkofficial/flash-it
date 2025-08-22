@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class RegisterDTO {
   @IsString()
@@ -30,4 +36,8 @@ export class LoginDTO {
   @IsOptional()
   @IsString()
   temporary_flashcard_id: string;
+}
+export class UpdatePlanDTO {
+  @IsNumber()
+  plan_id: number;
 }
