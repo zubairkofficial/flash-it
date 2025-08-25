@@ -1,6 +1,8 @@
-import { Body, Controller, Post, Put, Req } from '@nestjs/common';
-import { LoginDTO, RegisterDTO, UpdatePlanDTO  } from './dto/auth.dto';
+import { Body, Controller, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { LoginDTO, RegisterDTO, UpdatePlanDTO } from './dto/auth.dto';
 import { AuthService } from './auth.service';
+import { Roles } from 'src/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -9,9 +11,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  
   async register(@Body() registerDTO: RegisterDTO) {
-      console.log('📌 Controller register called');
+    console.log('📌 Controller register called');
 
     return this.authService.register(registerDTO);
   }
@@ -21,7 +22,8 @@ export class AuthController {
     return this.authService.login(loginDTO);
   }
 
- @Put('update-user-plan')
+  @UseGuards(JwtAuthGuard)
+  @Put('update-user-plan')
   async updateUserPlan(@Body() updatePlanDTO: UpdatePlanDTO, @Req() req: any) {
     return this.authService.updateUserPlan(updatePlanDTO, req);
   }

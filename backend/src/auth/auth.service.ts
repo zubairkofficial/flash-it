@@ -5,13 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDTO, RegisterDTO, UpdatePlanDTO } from './dto/auth.dto';
-import { Sequelize  } from 'sequelize-typescript';
+import { Sequelize } from 'sequelize-typescript';
 import User from 'src/models/user.model';
 import FlashCard from 'src/models/flashcard.model';
 import { Op } from 'sequelize';
 import WorkSpace from 'src/models/workspace.model';
 import { FlashcardService } from 'src/flashcard/flashcard.service';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
+import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
 
 @Injectable()
 export class AuthService {
@@ -30,20 +31,32 @@ export class AuthService {
             [Op.eq]: email,
           },
         },
-        transaction
+        transaction,
       });
-      console.log("asdfsadfasdfasdfsadfsad=======================", userExist)
+      console.log('asdfsadfasdfasdfsadfsad=======================', userExist);
       if (userExist) {
         await transaction.rollback();
         throw new HttpException('User Already Exist', HttpStatus.BAD_REQUEST);
       }
 
+      const plan = await SubscriptionPlan.findOne({
+        where: {
+          plan_type: {
+            [Op.eq]: SUBSCRIPTION_TYPE.FREE,
+          },
+        },
+      });
+
+      // if (plan) {
+
+      // }
+      // @fix check if plan exist in DB
       const newUser = await User.create(
         {
           name,
           email,
           password: registerDTO.password,
-          plan_id: 1, // @fix make it dynamic -> call the free plan id from the database
+          plan_id: plan.id,
         },
         {
           transaction,
@@ -61,7 +74,12 @@ export class AuthService {
         },
       );
 
+
       if (temporary_flashcard_id && defaultWorkspace) {
+
+              // @fix find flashcard against temp_id if it exist
+
+
         await this.flashCardService.generateFlashCard(
           {
             temporary_flashcard_id,
@@ -75,37 +93,6 @@ export class AuthService {
           transaction,
         );
 
-        // const tempFlashCard = await FlashCard.findOne({
-        //   where: {
-        //     [Op.and]: [
-        //       { temporary_flashcard_id: { [Op.eq]: temporary_flashcard_id } },
-        //       { temporary_flashcard_id: { [Op.ne]: null } },
-        //       {
-        //         user_id: {
-        //           [Op.eq]: null,
-        //         },
-        //       },
-        //       {
-        //         workspace_id: {
-        //           [Op.eq]: null,
-        //         },
-        //       },
-        //     ],
-        //   },
-        // });
-
-        // if (tempFlashCard) {
-        //   await tempFlashCard.update(
-        //     {
-        //       user_id: newUser.id,
-        //       temporary_flashcard_id: null,
-        //       workspace_id: defaultWorkspace.id,
-        //     },
-        //     {
-        //       transaction,
-        //     },
-        //   );
-        // }
       }
 
       const { password, ...safeUser } = newUser;
