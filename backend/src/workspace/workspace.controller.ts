@@ -31,4 +31,11 @@ export class WorkspaceController {
   async getWorkspace( @Req() req: any) {
     return this.workspaceService.getWorkspace( req);
   }
+  
+  @Get('/:id')
+  @UseGuards(JwtAuthGuard)
+  // @fix add jwt Guards
+  async getWorkspaceById( @Param('id') id:string, @Req() req: any) {
+    return this.workspaceService.getWorkspaceById(+id, req);
+  }
 }

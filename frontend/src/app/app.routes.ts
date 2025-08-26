@@ -5,6 +5,7 @@ import { SignedOutLayout } from './layout/signed-out-layout/signed-out-layout';
 import { LandingPage } from './landing-page/landing-page';
 import { PricePlanSection } from './landing-page/price-plan-section/price-plan-section';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { WorkspaceDetail } from './pages/workspace-detail/workspace-detail';
 
 export const routes: Routes = [
   //   {
@@ -52,5 +53,9 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
+  },
+  {
+    path: 'workspace/:id',
+    component: WorkspaceDetail,
   },
 ];

@@ -4,6 +4,10 @@ import User from 'src/models/user.model';
 import WorkSpace from 'src/models/workspace.model';
 import WorkspaceUser from 'src/models/workspace-user.model';
 import WorkspaceUserPermission from 'src/models/workspace-user-permission.model';
+import Invite from 'src/models/invite.model';
+import FlashCard from 'src/models/flashcard.model';
+import FlashCardSlide from 'src/models/flashcard-slide.model';
+import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 
 @Injectable()
 export class WorkspaceService {
@@ -85,6 +89,52 @@ export class WorkspaceService {
           //   as: 'user', // If you want to include the user relation
           //   required: true, // Ensure the user exists
           // },
+        ],
+      });
+
+      return workspaceUsers;
+    } catch (error) {
+      throw new HttpException('Error: ' + error.message, error.status);
+    }
+  }
+  async getWorkspaceById(id: number,req: any) {
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+
+      if (!existingUser) {
+        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+      }
+
+      const workspaceUsers = await WorkSpace.findOne({
+        where: { id },
+        include: [
+          {
+      model: User,
+      as: 'admin', // Alias for the admin relationship
+      required: true, // Ensure the admin is included
+    },
+          {
+      model: User,
+      as: 'members', // Alias for the members relationship
+      required: true, // Ensure the members are included
+    },
+    {
+      model: FlashCard,
+      as: 'flashcards', // Alias for the flashcards relationship
+      required: false, // Optional, if no flashcards exist
+      include:[{
+        model:FlashCardSlide,
+        as:'slides'
+      },{
+        model:FlashCardRawData,
+        as:'raw_data'
+      }]
+    },
+    {
+      model: Invite,
+      as: 'invites', // Alias for the invites relationship
+      required: false, // Optional, if no invites exist
+    },
         ],
       });
 
