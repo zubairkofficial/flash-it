@@ -38,7 +38,7 @@
     >
   </div>
   <div id="buttons" class="flex flex-row gap-2 items-center justify-evenly">
-    <app-buttom-outlined text="Log In"></app-buttom-outlined>
-    <app-buttom-primary text="Sign up"></app-buttom-primary>
+    <app-buttom-outlined text="Log In" (click)="navigate('auth/login')"></app-buttom-outlined>
+    <app-buttom-primary text="Sign up" (click)="navigate('auth/register')"></app-buttom-primary>
   </div>
 </nav>

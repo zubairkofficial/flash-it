@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
+import { verifyToken } from 'src/utils/jwt.utils';
 // import { VerifyAccessToken } from 'src/utils/verifyToken.utils';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class JwtAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.token;
+    const token = request.headers.authorization.split("Bearer ")[1];
     if (!token) {
       throw new UnauthorizedException({
         statusCode: 403,
@@ -26,20 +27,10 @@ export class JwtAuthGuard implements CanActivate {
       });
     }
 
-    // const user = VerifyAccessToken(token);
-
-    const user = this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRET,
-    });
-    if (user == 'TokenExpiredError') {
-      console.log('toke is expired');
-      throw new UnauthorizedException({
-        statusCode: 4001,
-        message: 'Authorization token is invalid',
-        error: 'Unauthorized',
-      });
-    }
-    if (user?.sub == null) {
+   
+   const user=verifyToken(token)
+  
+    if (!user) {
       throw new UnauthorizedException({
         statusCode: 4002,
         message: 'Invalid token',

@@ -1,5 +1,6 @@
 import {
   AutoIncrement,
+  BelongsTo,
   Column,
   DataType,
   Default,
@@ -56,4 +57,11 @@ export default class WorkspaceUser extends Model {
 
   @HasOne(() => WorkspaceUserPermission)
   declare workspace_user_permissions: WorkspaceUserPermission;
+
+ @BelongsTo(() => WorkSpace, 'workspace_id')
+  declare workspace: WorkSpace;
+
+  @BelongsTo(() => User, 'user_id')
+  declare user: User;
+  
 }

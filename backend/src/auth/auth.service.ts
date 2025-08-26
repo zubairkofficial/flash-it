@@ -13,6 +13,9 @@ import WorkSpace from 'src/models/workspace.model';
 import { FlashcardService } from 'src/flashcard/flashcard.service';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
+import { generateToken } from 'src/utils/jwt.utils';
+import WorkspaceUser from 'src/models/workspace-user.model';
+import { WORKSPACE_USER_ROLE } from 'src/utils/workspace-user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -74,6 +77,14 @@ export class AuthService {
         },
       );
 
+     await WorkspaceUser.create({
+     workspace_id:defaultWorkspace.id,
+     user_id:newUser.id,
+     role:WORKSPACE_USER_ROLE.ADMIN},
+       {
+          transaction,
+        },
+ )
 
       if (temporary_flashcard_id && defaultWorkspace) {
 
@@ -96,14 +107,16 @@ export class AuthService {
       }
 
       const { password, ...safeUser } = newUser;
-
+      
+      const token = generateToken({ id: safeUser.dataValues.id, email: safeUser.dataValues.email });
+     
       await transaction.commit();
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
           message: 'SignUP successfull',
-          token: '', // @fix generate jwt token
+          token: token, // @fix generate jwt token
           user: safeUser,
           workspace_id: defaultWorkspace.id,
         },
@@ -176,7 +189,9 @@ export class AuthService {
       }
 
       const { password, ...sendUserData } = existingUser;
-
+     
+      const token = generateToken({ id: sendUserData.dataValues.id, email: sendUserData.dataValues.email });
+      
       await transaction.commit();
       return {
         status: HttpStatus.OK,
@@ -184,7 +199,7 @@ export class AuthService {
         data: {
           message: 'Login Successfull successfull',
           user: sendUserData,
-          token: '', // @fix generate jwt token
+          token: token, 
         },
       };
     } catch (error: any) {
