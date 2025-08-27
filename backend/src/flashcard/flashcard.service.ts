@@ -188,7 +188,7 @@ export class FlashcardService {
 
   async uploadRawData(rawDataUploadDTO: RawDataUploadDTO, req: any) {
     const transaction = await this.sequelize.transaction();
-    const { text, data_type } = rawDataUploadDTO;
+    const { text,title, data_type } = rawDataUploadDTO;
 
     try {
       const temp_id = uuidv4();
@@ -213,6 +213,7 @@ export class FlashcardService {
       await FlashCardRawData.create(
         {
           text,
+          title,
           data_type,
           flashcard_id: flashCard.id,
         },
@@ -234,6 +235,35 @@ export class FlashcardService {
     } catch (error) {
       console.log('error', error.message);
       await transaction.rollback();
+      throw new HttpException('Error ' + error.message, error.status);
+    }
+  }
+
+  async getFlashCardById(id:number, req: any) {
+   
+    try {
+
+      const flashCard = await FlashCard.findOne({
+        where: {
+          id: id,
+        },
+        include:[{
+          model:FlashCardSlide,
+          as:'slides',
+        },
+        {
+          model:FlashCardRawData,
+          as:'raw_data'
+        }
+      ]
+      });
+      if(!flashCard){
+        throw new HttpException('Flash card not found', HttpStatus.NOT_FOUND);
+      }
+      return flashCard;
+    } catch (error) {
+      console.log('error', error.message);
+     
       throw new HttpException('Error ' + error.message, error.status);
     }
   }

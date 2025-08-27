@@ -18,7 +18,10 @@ export class FlashCardGenerateDTO {
 export class RawDataUploadDTO {
   @IsString()
   text: string; //it will be user input text or extracted text from the pdf file
-
+ 
+  @IsString()
+  title: string;
+  
   @IsEnum(DATA_TYPE)
   @IsNotEmpty()
   data_type: DATA_TYPE;

@@ -124,11 +124,13 @@ export class WorkspaceService {
       required: false, // Optional, if no flashcards exist
       include:[{
         model:FlashCardSlide,
-        as:'slides'
-      },{
+        as:'slides',
+      },
+      {
         model:FlashCardRawData,
         as:'raw_data'
-      }]
+      }
+    ]
     },
     {
       model: Invite,
