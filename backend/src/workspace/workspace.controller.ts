@@ -36,4 +36,12 @@ export class WorkspaceController {
   async getWorkspaceById( @Param('id') id:string, @Req() req: any) {
     return this.workspaceService.getWorkspaceById(+id, req);
   }
+  
+  @Get('/invite/:id')
+  @UseGuards(JwtAuthGuard)
+  async invitedWorkspaceById( @Param('id') id:string, @Req() req: any) {
+    return this.workspaceService.invitedWorkspaceById(+id, req);
+  }
+
+
 }

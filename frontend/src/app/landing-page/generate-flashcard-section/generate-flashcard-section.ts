@@ -43,6 +43,7 @@ export class GenerateFlashcardSection {
     private router: Router
   ) {
     this.textForm = this.fb.group({
+      
       text: ['', [Validators.min(100)]],
     });
   }
@@ -50,9 +51,10 @@ export class GenerateFlashcardSection {
     if (this.textForm.valid) {
       const textValue = this.textForm.value.text;
       // Handle the submitted text value here
-      console.log('Submitted text:', textValue);
+      console.log('Submitted text:', this.selectedFileName);
       const uploadRes = this.flashcardService.uploadData({
         text: textValue,
+        title:this.selectedFileName,
         data_type: this.activeState,
       });
 

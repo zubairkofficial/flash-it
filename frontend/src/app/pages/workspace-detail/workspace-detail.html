@@ -30,10 +30,10 @@
                         <div class="rounded-lg border border-gray-200 p-3" *ngFor="let fc of workspace.flashcards">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <div class="font-medium">Flashcard #{{ fc.id }}</div>
+                                    <div class="font-medium">{{ fc?.raw_data?.title || 'Flashcard' }}</div>
                                     <div class="text-xs text-text-secondary">Slides: {{ fc.slides?.length || 0 }}</div>
                                 </div>
-                                <button class="btn btn-outline btn-sm" type="button">Open</button>
+                                <button class="btn btn-outline btn-sm" type="button" (click)="openFlashcard(fc.id)">Open</button>
                             </div>
                         </div>
                     </div>

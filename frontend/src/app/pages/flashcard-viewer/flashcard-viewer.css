@@ -1,0 +1,176 @@
+
+
+/* Viewer */
+
+.viewer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+/* Base styling for the card */
+.viewer-card {
+    position: relative;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 60%, #fb923c 100%);
+    color: white;
+    min-height: 260px;
+    padding: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+    transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+.viewer-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+}
+
+/* Card inner container */
+.card-inner {
+    display: flex;
+    flex-direction: column;
+   align-items: center;
+    gap: 12px;
+    height: 100%;
+    justify-content: center;
+}
+
+/* Meta section for slide count and tab pill */
+.meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0.9;
+    font-size: 14px;  /* Adjusted for better readability */
+    font-weight: 600;
+}
+
+/* Tab pill */
+.tab-pill {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+/* Title styling */
+.title {
+    font-size: 28px;  /* Larger font for titles */
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px; /* Added space below title */
+    word-break: break-word; /* Ensure title fits nicely */
+}
+
+/* Content styling */
+.content {
+    font-size: 16px;
+    opacity: 0.95;
+    word-wrap: break-word;
+}
+
+/* Navigation buttons */
+.nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.nav:hover {
+    background: rgba(255, 255, 255, 0.4); /* Darker hover effect */
+}
+
+.nav-left {
+    left: 12px;
+}
+
+.nav-right {
+    right: 12px;
+}
+
+/* Progress bar for slides */
+.dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    padding: 0 16px;
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    background: #ffffff;
+    width: 0%;
+    transition: width 250ms ease;
+}
+
+/* Action buttons section */
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px; /* Added margin for spacing */
+}
+
+.sub-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sub-actions button {
+    padding: 8px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+
+
+.export {
+    background: #0f766e;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.export:hover {
+    background: #0e5c50;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .title {
+        font-size: 20px; /* Slightly smaller title */
+    }
+    .viewer-card {
+        min-height: 220px;
+        padding: 16px;
+    }
+    .sub-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

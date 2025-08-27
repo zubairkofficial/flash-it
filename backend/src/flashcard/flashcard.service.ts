@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Op } from 'sequelize';
 import { FLASHCARD_SLIDE_TYPE } from 'src/utils/flashcard-slide-type.enum';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
+import { generateFlashcardSlides } from 'src/utils/openai-flashCard.utils';
 
 @Injectable()
 export class FlashcardService {
@@ -23,6 +24,24 @@ export class FlashcardService {
     }
 
     const { temporary_flashcard_id, workspace_id } = flashCardGenerateDTO;
+    const flashCard=await FlashCard.findOne(
+       {where:
+         {
+              temporary_flashcard_id: {
+                [Op.eq]: temporary_flashcard_id,
+              },
+          },
+           include:[
+        {
+          model:FlashCardRawData,
+          as:'raw_data'
+        }
+      ]
+        }
+    )
+
+  //    const generatedSlides = await generateFlashcardSlides(flashCard.dataValues.raw_data.dataValues.text);
+  // const parsedSlides = JSON.parse(generatedSlides);
 
     const generated = [
       {

@@ -145,4 +145,27 @@ export class WorkspaceService {
       throw new HttpException('Error: ' + error.message, error.status);
     }
   }
+  async invitedWorkspaceById(id: number,req: any) {
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+
+      if (!existingUser) {
+        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+      }
+
+      const invites=await Invite.create(
+        {
+          admin_id:req.user.id,
+          workspace_id:id
+
+        }
+      )
+
+      const baseUrl=`http://localhost:3000/workspace/invited/${invites}`
+
+      return baseUrl;
+    } catch (error) {
+      throw new HttpException('Error: ' + error.message, error.status);
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../../services/workspace/workspace';
 
 @Component({
@@ -15,7 +15,7 @@ export class WorkspaceDetail implements OnInit {
   public errorMessage: string | null = null;
   public workspace: any = null;
 
-  constructor(private route: ActivatedRoute, private workspaceService: WorkspaceService) {}
+  constructor(private route: ActivatedRoute, private router: Router, private workspaceService: WorkspaceService) {}
 
   public ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -38,6 +38,10 @@ export class WorkspaceDetail implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  public openFlashcard(flashcardId: number): void {
+    this.router.navigate(['/flashcard', flashcardId]);
   }
 }
 

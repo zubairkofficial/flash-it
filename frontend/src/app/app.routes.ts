@@ -6,6 +6,7 @@ import { LandingPage } from './landing-page/landing-page';
 import { PricePlanSection } from './landing-page/price-plan-section/price-plan-section';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { WorkspaceDetail } from './pages/workspace-detail/workspace-detail';
+import { FlashcardViewer } from './pages/flashcard-viewer/flashcard-viewer';
 
 export const routes: Routes = [
   //   {
@@ -57,5 +58,9 @@ export const routes: Routes = [
   {
     path: 'workspace/:id',
     component: WorkspaceDetail,
+  },
+  {
+    path: 'flashcard/:id',
+    component: FlashcardViewer,
   },
 ];

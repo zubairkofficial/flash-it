@@ -85,3 +85,6 @@
 @utility btn-lg {
   @apply px-6 py-3 text-lg;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
