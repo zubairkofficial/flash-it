@@ -4,6 +4,7 @@ import { Api } from '../../../utils/api/api';
 import { AuthService } from '../../../services/auth/auth';
 import { notyf } from '../../../utils/notyf.utils';
 import { Router } from '@angular/router';
+import { SUBSCRIPTION_TYPE } from '../../../utils/enum';
 
 @Component({
   selector: 'app-subscription-plan-card',
@@ -15,6 +16,7 @@ import { Router } from '@angular/router';
 export class SubscriptionPlanCard {
   @Input() availablePlan!: {
     id: number;
+    subscriptionType:SUBSCRIPTION_TYPE,
     title: string;
     description: string;
     price: number;
@@ -23,10 +25,11 @@ export class SubscriptionPlanCard {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onClick(plan_id: number) {
+  onClick(subscriptionType: SUBSCRIPTION_TYPE) {
+    console.log("subscriptionType",subscriptionType)
     this.authService
       .updateUserPlan({
-        plan_id,
+        subscriptionType,
       })
       .subscribe({
         next: (res) => {

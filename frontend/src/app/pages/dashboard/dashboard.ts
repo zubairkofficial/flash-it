@@ -39,4 +39,7 @@ export class Dashboard implements OnInit {
   public openWorkspace(id: number): void {
     this.router.navigate(['/workspace', id]);
   }
+  public onClickUpgrade(): void {
+    this.router.navigate(['/plans']);
+  }
 }

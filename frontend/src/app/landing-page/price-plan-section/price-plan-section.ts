@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SubscriptionPlanCard } from '../subscription-plan-card/subscription-plan-card';
+import { SUBSCRIPTION_TYPE } from '../../../../../backend/src/utils/subscription.enum';
 
 @Component({
   selector: 'app-price-plan-section',
@@ -12,6 +13,7 @@ export class PricePlanSection {
     {
       id: 1,
       title: 'Free Plan',
+      subscriptionType: SUBSCRIPTION_TYPE.FREE,
       description: 'Up to 5 Flashcards',
       price: 0,
       features: [
@@ -28,6 +30,7 @@ export class PricePlanSection {
     {
       id: 2,
       title: 'Pro Plan',
+      subscriptionType: SUBSCRIPTION_TYPE.PRO,
       description: 'Up to 30 Flashcards',
       price: 5,
       features: [
@@ -48,6 +51,7 @@ export class PricePlanSection {
       id: 3,
       title: 'Team Plan',
       description: 'Up to 100 Flashcards',
+      subscriptionType: SUBSCRIPTION_TYPE.TEAM,
       price: 15,
       features: [
         'Flashcard Generation 100',

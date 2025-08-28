@@ -3,6 +3,7 @@ import { Api } from '../../utils/api/api';
 import { Observable } from 'rxjs';
 import { notyf } from '../../utils/notyf.utils';
 import { Router } from '@angular/router';
+import { SUBSCRIPTION_TYPE } from '../../utils/enum';
 
 @Injectable({
   providedIn: 'root',
@@ -70,7 +71,7 @@ export class AuthService {
     return res;
   }
 
-  updateUserPlan(data: { plan_id: number }): Observable<any> {
+  updateUserPlan(data: { subscriptionType: SUBSCRIPTION_TYPE }): Observable<any> {
     return this.api.put('/auth/update-user-plan', data, {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,

@@ -212,13 +212,13 @@ export class AuthService {
   }
 
   async updateUserPlan(updatePlanDTO: UpdatePlanDTO, req: any) {
-    const { plan_id } = updatePlanDTO;
+    const { subscribePlan } = updatePlanDTO;
 
     try {
       const existingPlan = await SubscriptionPlan.findOne({
         where: {
-          id: {
-            [Op.eq]: plan_id,
+          plan_type: {
+            [Op.eq]: subscribePlan,
           },
         },
       });

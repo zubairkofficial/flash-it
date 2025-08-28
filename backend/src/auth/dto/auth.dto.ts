@@ -1,10 +1,14 @@
 import {
   IsEmail,
+  
+  IsEnum,
+  
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
 
 export class RegisterDTO {
   @IsString()
@@ -38,6 +42,6 @@ export class LoginDTO {
   temporary_flashcard_id: string;
 }
 export class UpdatePlanDTO {
-  @IsNumber()
-  plan_id: number;
+  // @IsEnum(SUBSCRIPTION_TYPE)
+  subscribePlan: SUBSCRIPTION_TYPE;
 }
