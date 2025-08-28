@@ -8,6 +8,7 @@ import Invite from 'src/models/invite.model';
 import FlashCard from 'src/models/flashcard.model';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
 import FlashCardRawData from 'src/models/flashcard-raw-data.model';
+import { WORKSPACE_USER_ROLE } from 'src/utils/workspace-user-role.enum';
 
 @Injectable()
 export class WorkspaceService {
@@ -145,27 +146,71 @@ export class WorkspaceService {
       throw new HttpException('Error: ' + error.message, error.status);
     }
   }
-  async invitedWorkspaceById(id: number,req: any) {
-    try {
-      const existingUser = await User.findByPk(req.user.id);
 
+  async invitedWorkspaceById(id: number, req: any) {
+    try {
+      // Find the user
+      const existingUser = await User.findByPk(req.user.id);
+  
       if (!existingUser) {
         throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
       }
-
-      const invites=await Invite.create(
-        {
-          admin_id:req.user.id,
-          workspace_id:id
-
-        }
-      )
-
-      const baseUrl=`http://localhost:3000/workspace/invited/${invites}`
-
-      return baseUrl;
+  
+      // Find the workspace
+      const workSpace = await WorkSpace.findByPk(id);
+      if (!workSpace) {
+        throw new HttpException('No workspace found', HttpStatus.BAD_REQUEST);
+      }
+  
+      // Create the invite using the user and workspace IDs
+      const invite = await Invite.create({
+        admin_id: existingUser.id,  // Use the ID here, not the whole instance
+        workspace_id: workSpace.id,  // Use the ID here, not the whole instance
+      });
+  
+      // Generate the base URL with the invite ID
+      const baseUrl = `${process.env.BASE_URL_FRONTEND}/workspace/invited/${invite.id}`;
+  
+      return {url:baseUrl};
     } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);
     }
   }
+  async invitedById(id: string, req: any) {
+    try {
+      // Find the user
+      const existingUser = await User.findByPk(req.user.id);
+  
+      if (!existingUser) {
+        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+      }
+  
+      // Find the workspace
+      const invite = await Invite.findByPk(id);
+      if (!invite) {
+        throw new HttpException('No invite found', HttpStatus.BAD_REQUEST);
+      }
+   const workspaceUser=await WorkspaceUser.findOne({where:{user_id:existingUser.id,workspace_id:invite.workspace_id}})
+  
+   if(workspaceUser){
+  throw new HttpException("already  part of this workspace",HttpStatus.BAD_REQUEST)
+}
+
+const workspaceUserLimit=await WorkspaceUser.count({where:{workspace_id:invite.workspace_id}})
+ 
+if(workspaceUserLimit>5){
+    throw new HttpException("maximum limit exceeded",HttpStatus.BAD_REQUEST)
+  }
+  
+return  WorkspaceUser.create({
+    role:WORKSPACE_USER_ROLE.MEMBER,
+    user_id:existingUser.id,
+    workspace_id:invite.workspace_id
+  })
+     
+       } catch (error) {
+      throw new HttpException('Error: ' + error.message, error.status);
+    }
+  }
+  
 }

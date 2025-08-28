@@ -15,7 +15,9 @@
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button class="btn btn-outline btn-sm" type="button">Invite</button>
+                    <button *ngIf="isUserAdmin" class="btn btn-outline btn-sm" type="button" [disabled]="!isUserAdmin" (click)="openInvitLink(workspace.id)">
+              Invite
+          </button>
                     <button class="btn btn-primary btn-sm" type="button">Create Flashcards</button>
                 </div>
             </div>
@@ -34,6 +36,25 @@
                                     <div class="text-xs text-text-secondary">Slides: {{ fc.slides?.length || 0 }}</div>
                                 </div>
                                 <button class="btn btn-outline btn-sm" type="button" (click)="openFlashcard(fc.id)">Open</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Invite Link Modal -->
+                    <div *ngIf="isInviteModalOpen" class="modal-backdrop" (click)="closeInviteModal()">
+                        <div class="modal-card" (click)="$event.stopPropagation()">
+                            <div class="modal-header">
+                                <div class="modal-title">Invite Link</div>
+                                <button class="close-btn" type="button" (click)="closeInviteModal()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="url-box">
+                                    <input class="url-input" [value]="InviteLink?.url" readonly />
+                                    <button class="copy-btn" type="button" (click)="copyInviteUrl()">{{ isCopySuccess ? 'Copied!' : 'Copy' }}</button>
+                                </div>
+                                <a class="text-blue-600 underline" [href]="InviteLink?.url" target="_blank">Open invite link</a>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="ok-btn" type="button" (click)="closeInviteModal()">Close</button>
                             </div>
                         </div>
                     </div>

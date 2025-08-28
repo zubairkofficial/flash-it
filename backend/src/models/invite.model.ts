@@ -12,17 +12,18 @@ import {
 } from 'sequelize-typescript';
 import User from './user.model';
 import WorkSpace from './workspace.model';
-
+import {v4 as uuidv4} from 'uuid';
 @Table({
   tableName: 'invites',
 })
 export default class Invite extends Model {
+  
   @PrimaryKey
   @Column({
     type: DataType.STRING,
+    defaultValue: uuidv4, // Automatically generates a UUID for each new invite
   })
-  declare id: string; //it will act as route param to find the invite table - 10 to 20 character string
-
+  declare id: string;
   
   @Default(true)
   @Column({

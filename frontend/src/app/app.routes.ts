@@ -7,6 +7,7 @@ import { PricePlanSection } from './landing-page/price-plan-section/price-plan-s
 import { Dashboard } from './pages/dashboard/dashboard';
 import { WorkspaceDetail } from './pages/workspace-detail/workspace-detail';
 import { FlashcardViewer } from './pages/flashcard-viewer/flashcard-viewer';
+import { WorkspaceInvite } from './workspace-invite/workspace-invite';
 
 export const routes: Routes = [
   //   {
@@ -58,6 +59,10 @@ export const routes: Routes = [
   {
     path: 'workspace/:id',
     component: WorkspaceDetail,
+  },
+  {
+    path: 'workspace/invited/:id',
+    component: WorkspaceInvite,
   },
   {
     path: 'flashcard/:id',

@@ -54,6 +54,21 @@ export class WorkspaceService {
     };
     return this.api.get<any>(`/workspace/${id}`, headers);
   }
+  public getInviteLinkByWorkspaceId(id: number): Observable<any> {
+    const headers = {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    };
+    return this.api.get<any>(`/workspace/invite/${id}`, headers);
+  }
+
+  public getInvitedById(id: string): Observable<any> {
+    const headers = {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    };
+    return this.api.get<any>(`/workspace/invited/${id}`, headers);
+  }
 }
 
 

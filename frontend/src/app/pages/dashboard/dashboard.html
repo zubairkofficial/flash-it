@@ -18,7 +18,7 @@
                 <h2 class="text-2xl font-bold">Your Workspaces</h2>
                 <p class="text-sm text-text-secondary">Manage and jump back into your workspaces.</p>
             </div>
-            
+
         </div>
 
         <div class="text-sm text-text-secondary" *ngIf="isLoading">Loading workspaces...</div>
@@ -42,12 +42,12 @@
                     </div>
                     <div>
                         <div class="text-text-secondary">Role</div>
-                        <!-- <div class="font-semibold uppercase">{{ ws.WorkspaceUser?.role || 'member' }}</div> -->
+                        <div class="font-semibold uppercase">{{ ws.WorkspaceUser?.role || 'member' }}</div>
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button class="btn btn-outline btn-sm" type="button" (click)="openWorkspace(ws.id)">Open</button>
-                    <button class="btn btn-outline btn-sm" type="button">Manage</button>
+                    <button class="btn btn-outline btn-sm " type="button" (click)="openWorkspace(ws.id)">Open</button>
+                    <!-- <button class="btn btn-outline btn-sm" type="button">Manage</button> -->
                 </div>
             </div>
 
