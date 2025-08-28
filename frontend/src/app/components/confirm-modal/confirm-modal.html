@@ -1,0 +1,14 @@
+<div *ngIf="open" class="cm-backdrop" (click)="onBackdropClick()">
+    <div class="cm-card" (click)="$event.stopPropagation()">
+        <div class="cm-header">
+            <div class="cm-title">{{ title }}</div>
+            <button class="cm-close" type="button" (click)="onCancel()">×</button>
+        </div>
+        <div class="cm-body">{{ message }}</div>
+        <div class="cm-footer">
+            <button class="btn btn-primary btn-small" type="button" (click)="onCancel()">{{ cancelText }}</button>
+            <button class="btn btn-outline btn-small" type="button" (click)="onConfirm()">{{ confirmText }}</button>
+        </div>
+    </div>
+
+</div>

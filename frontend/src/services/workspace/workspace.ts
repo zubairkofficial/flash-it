@@ -69,6 +69,13 @@ export class WorkspaceService {
     };
     return this.api.get<any>(`/workspace/invited/${id}`, headers);
   }
+  public deleteWorkspaceUser(workspace_id: any,user_id: any): Observable<any> {
+    const headers = {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    };
+    return this.api.delete<any>(`/workspace/${workspace_id}/${user_id}`, headers);
+  }
 }
 
 

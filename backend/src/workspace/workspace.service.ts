@@ -9,6 +9,7 @@ import FlashCard from 'src/models/flashcard.model';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
 import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 import { WORKSPACE_USER_ROLE } from 'src/utils/workspace-user-role.enum';
+import { Identifier } from 'sequelize';
 
 @Injectable()
 export class WorkspaceService {
@@ -149,6 +150,7 @@ export class WorkspaceService {
 
   async invitedWorkspaceById(id: number, req: any) {
     try {
+      let invite;
       // Find the user
       const existingUser = await User.findByPk(req.user.id);
   
@@ -161,15 +163,19 @@ export class WorkspaceService {
       if (!workSpace) {
         throw new HttpException('No workspace found', HttpStatus.BAD_REQUEST);
       }
-  
-      // Create the invite using the user and workspace IDs
-      const invite = await Invite.create({
-        admin_id: existingUser.id,  // Use the ID here, not the whole instance
-        workspace_id: workSpace.id,  // Use the ID here, not the whole instance
+  const existInvite=await Invite.findOne({where:{
+    admin_id: existingUser.id,  
+    workspace_id: workSpace.id, 
+  }})
+  if(!existInvite)
+      {// Create the invite using the user and workspace IDs
+       invite = await Invite.create({
+        admin_id: existingUser.id,  
+        workspace_id: workSpace.id,  
       });
-  
+  }
       // Generate the base URL with the invite ID
-      const baseUrl = `${process.env.BASE_URL_FRONTEND}/workspace/invited/${invite.id}`;
+      const baseUrl = `${process.env.BASE_URL_FRONTEND}/workspace/invited/${existInvite.id??invite.id}`;
   
       return {url:baseUrl};
     } catch (error) {
@@ -208,6 +214,30 @@ return  WorkspaceUser.create({
     workspace_id:invite.workspace_id
   })
      
+       } catch (error) {
+      throw new HttpException('Error: ' + error.message, error.status);
+    }
+  }
+  
+  async deleteWorkspace(workspaceId: string, userId: string, req: { user: { id: Identifier; }; }) {
+    try {
+      // Find the user
+      const existingUser = await User.findByPk(req.user.id);
+  
+      if (!existingUser) {
+        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+      }
+  
+      
+   const workspaceUser=await WorkspaceUser.findOne({where:{user_id:userId,workspace_id:workspaceId}})
+  
+   if(!workspaceUser){
+    throw new HttpException('User is not part of this workspace', HttpStatus.BAD_REQUEST);
+}
+await workspaceUser.destroy();
+
+return { message: 'User successfully removed from workspace' };
+
        } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);
     }
