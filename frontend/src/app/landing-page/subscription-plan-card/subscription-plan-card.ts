@@ -25,19 +25,24 @@ export class SubscriptionPlanCard {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onClick(subscriptionType: SUBSCRIPTION_TYPE) {
-    console.log("subscriptionType",subscriptionType)
-    this.authService
-      .updateUserPlan({
-        subscriptionType,
-      })
-      .subscribe({
-        next: (res) => {
-          this.router.navigate(['dashboard']);
-        },
-        error: () => {
-          notyf.error('error subscribing the plan - try again');
-        },
-      });
+  onClickPaymentPage(availablePlan: any) {
+    console.log("subscriptionType",availablePlan.subscriptionType)
+    this.router.navigate(['/payment/card'], {
+      queryParams: {
+        subscriptionType:availablePlan.subscriptionType,
+      },
+    });
+    // this.authService
+    //   .updateUserPlan({
+    //     subscribePlan:subscriptionType,
+    //   })
+    //   .subscribe({
+    //     next: (res) => {
+    //       this.router.navigate(['dashboard']);
+    //     },
+    //     error: () => {
+    //       notyf.error('error subscribing the plan - try again');
+    //     },
+    //   });
   }
 }

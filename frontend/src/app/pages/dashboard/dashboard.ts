@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceService, WorkspaceResponseItem, JoinedWorkspace } from '../../../services/workspace/workspace';
 import { Router } from '@angular/router';
+import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule,WorkSpaceModal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -13,6 +14,8 @@ export class Dashboard implements OnInit {
   public isLoading: boolean = false;
   public errorMessage: string | null = null;
   public workspaces: JoinedWorkspace[] = [];
+  public isOpenWorkspace:boolean  = false;
+  public confirmModalOpen: boolean = false;
 
   constructor(private workspaceService: WorkspaceService, private router: Router) {}
 
@@ -42,4 +45,21 @@ export class Dashboard implements OnInit {
   public onClickUpgrade(): void {
     this.router.navigate(['/plans']);
   }
+  public handleWorkspace(): void {
+ 
+   this.confirmModalOpen = true;
+  }
+
+
+
+
+  public onCancelDelete(): void {
+    this.confirmModalOpen = false;
+
+  }
+  public onConfirmDelete(): void {
+    this.confirmModalOpen = false;
+
+  }
+
 }

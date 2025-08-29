@@ -1,0 +1,40 @@
+.card-form {
+    max-width: 40%;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

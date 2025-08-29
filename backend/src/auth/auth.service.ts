@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDTO, RegisterDTO, UpdatePlanDTO } from './dto/auth.dto';
@@ -211,6 +212,32 @@ export class AuthService {
     }
   }
 
+  async getUserById(id:number) {
+   try {
+      const existingUser = await User.findOne({
+        where: {
+          id: {
+            [Op.eq]: id,
+          },
+        },
+      });
+
+      if (!existingUser) {
+        throw new NotFoundException('user not exist');
+      }
+
+   return existingUser
+
+   
+    } catch (error: any) {
+      
+      throw new HttpException(
+        'Error: ' + error.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async updateUserPlan(updatePlanDTO: UpdatePlanDTO, req: any) {
     const { subscribePlan } = updatePlanDTO;
 
@@ -248,4 +275,5 @@ export class AuthService {
       throw new HttpException('Error: ' + error.message, error.status);
     }
   }
+
 }

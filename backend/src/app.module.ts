@@ -20,6 +20,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { existsSync, mkdirSync } from 'fs';
 import { join, extname } from 'path';
+import { PaymentModule } from './payment/payment.module';
 import FlashCardSlide from './models/flashcard-slide.model';
 
 @Module({
@@ -97,6 +98,7 @@ import FlashCardSlide from './models/flashcard-slide.model';
     FlashcardModule,
     PlanModule,
     WorkspaceModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

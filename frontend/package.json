@@ -9,12 +9,14 @@
         "test": "ng test"
     },
     "prettier": {
-        "overrides": [{
-            "files": "*.html",
-            "options": {
-                "parser": "angular"
+        "overrides": [
+            {
+                "files": "*.html",
+                "options": {
+                    "parser": "angular"
+                }
             }
-        }]
+        ]
     },
     "private": true,
     "dependencies": {
@@ -25,6 +27,7 @@
         "@angular/material": "^20.2.0",
         "@angular/platform-browser": "^20.2.0",
         "@angular/router": "^20.0.0",
+        "@stripe/stripe-js": "^7.9.0",
         "@tailwindcss/postcss": "^4.1.11",
         "notyf": "^3.10.0",
         "pdfjs-dist": "^5.4.54",

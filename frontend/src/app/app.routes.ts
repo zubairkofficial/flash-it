@@ -8,6 +8,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { WorkspaceDetail } from './pages/workspace-detail/workspace-detail';
 import { FlashcardViewer } from './pages/flashcard-viewer/flashcard-viewer';
 import { WorkspaceInvite } from './workspace-invite/workspace-invite';
+import { PaymentCard } from './payment-card/payment-card';
 
 export const routes: Routes = [
   //   {
@@ -68,4 +69,9 @@ export const routes: Routes = [
     path: 'flashcard/:id',
     component: FlashcardViewer,
   },
+  {
+    path: 'payment/card',
+    component: PaymentCard,
+  },
+ 
 ];

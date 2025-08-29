@@ -71,7 +71,7 @@ export class AuthService {
     return res;
   }
 
-  updateUserPlan(data: { subscriptionType: SUBSCRIPTION_TYPE }): Observable<any> {
+  updateUserPlan(data: { subscribePlan: SUBSCRIPTION_TYPE }): Observable<any> {
     return this.api.put('/auth/update-user-plan', data, {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,

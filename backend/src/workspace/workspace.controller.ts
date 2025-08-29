@@ -9,8 +9,6 @@ export class WorkspaceController {
 
   @Post('')
   @UseGuards(JwtAuthGuard)
-  // @fix add jwt Guards
-  @UseGuards(JwtAuthGuard)
   async createWorkspace(
     @Body() createWorkspaceDTO: CreateWorkspaceDTO,
     @Req() req: any,
