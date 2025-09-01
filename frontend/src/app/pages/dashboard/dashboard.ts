@@ -46,18 +46,18 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/plans']);
   }
   public handleWorkspace(): void {
- 
+
    this.confirmModalOpen = true;
   }
 
 
 
 
-  public onCancelDelete(): void {
+  public onCancelSave(): void {
     this.confirmModalOpen = false;
 
   }
-  public onConfirmDelete(): void {
+  public onConfirmSave(): void {
     this.confirmModalOpen = false;
 
   }
