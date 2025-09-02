@@ -17,84 +17,61 @@ export class FlashcardService {
     req: any,
     outsideTransaction: any,
   ) {
-    console.log("came in flashcard generate")
-    let transaction: any = outsideTransaction;
-    if (!outsideTransaction) {
-      transaction = await this.sequelize.transaction();
-    }
-
+    console.log("came in flashcard generate");
+  
+    let transaction: any = outsideTransaction || await this.sequelize.transaction();
     const { temporary_flashcard_id, workspace_id } = flashCardGenerateDTO;
-    const flashCard=await FlashCard.findOne(
-       {where:
-         {
-              temporary_flashcard_id: {
-                [Op.eq]: temporary_flashcard_id,
-              },
-          },
-           include:[
-        {
-          model:FlashCardRawData,
-          as:'raw_data'
-        }
-      ]
-        }
-    )
-
-     const generatedSlides = await generateFlashcardSlides(flashCard.dataValues.raw_data.dataValues.text);
-    console.log("generatedSlides",typeof generatedSlides)
-     const extractedJson = extractJsonBlock(generatedSlides);
-
-     if (!extractedJson) {
-       throw new Error('No valid JSON found in OpenAI response');
-     }
-     let parsedSlides
-     try {
-      
-      parsedSlides = JSON.parse(extractedJson);
-    } catch (error) {
-      console.log("======",error.message)
-      throw new Error(error)
-    }
+  
     try {
+      // 1. Get flashcard and raw data
       const flashCard = await FlashCard.findOne({
         where: {
-          [Op.and]: [
-            {
-              temporary_flashcard_id: {
-                [Op.eq]: temporary_flashcard_id,
-              },
-            },
-            {
-              temporary_flashcard_id: {
-                [Op.ne]: null,
-              },
-            },
-            {
-              user_id: {
-                [Op.eq]: null,
-              },
-            },
-            {
-              workspace_id: {
-                [Op.eq]: null,
-              },
-            },
-          ],
+          temporary_flashcard_id: {
+            [Op.eq]: temporary_flashcard_id,
+          },
         },
-        transaction
+        include: [
+          {
+            model: FlashCardRawData,
+            as: 'raw_data',
+          },
+        ],
+        transaction,
       });
-
-      if (!flashCard) {
-        if (!outsideTransaction) {
-          await transaction.rollback();
-        }
-        throw new HttpException(
-          'no flashcard found - error generating',
-          HttpStatus.BAD_REQUEST,
-        );
+  
+      if (!flashCard || !flashCard.raw_data || flashCard.raw_data.length === 0) {
+        throw new HttpException('No flashcard or raw data found.', HttpStatus.BAD_REQUEST);
       }
-      // @fix attach slides of flashcard, generate model for that
-
+  
+      // 2. Process each raw_data item
+      for (const rawData of flashCard.raw_data) {
+        const text = rawData.dataValues.text;
+  
+        const generatedSlides = await generateFlashcardSlides(text);
+        console.log("generatedSlides", typeof generatedSlides);
+  
+        const extractedJson = extractJsonBlock(generatedSlides);
+  
+        if (!extractedJson) {
+          throw new Error('No valid JSON found in OpenAI response');
+        }
+  
+        let parsedSlides;
+        try {
+          parsedSlides = JSON.parse(extractedJson);
+        } catch (error) {
+          console.log("JSON parse error:", error.message);
+          throw new Error(error.message || 'Failed to parse JSON');
+        }
+  
+        if (!parsedSlides || typeof parsedSlides !== 'object') {
+          throw new Error('Invalid parsedSlides data');
+        }
+  
+        await this.storeParsedSlides(parsedSlides, flashCard.id);
+      }
+  
+      // 3. Update flashcard to attach user & workspace, remove temp ID
       await flashCard.update(
         {
           temporary_flashcard_id: null,
@@ -105,80 +82,74 @@ export class FlashcardService {
           transaction,
         },
       );
-      console.log("parse",typeof parsedSlides)
-      if (!parsedSlides || typeof parsedSlides !== 'object') {
-        throw new Error('Invalid parsedSlides data');
-      }
-      await this.storeParsedSlides(parsedSlides,flashCard.id);
-
-     
-
+  
+      // 4. Final commit
       if (!outsideTransaction) {
         await transaction.commit();
       }
+  
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
-          message: 'flash card created successfully',
+          message: 'Flash card created successfully',
           flash_card: flashCard,
         },
       };
     } catch (error) {
-      console.log(
-        ' in flashacar service geenrate flash ard ========',
-        error,
-      );
+      console.log('Flashcard generation error:', error);
+  
       if (!outsideTransaction) {
         await transaction.rollback();
       }
-      throw new HttpException('Error: ', +error.message, error.status);
+  
+      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  
 
-  async uploadRawData(rawDataUploadDTO: RawDataUploadDTO, req: any) {
+  async uploadRawData(rawDataUploadDTO: RawDataUploadDTO[], req: any) {
     const transaction = await this.sequelize.transaction();
-    const { text,title, data_type } = rawDataUploadDTO;
-
+  
     try {
-      const temp_id = uuidv4();
       const flashCard = await FlashCard.create(
         {
-          temporary_flashcard_id: temp_id, // @fix generate temp id
+          temporary_flashcard_id: uuidv4(),
           user_id: null,
           workspace_id: null,
         },
-        {
-          transaction,
-        },
+        { transaction },
       );
+  
       if (!flashCard) {
         await transaction.rollback();
         throw new HttpException(
-          'Error while processing flashcard',
+          'Error while creating flashcard',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-
-      await FlashCardRawData.create(
-        {
-          text,
-          title,
-          data_type,
-          flashcard_id: flashCard.id,
-        },
-        {
-          transaction,
-        },
-      );
-
+  
+      for (const item of rawDataUploadDTO) {
+        const { text, title, data_type } = item;
+  
+        await FlashCardRawData.create(
+          {
+            text,
+            title,
+            data_type,
+            flashcard_id: flashCard.id,
+          },
+          { transaction },
+        );
+      }
+  
       await transaction.commit();
-
+  
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
-          message: 'upload successfull',
+          message: 'Upload successful',
           temporary_flashcard_id: flashCard.temporary_flashcard_id,
         },
       };
@@ -188,6 +159,7 @@ export class FlashcardService {
       throw new HttpException('Error ' + error.message, error.status);
     }
   }
+  
 
   async getFlashCardById(id:number, req: any) {
    

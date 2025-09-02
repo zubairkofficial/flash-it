@@ -19,7 +19,7 @@ export class FlashcardService {
     });
   }
 
-  uploadData(data: { text: string;title:string; data_type: DATA_TYPE }): Observable<any> {
+  uploadData(data:any): Observable<any> {
     return this.api.post('/flashcard/upload-data', data, {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,

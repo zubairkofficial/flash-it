@@ -27,7 +27,7 @@ export class FlashcardController {
 
   @Post('upload-data')
   async uploadRawData(
-    @Body() rawDataUploadDTO: RawDataUploadDTO,
+    @Body() rawDataUploadDTO: RawDataUploadDTO[],
     @Req() req: any,
   ) {
     return this.flashCardService.uploadRawData(rawDataUploadDTO, req);

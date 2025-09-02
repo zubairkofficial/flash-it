@@ -14,7 +14,6 @@ import { Api } from '../../../utils/api/api';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { notyf } from '../../../utils/notyf.utils';
 import { Router } from '@angular/router';
-import { CountrySelectComponent } from '@wlucha/ng-country-select';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -23,7 +22,6 @@ import { CountrySelectComponent } from '@wlucha/ng-country-select';
     ButtonPrimaryDropdown,
     ButtomPrimary,
     ReactiveFormsModule,
-    CountrySelectComponent
   ],
   providers: [Pdf, Api, FlashcardService],
   templateUrl: './generate-flashcard-section.html',
@@ -35,7 +33,7 @@ export class GenerateFlashcardSection {
   activeLanguage = 'en';
   isLanguageDropDownOpen = false;
   extractedText: string = '';
-  selectedFileName: string = '';
+  selectedFiles: {name: string, content: string}[] = []; // Array to store multiple files
   textForm: FormGroup;
 
   constructor(
@@ -45,24 +43,32 @@ export class GenerateFlashcardSection {
     private router: Router
   ) {
     this.textForm = this.fb.group({
-
       text: ['', [Validators.min(100)]],
     });
   }
+
   onSubmit() {
     if (this.textForm.valid) {
-      const textValue = this.textForm.value.text;
-      // Handle the submitted text value here
-      console.log('Submitted text:', this.textForm);
-      const uploadRes = this.flashcardService.uploadData({
-        text: textValue,
-        title:this.selectedFileName,
+      // Prepare data for API - array of objects
+      const uploadData = this.selectedFiles.map(file => ({
+        text: file.content,
+        title: file.name,
         data_type: this.activeState,
-      });
+      }));
+
+      // If we also have text input, include it
+      if (this.textForm.value.text) {
+        uploadData.push({
+          text: this.textForm.value.text,
+          title: 'User Input Text',
+          data_type: this.activeState,
+        });
+      }
+
+      const uploadRes = this.flashcardService.uploadData(uploadData);
 
       uploadRes.subscribe({
         next: (res) => {
-          // Expecting res to have data : { message, temporary_flashcard_id }
           if (res && res.data.temporary_flashcard_id) {
             this.router.navigate(['/auth/register'], {
               queryParams: {
@@ -81,13 +87,39 @@ export class GenerateFlashcardSection {
   }
 
   async onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      this.selectedFiles = []; // Reset selected files
 
-      this.selectedFileName = file.name;
-      this.extractedText = await this.pdfService.extractText(file);
-      console.log("file=====",this.extractedText)
-      this.textForm.value.text = this.extractedText;
+      // Process each selected file
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+          const fileContent = await this.pdfService.extractText(file);
+          this.selectedFiles.push({
+            name: file.name,
+            content: fileContent
+          });
+        } catch (error) {
+          notyf.error(`Error processing ${file.name}: ${error}`);
+        }
+      }
+
+      // Update the form with all extracted text
+      const allText = this.selectedFiles.map(file => file.content).join('\n\n');
+      this.textForm.patchValue({ text: allText });
+    }
+  }
+
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+
+    // Update the form text if files remain
+    if (this.selectedFiles.length > 0) {
+      const allText = this.selectedFiles.map(file => file.content).join('\n\n');
+      this.textForm.patchValue({ text: allText });
+    } else {
+      this.textForm.patchValue({ text: '' });
     }
   }
 }

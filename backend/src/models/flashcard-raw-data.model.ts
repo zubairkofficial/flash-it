@@ -25,6 +25,7 @@ export default class FlashCardRawData extends Model {
   })
   declare id: number;
 
+
   @Column({
     type: DataType.TEXT,
     allowNull: false,
