@@ -8,10 +8,12 @@ import { Op } from 'sequelize';
 import { FLASHCARD_SLIDE_TYPE } from 'src/utils/flashcard-slide-type.enum';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
 import { extractJsonBlock, generateFlashcardSlides } from 'src/utils/openai-flashCard.utils';
+import { PdfService } from 'src/utils/pdf';
+
 
 @Injectable()
 export class FlashcardService {
-  constructor(private sequelize: Sequelize) {}
+  constructor(private sequelize: Sequelize,private pdfService:PdfService) {}
   async generateFlashCard(
     flashCardGenerateDTO: FlashCardGenerateDTO,
     req: any,
@@ -108,8 +110,14 @@ export class FlashcardService {
   }
   
 
-  async uploadRawData(rawDataUploadDTO: RawDataUploadDTO[], req: any) {
-    const transaction = await this.sequelize.transaction();
+  async uploadRawData(files: Express.Multer.File[], req: any) {
+    const extractedTexts = [];
+
+    for (const file of files) {
+      const data = await this.pdfService.extractTextFromBuffer(file.buffer);
+      extractedTexts.push(data);
+    }
+     const transaction = await this.sequelize.transaction();
   
     try {
       const flashCard = await FlashCard.create(
@@ -129,7 +137,7 @@ export class FlashcardService {
         );
       }
   
-      for (const item of rawDataUploadDTO) {
+      for (const item of extractedTexts) {
         const { text, title, data_type } = item;
   
         await FlashCardRawData.create(

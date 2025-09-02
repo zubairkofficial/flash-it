@@ -6,11 +6,15 @@ import {
   Post,
   Put,
   Req,
+  UploadedFile,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
 import { FlashcardService } from './flashcard.service';
 import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
+import {  FilesInterceptor } from '@nestjs/platform-express/multer';
 
 @Controller('flashcard')
 export class FlashcardController {
@@ -25,13 +29,21 @@ export class FlashcardController {
     return this.flashCardService.generateFlashCard(flashCardGenerateDTO, req, null);
   }
 
+  // @Post('upload-data')
+  // async uploadRawData(
+  //   @Body() rawDataUploadDTO: RawDataUploadDTO[],
+  //   @Req() req: any,
+  // ) {
+  //   return this.flashCardService.uploadRawData(rawDataUploadDTO, req);
+  // }
+
+
   @Post('upload-data')
-  async uploadRawData(
-    @Body() rawDataUploadDTO: RawDataUploadDTO[],
-    @Req() req: any,
-  ) {
-    return this.flashCardService.uploadRawData(rawDataUploadDTO, req);
-  }
+  @UseInterceptors(FilesInterceptor('files'))
+ async uploadRawData(@UploadedFiles() files: Array<Express.Multer.File>, @Req() req: any,) {
+  return this.flashCardService.uploadRawData(files, req);
+  // console.log(files);
+}
 
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
