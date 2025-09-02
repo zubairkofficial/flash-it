@@ -1,34 +1,16 @@
 <div class="flex flex-col w-screen h-[calc(100vh-100px)]">
-  <div class="flex items-center justify-center w-full h-full">
-    <div
-      class="flex flex-row items-center justify-center rounded-xl w-[85%] h-[85%] shadow-md"
-    >
-      <form
-        [formGroup]="textForm"
-        (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-4 w-[63%] h-full rounded-xl p-10"
-      >
-        <div class="flex flex-row items-center justify-between">
-          <div>
-            <app-button-toggle
-              [availableStates]="availableStates"
-              [(active)]="activeState"
-            ></app-button-toggle>
-          </div>
-          <app-button-primary-dropdown
-            [availableState]="['en', '1', '2']"
-            [(active)]="activeLanguage"
-            [(isOpen)]="isLanguageDropDownOpen"
-            text="Language"
-          ></app-button-primary-dropdown>
-        </div>
-        <div
-          class="flex gap-1 flex-col w-full h-full items-center justify-center bg-[#F3F1ED] border-[#DFDFDF] rounded-xl cursor-pointer"
-        >
-          @if (activeState === 'docs') {
-          <label
-            class="flex flex-col items-center justify-center cursor-pointer w-full h-full"
-          >
+    <div class="flex items-center justify-center w-full h-full">
+        <div class="flex flex-row items-center justify-center rounded-xl w-[85%] h-[85%] shadow-md">
+            <form [formGroup]="textForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 w-[63%] h-full rounded-xl p-10">
+                <div class="flex flex-row items-center justify-between">
+                    <div>
+                        <app-button-toggle [availableStates]="availableStates" [(active)]="activeState"></app-button-toggle>
+                    </div>
+                    <app-button-primary-dropdown [availableState]="['en', 'es', 'fr','de']" [(active)]="activeLanguage" [(isOpen)]="isLanguageDropDownOpen" text="Language"></app-button-primary-dropdown>
+                </div>
+                <div class="flex gap-1 flex-col w-full h-full items-center justify-center bg-[#F3F1ED] border-[#DFDFDF] rounded-xl cursor-pointer">
+                    @if (activeState === 'Documents') {
+                    <label class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
             <svg
               height="49"
               viewBox="0 0 71 49"
@@ -47,6 +29,7 @@
               type="file"
               accept="application/pdf"
               class="hidden"
+              multiple
               (change)="onFileSelected($event)"
             />
             @if(selectedFileName){
@@ -55,30 +38,21 @@
             >
 
             }
-          </label>
-          } @if (activeState === 'text') {
-          <textarea
-            formControlName="text"
-            class="w-full h-full p-2 outline-none border-none resize-none rounded-xl placeholder-black"
-            [placeholder]="'Enter your notes here'"
-          ></textarea>
-          }
+          </label> } @if (activeState === 'Text') {
+                    <textarea formControlName="text" class="w-full h-full p-2 outline-none border-none resize-none rounded-xl placeholder-black" [placeholder]="'Enter your notes here'"></textarea> }
+                </div>
+                <div>
+                    <app-buttom-primary type="submit" text="Generate Flashcards" />
+                </div>
+            </form>
+            <div id="image-section" class="p-2 flex items-center justify-center w-[37%] h-full p-2 rounded-xl">
+                <img src="/assets/flash-card-books.png" alt="hoha" class="h-full p-0" />
+            </div>
         </div>
-        <div>
-          <app-buttom-primary type="submit" text="Generate Flashcards" />
-        </div>
-      </form>
-      <div
-        id="image-section"
-        class="p-2 flex items-center justify-center w-[37%] h-full p-2 rounded-xl"
-      >
-        <img src="/assets/flash-card-books.png" alt="hoha" class="h-full p-0" />
-      </div>
     </div>
-  </div>
-  <div class="flex h-auto lg:h-[25%] w-full items-center justify-center">
-    <p class="text-4xl text-[#4A494A] text-center">
-      Smart Flashcard is fast, focused and built for real learners
-    </p>
-  </div>
+    <div class="flex h-auto lg:h-[25%] w-full items-center justify-center">
+        <p class="text-4xl text-[#4A494A] text-center">
+            Smart Flashcard is fast, focused and built for real learners
+        </p>
+    </div>
 </div>

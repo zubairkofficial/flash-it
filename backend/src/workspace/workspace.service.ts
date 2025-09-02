@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateWorkspaceDTO } from './dto/workspace.dto';
+import { CreateWorkspaceDTO, UpdateWorkspaceDTO } from './dto/workspace.dto';
 import User from 'src/models/user.model';
 import WorkSpace from 'src/models/workspace.model';
 import WorkspaceUser from 'src/models/workspace-user.model';
@@ -10,16 +10,17 @@ import FlashCardSlide from 'src/models/flashcard-slide.model';
 import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 import { WORKSPACE_USER_ROLE } from 'src/utils/workspace-user-role.enum';
 import { Identifier } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { WORKSPACE_USER_PERMISSION } from 'src/utils/permission.enum';
 
 @Injectable()
 export class WorkspaceService {
   constructor(
-    // private sequelize: Sequelize
+    private sequelize: Sequelize
   ) {}
   async createWorkspace(createWorkspaceDTO: CreateWorkspaceDTO, req: any) {
     const { name } = createWorkspaceDTO;
-    // const transaction = await this.sequelize.transaction();
+    const transaction = await this.sequelize.transaction();
     try {
       const existingUser = await User.findByPk(req.user.id);
 
@@ -33,17 +34,26 @@ export class WorkspaceService {
           credit: 0,
           admin_user_id: existingUser.id,
         },
-        // { transaction },
+        { transaction },
+      );
+      const workspaceUser = await WorkspaceUser.create(
+        {
+         role: WORKSPACE_USER_ROLE.ADMIN,
+         user_id: existingUser.id,
+         workspace_id: workspace.id,
+        
+        },
+        { transaction },
       );
 
       await WorkspaceUserPermission.create(
         {
-          permission: WORKSPACE_USER_PERMISSION.RE,
-          workspace_user_id: workspace.id,
+          permissions: WORKSPACE_USER_PERMISSION.RE,
+          workspace_user_id: workspaceUser.id,
         },
-        // { transaction },
+        { transaction },
       );
-      // await transaction.commit();
+      await transaction.commit();
       return {
         status: HttpStatus.OK,
         success: true,
@@ -58,12 +68,146 @@ export class WorkspaceService {
     }
   }
 
-  async updateWorkspace(id: string, req: any) {
+  async updateWorkspace(
+    id: string,
+    updateWorkspaceDTO: UpdateWorkspaceDTO,
+    req: any
+  ) {
+    const transaction = await this.sequelize.transaction();
+  
     try {
+      const userId = req.user.id;
+  
+      // Fetch user
+      const existingUser = await User.findByPk(userId, { transaction });
+      if (!existingUser) {
+        throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      }
+  
+   
+      const workspace = await WorkSpace.findByPk(id, { transaction });
+      if (!workspace) {
+        throw new HttpException('Workspace not found', HttpStatus.NOT_FOUND);
+      }
+  
+     
+      if (workspace.admin_user_id !== userId) {
+        throw new HttpException(
+          'Only the workspace admin can update the workspace',
+          HttpStatus.FORBIDDEN
+        );
+      }
+  
+      // Update workspace name
+      if (updateWorkspaceDTO.name) {
+        workspace.name = updateWorkspaceDTO.name;
+        await workspace.save({ transaction });
+      }
+  
+      // Update user role in workspace
+      if (updateWorkspaceDTO.role) {
+        const workspaceUser = await WorkspaceUser.findOne({
+          where: { workspace_id: id, user_id: userId },
+          transaction,
+        });
+  
+        if (!workspaceUser) {
+          throw new HttpException(
+            'Workspace user not found',
+            HttpStatus.NOT_FOUND
+          );
+        }
+  
+        const workspacePermission = await WorkspaceUserPermission.findOne({
+          where: { workspace_user_id: workspaceUser.id },
+          transaction,
+        });
+  
+        if (!workspacePermission) {
+          throw new HttpException(
+            'Workspace permission not found',
+            HttpStatus.NOT_FOUND
+          );
+        }
+  
+        workspacePermission.permissions = updateWorkspaceDTO.role;
+        await workspacePermission.save({ transaction });
+      }
+  
+      await transaction.commit();
+  
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Workspace updated successfully',
+          workspace,
+        },
+      };
     } catch (error) {
-      throw new HttpException('Error: ' + error.message, error.status);
+      await transaction.rollback();
+      const status =
+        error instanceof HttpException
+          ? error.getStatus()
+          : HttpStatus.INTERNAL_SERVER_ERROR;
+  
+      throw new HttpException(
+        error.message || 'An error occurred while updating the workspace',
+        status
+      );
     }
   }
+  
+
+  // async updateWorkspace(id: string, updateWorkspaceDTO: UpdateWorkspaceDTO, req: any) {
+  //   try {
+  //     const existingUser = await User.findByPk(req.user.id);
+
+  //     if (!existingUser) {
+  //       throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+  //     }
+
+  //     const workspace = await WorkSpace.findByPk(id);
+  //     if (!workspace) {
+  //       throw new HttpException('Workspace not found', HttpStatus.NOT_FOUND);
+  //     }
+
+  //     // Check if user is admin of the workspace
+  //     if (workspace.admin_user_id !== existingUser.id) {
+  //       throw new HttpException('Only workspace admin can update workspace', HttpStatus.FORBIDDEN);
+  //     }
+
+  //     // Update workspace name if provided
+  //     if (updateWorkspaceDTO.name) {
+  //       workspace.name = updateWorkspaceDTO.name;
+  //     }
+
+  //     await workspace.save();
+
+  //     // Update role if provided
+  //     if (updateWorkspaceDTO.role) {
+  //       const workspaceUser = await WorkspaceUser.findOne({
+  //         where: { workspace_id: id, user_id: existingUser.id }
+  //       });
+
+  //       if (workspaceUser) {
+  //         workspaceUser.role = updateWorkspaceDTO.role as WORKSPACE_USER_ROLE;
+  //         await workspaceUser.save();
+  //       }
+  //     }
+
+  //     return {
+  //       status: HttpStatus.OK,
+  //       success: true,
+  //       data: {
+  //         message: 'Workspace updated successfully',
+  //         workspace: workspace,
+  //       },
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException('Error: ' + error.message, error.status);
+  //   }
+  // }
   async getWorkspace(req: any) {
     try {
       const existingUser = await User.findByPk(req.user.id);
@@ -75,28 +219,13 @@ export class WorkspaceService {
       const workspaceUsers = await User.findAll({
         where: { id: req.user.id },
         include: [
-          // {
-          //   model: WorkSpace,
-          //   as: 'workspaces', // If you want to include the workspace relation
-          //   required: true, // Ensure the user is related to a workspace
-          //   // include: [
-          //   //   {
-          //   //     model: User,
-          //   //     as: 'member',
-          //   //   },
-          //   // ],
-          // },
-          {
+           {
             model: WorkSpace,
             as: 'joined_workspaces', // If you want to include the workspace relation
             required: true, // Ensure the user is related to a workspace
-            // include: [
-            //   {
-            //     model: User,
-            //     as: 'members',
-            //   },
-            // ],
+          
           },
+            
           // {
           //   model: WorkspaceUserPermission,
           //   as: 'workspace_user_permissions', // If you want to include the permissions relation
@@ -247,7 +376,7 @@ export class WorkspaceService {
     }
   }
 
-  async deleteWorkspace(
+  async removeUserFromWorkspace(
     workspaceId: string,
     userId: string,
     req: { user: { id: Identifier } },
@@ -273,6 +402,108 @@ export class WorkspaceService {
       await workspaceUser.destroy();
 
       return { message: 'User successfully removed from workspace' };
+    } catch (error) {
+      throw new HttpException('Error: ' + error.message, error.status);
+    }
+  }
+
+  async deleteWorkspace(id: string, req: any) {
+    const transaction = await this.sequelize.transaction();
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+
+      if (!existingUser) {
+        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+      }
+
+      const workspace = await WorkSpace.findByPk(id);
+      if (!workspace) {
+        throw new HttpException('Workspace not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Check if user is part of the workspace
+      const workspaceUser = await WorkspaceUser.findOne({
+        where: { workspace_id: id, user_id: existingUser.id },
+        include: [{
+          model: WorkspaceUserPermission,
+          as: 'workspace_user_permissions'
+        }]
+      });
+
+      if (!workspaceUser) {
+        throw new HttpException('User is not part of this workspace', HttpStatus.FORBIDDEN);
+      }
+
+      // Check permissions - only CRUDE permission allows deletion
+      if (workspaceUser.dataValues.role!==WORKSPACE_USER_ROLE.ADMIN 
+        // || workspaceUser.workspace_user_permissions?.permissions !== WORKSPACE_USER_PERMISSION.CRUDE
+      ) {
+        throw new HttpException('Insufficient permissions to delete workspace', HttpStatus.FORBIDDEN);
+      }
+
+      // Check if user is admin of the workspace
+      if (workspace.admin_user_id !== existingUser.id) {
+        throw new HttpException('Only workspace admin can delete workspace', HttpStatus.FORBIDDEN);
+      }
+
+      // Delete all related data
+      await WorkspaceUserPermission.destroy({
+        where: { workspace_user_id: workspaceUser.id },
+        transaction
+      });
+
+      await WorkspaceUser.destroy({
+        where: { workspace_id: id },
+        transaction
+      });
+
+      await workspace.destroy({ transaction });
+
+      await transaction.commit();
+
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Workspace deleted successfully',
+        },
+      };
+    } catch (error) {
+      await transaction.rollback();
+      throw new HttpException('Error: ' + error.message, error.status);
+    }
+  }
+
+  async getUserPermissions(workspaceId: string, req: any) {
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+
+      if (!existingUser) {
+        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
+      }
+
+      const workspaceUser = await WorkspaceUser.findOne({
+        where: { workspace_id: workspaceId, user_id: existingUser.id },
+        include: [{
+          model: WorkspaceUserPermission,
+          as: 'workspace_user_permissions'
+        }]
+      });
+
+      if (!workspaceUser) {
+        throw new HttpException('User is not part of this workspace', HttpStatus.FORBIDDEN);
+      }
+
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          role: workspaceUser.role,
+          permissions: workspaceUser.workspace_user_permissions?.permissions,
+          canUpdate: workspaceUser.workspace_user_permissions?.permissions === WORKSPACE_USER_PERMISSION.CRUDE,
+          canDelete: workspaceUser.workspace_user_permissions?.permissions === WORKSPACE_USER_PERMISSION.CRUDE && workspaceUser.workspace?.admin_user_id === existingUser.id,
+        },
+      };
     } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);
     }

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
-import { CreateWorkspaceDTO } from './dto/workspace.dto';
+import { CreateWorkspaceDTO, UpdateWorkspaceDTO } from './dto/workspace.dto';
 import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
 
 @Controller('workspace')
@@ -18,9 +18,8 @@ export class WorkspaceController {
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
-  // @fix add jwt Guards
-  async updateWorkspace(@Param('id') id: string, @Req() req: any) {
-    return this.workspaceService.updateWorkspace(id, req);
+  async updateWorkspace(@Param('id') id: string, @Body() updateWorkspaceDTO: UpdateWorkspaceDTO, @Req() req: any) {
+    return this.workspaceService.updateWorkspace(id, updateWorkspaceDTO, req);
   }
 
   @Get('')
@@ -48,14 +47,13 @@ export class WorkspaceController {
   }
 
 
-  @Delete('/:workspace_id/:user_id')
+  @Delete('/:workspace_id')
   @UseGuards(JwtAuthGuard)
   async deleteWorkspace(
   @Param('workspace_id') workspaceId: string, 
-  @Param('user_id') userId: string,
   @Req() req: any
 ) {
-    return this.workspaceService.deleteWorkspace(workspaceId, userId, req);
+    return this.workspaceService.deleteWorkspace(workspaceId, req);
   }
 
 }

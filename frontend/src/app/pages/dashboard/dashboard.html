@@ -34,7 +34,19 @@
                         <div class="font-semibold">{{ ws.name }}</div>
                         <div class="text-xs text-text-secondary">ID #{{ ws.id }}</div>
                     </div>
+                    <div class="flex-1"></div>
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer" (click)="editWorkspace(ws)">
+                        <mat-icon class="text-white">edit</mat-icon>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer" (click)="deleteWorkspace(ws.id)">
+                        <mat-icon class="text-white">delete</mat-icon>
+                    </div>
+
+                    <!-- <div class="flex rounded-xl border border-gray-200 text-white bg-primary rounded-full ">
+                    <mat-icon class="text-white">edit</mat-icon>
+                </div> -->
                 </div>
+
                 <div class="grid grid-cols-2 gap-3 text-sm mb-4">
                     <div>
                         <div class="text-text-secondary">Credit</div>
@@ -47,7 +59,7 @@
                 </div>
                 <div class="flex gap-2">
                     <button class="btn btn-outline btn-sm " type="button" (click)="openWorkspace(ws.id)">Open</button>
-                    <!-- <button class="btn btn-outline btn-sm" type="button">Manage</button> -->
+
                 </div>
             </div>
 
@@ -56,7 +68,13 @@
                     No workspaces yet. Create your first one.
                 </div>
             </div>
-            <app-workspace-modal [open]="confirmModalOpen" [title]="'Save Workspace'" [message]="'Create New Workspace.'" [confirmText]="'Save'" [cancelText]="'Cancel'" (confirmed)="onConfirmSave()" (cancelled)="onCancelSave()"></app-workspace-modal>
+            <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
+                [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
+
+            <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Create New Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
+                [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
+          
+            <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove workspace'" [message]="'Are you sure you want to remove this workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()" (cancelled)="onCancelDelete()"></app-confirm-modal>
         </div>
     </div>
 </div>

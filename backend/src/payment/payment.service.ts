@@ -8,7 +8,7 @@ import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
-constructor(private authService: AuthService,){}
+  constructor(private authService: AuthService) {}
   private async initializeStripe(): Promise<void> {
     if (!this.stripe) {
       const stripeApiKey = process.env.STRIPE_KEY; // Fetch API key from DB
@@ -20,7 +20,7 @@ constructor(private authService: AuthService,){}
 
   async createCardToken(input: CreatePaymentDto) {
     try {
-     const expiry= input.expiry.split("/")
+      const expiry = input.expiry.split('/');
       const cardToken = await this.stripe.tokens.create({
         card: {
           number: input.cardNumber,
@@ -36,25 +36,33 @@ constructor(private authService: AuthService,){}
     }
   }
 
-  async cardPaymentCreate(input: { price: number; token: string; subscriptionType: any; }, req: any) {
+  async cardPaymentCreate(
+    input: { price: number; token: string; subscriptionType: any },
+    req: any,
+  ) {
     await this.initializeStripe();
-  
+
     // const user = await this.authService.getUserById(req.user.id);
-  
+
     const paymentIntent = await this.createPaymentIntent(
-      input.price*100, 
+      input.price * 100,
       'usd',
-      input.token 
+      input.token,
     );
     // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
-    const workSpace=await WorkSpace.findOne({where:{admin_user_id:req.user.id}})
-    workSpace.credit=+workSpace.credit+1000
-    await workSpace.save()
+    const workSpace = await WorkSpace.findOne({
+      where: { admin_user_id: req.user.id },
+    });
+    workSpace.credit = +workSpace.credit + 1000;
+    await workSpace.save();
     return paymentIntent;
   }
-  
 
-  async createPaymentIntent(amount: number, currency: string, cardTokenId: string) {
+  async createPaymentIntent(
+    amount: number,
+    currency: string,
+    cardTokenId: string,
+  ) {
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: amount, // Amount in cents
@@ -77,6 +85,4 @@ constructor(private authService: AuthService,){}
       throw new Error('Payment intent creation failed');
     }
   }
-
- 
 }

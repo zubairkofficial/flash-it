@@ -1,4 +1,4 @@
 export enum DATA_TYPE {
-  TEXT = 'text',
-  FILE = 'docs',
+  TEXT = 'Text',
+  FILE = 'Documents',
 }

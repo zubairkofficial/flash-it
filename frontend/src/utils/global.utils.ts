@@ -4,6 +4,7 @@ class globals {
   private NODE_ENV: string = 'development';
 
   private DEV_URL: string = 'http://localhost:3000';
+  // private DEV_URL: string = 'https://d3bda50b4a2c.ngrok-free.app';
   private PROD_URL: string = 'https://api.example.com';
   private URL: string =
     this.NODE_ENV === 'development' ? this.DEV_URL : this.PROD_URL;

@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Op } from 'sequelize';
 import { FLASHCARD_SLIDE_TYPE } from 'src/utils/flashcard-slide-type.enum';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
-import { generateFlashcardSlides } from 'src/utils/openai-flashCard.utils';
+import { extractJsonBlock, generateFlashcardSlides } from 'src/utils/openai-flashCard.utils';
 
 @Injectable()
 export class FlashcardService {
@@ -40,51 +40,21 @@ export class FlashcardService {
         }
     )
 
-  //    const generatedSlides = await generateFlashcardSlides(flashCard.dataValues.raw_data.dataValues.text);
-  // const parsedSlides = JSON.parse(generatedSlides);
+     const generatedSlides = await generateFlashcardSlides(flashCard.dataValues.raw_data.dataValues.text);
+    console.log("generatedSlides",typeof generatedSlides)
+     const extractedJson = extractJsonBlock(generatedSlides);
 
-    const generated = [
-      {
-        type: FLASHCARD_SLIDE_TYPE.CONCISE,
-        slides: [
-          {
-            title: 'This is title',
-            text: '',
-          },
-          {
-            title: '',
-            text: 'this is text for next slide',
-          },
-        ],
-      },
-      {
-        type: FLASHCARD_SLIDE_TYPE.STANDARD,
-        slides: [
-          {
-            title: 'This is title',
-            text: 'this is the text of give slide',
-          },
-          {
-            title: 'this is the title',
-            text: 'this is text for next slide',
-          },
-        ],
-      },
-      {
-        type: FLASHCARD_SLIDE_TYPE.DETAILED,
-        slides: [
-          {
-            title: 'This is title',
-            text: 'this is the text of give slide, this is anoterh more text',
-          },
-          {
-            title: 'this is the title',
-            text: 'this is text for next slide, this is another more text',
-          },
-        ],
-      },
-    ]; // @fix implement openai here
-
+     if (!extractedJson) {
+       throw new Error('No valid JSON found in OpenAI response');
+     }
+     let parsedSlides
+     try {
+      
+      parsedSlides = JSON.parse(extractedJson);
+    } catch (error) {
+      console.log("======",error.message)
+      throw new Error(error)
+    }
     try {
       const flashCard = await FlashCard.findOne({
         where: {
@@ -123,7 +93,6 @@ export class FlashcardService {
           HttpStatus.BAD_REQUEST,
         );
       }
-
       // @fix attach slides of flashcard, generate model for that
 
       await flashCard.update(
@@ -136,51 +105,13 @@ export class FlashcardService {
           transaction,
         },
       );
+      console.log("parse",typeof parsedSlides)
+      if (!parsedSlides || typeof parsedSlides !== 'object') {
+        throw new Error('Invalid parsedSlides data');
+      }
+      await this.storeParsedSlides(parsedSlides,flashCard.id);
 
-      await FlashCardSlide.bulkCreate(
-        generated[0].slides.map((d) => ({
-          slide_type: generated[0].type,
-          title: d.title,
-          text: d.text,
-          flashcard_id: flashCard.id,
-        })),
-        {
-          transaction,
-          validate: true, // runs model validations on each record
-          ignoreDuplicates: true, // optional, skips inserts that violate unique constraints
-          returning: true, // returns the created records (esp. useful in Postgres)
-        },
-      );
-
-      await FlashCardSlide.bulkCreate(
-        generated[1].slides.map((d) => ({
-          slide_type: generated[1].type,
-          title: d.title,
-          text: d.text,
-          flashcard_id: flashCard.id,
-        })),
-        {
-          transaction,
-          validate: true, // runs model validations on each record
-          ignoreDuplicates: true, // optional, skips inserts that violate unique constraints
-          returning: true, // returns the created records (esp. useful in Postgres)
-        },
-      );
-
-      await FlashCardSlide.bulkCreate(
-        generated[2].slides.map((d) => ({
-          slide_type: generated[2].type,
-          title: d.title,
-          text: d.text,
-          flashcard_id: flashCard.id,
-        })),
-        {
-          transaction,
-          validate: true, // runs model validations on each record
-          ignoreDuplicates: true, // optional, skips inserts that violate unique constraints
-          returning: true, // returns the created records (esp. useful in Postgres)
-        },
-      );
+     
 
       if (!outsideTransaction) {
         await transaction.commit();
@@ -195,7 +126,7 @@ export class FlashcardService {
       };
     } catch (error) {
       console.log(
-        'lola in flashacar service geenrate flash ard ========',
+        ' in flashacar service geenrate flash ard ========',
         error,
       );
       if (!outsideTransaction) {
@@ -286,4 +217,36 @@ export class FlashcardService {
       throw new HttpException('Error ' + error.message, error.status);
     }
   }
+
+  async storeParsedSlides  (parsedSlides: Record<string, any[]>,flashcardId:number) {
+    const slidesToInsert = Object.entries(parsedSlides).flatMap(([key, slides]) => {
+      const upperKey = key.toUpperCase().trim();
+    
+      if (!(upperKey in FLASHCARD_SLIDE_TYPE)) {
+        console.warn(`⚠️ Skipping unknown slide type: ${key}`);
+        return [];
+      }
+    
+      const slideType = FLASHCARD_SLIDE_TYPE[upperKey as keyof typeof FLASHCARD_SLIDE_TYPE];
+    
+      if (!slideType) {
+        console.warn(`Skipping unknown slide type: ${key}`);
+        return [];
+      }
+  
+      return slides.map(slide => ({
+        slide_type: slideType,
+        title: slide.title || '',
+        text: slide.text || '',
+        flashcard_id: flashcardId,
+      }));
+    });
+  
+    try {
+      await FlashCardSlide.bulkCreate(slidesToInsert);
+      console.log('✅ Slides stored successfully!');
+    } catch (error) {
+      console.error('❌ Error saving slides:', error);
+    }
+  };
 }

@@ -14,6 +14,7 @@ import { Api } from '../../../utils/api/api';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { notyf } from '../../../utils/notyf.utils';
 import { Router } from '@angular/router';
+import { CountrySelectComponent } from '@wlucha/ng-country-select';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -22,6 +23,7 @@ import { Router } from '@angular/router';
     ButtonPrimaryDropdown,
     ButtomPrimary,
     ReactiveFormsModule,
+    CountrySelectComponent
   ],
   providers: [Pdf, Api, FlashcardService],
   templateUrl: './generate-flashcard-section.html',
@@ -43,7 +45,7 @@ export class GenerateFlashcardSection {
     private router: Router
   ) {
     this.textForm = this.fb.group({
-      
+
       text: ['', [Validators.min(100)]],
     });
   }
@@ -51,7 +53,7 @@ export class GenerateFlashcardSection {
     if (this.textForm.valid) {
       const textValue = this.textForm.value.text;
       // Handle the submitted text value here
-      console.log('Submitted text:', this.selectedFileName);
+      console.log('Submitted text:', this.textForm);
       const uploadRes = this.flashcardService.uploadData({
         text: textValue,
         title:this.selectedFileName,
@@ -81,8 +83,10 @@ export class GenerateFlashcardSection {
   async onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+
       this.selectedFileName = file.name;
       this.extractedText = await this.pdfService.extractText(file);
+      console.log("file=====",this.extractedText)
       this.textForm.value.text = this.extractedText;
     }
   }

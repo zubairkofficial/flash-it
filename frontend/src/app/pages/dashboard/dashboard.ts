@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { WorkspaceService, WorkspaceResponseItem, JoinedWorkspace } from '../../../services/workspace/workspace';
 import { Router } from '@angular/router';
 import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
+import { MatIconModule } from '@angular/material/icon';
+import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,WorkSpaceModal],
+  imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -15,7 +17,10 @@ export class Dashboard implements OnInit {
   public errorMessage: string | null = null;
   public workspaces: JoinedWorkspace[] = [];
   public isOpenWorkspace:boolean  = false;
+  public isConfirmModalOpen: boolean = false;
   public confirmModalOpen: boolean = false;
+  public workspaceId: number = 0;
+  public editingWorkspace: JoinedWorkspace | null = null;
 
   constructor(private workspaceService: WorkspaceService, private router: Router) {}
 
@@ -46,20 +51,77 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/plans']);
   }
   public handleWorkspace(): void {
-
-   this.confirmModalOpen = true;
+    this.editingWorkspace = null;
+    this.isConfirmModalOpen = true;
   }
 
 
 
 
   public onCancelSave(): void {
-    this.confirmModalOpen = false;
+    this.isConfirmModalOpen = false;
 
   }
-  public onConfirmSave(): void {
-    this.confirmModalOpen = false;
+  public editWorkspace(ws: JoinedWorkspace): void {
+    this.editingWorkspace = ws;
+    console.log("editingWorkspace",this.editingWorkspace)
+    this.isConfirmModalOpen = true;
+  }
+  public deleteWorkspace(id:number): void {
 
+    this.workspaceId=id;
+    this.confirmModalOpen = true;
+    console.log("editingWorkspace",id)
+
+
+  }
+  public onConfirmDelete(): void {
+this.isLoading = true;
+
+this.confirmModalOpen=false
+this.workspaceService.deleteWorkspace(this.workspaceId).subscribe({
+  next: () => {
+    this.fetchWorkspaces();
+  },
+  error: (err: any) => {
+    this.errorMessage = err?.error?.message || 'Failed to delete workspace.';
+    this.isLoading = false;
+  }
+});
+
+  }
+  public onCancelDelete(): void {
+    this.confirmModalOpen=false
+
+  }
+  public onConfirmSave(data: { name: string; role: string }): void {
+
+    this.isConfirmModalOpen = false;
+    const name = (data.name || '').trim();
+    const role = (data.role || '').trim();
+    if (!name || !role) return;
+    this.isLoading = true;
+    if (this.editingWorkspace) {
+      this.workspaceService.updateWorkspace(this.editingWorkspace.id, { name, role }).subscribe({
+        next: () => {
+          this.fetchWorkspaces();
+        },
+        error: (err: any) => {
+          this.errorMessage = err?.error?.message || 'Failed to update workspace.';
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.workspaceService.createWorkspace(name).subscribe({
+        next: () => {
+          this.fetchWorkspaces();
+        },
+        error: (err: any) => {
+          this.errorMessage = err?.error?.message || 'Failed to create workspace.';
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
 }
