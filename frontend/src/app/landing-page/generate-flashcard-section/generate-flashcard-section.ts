@@ -14,6 +14,7 @@ import { Api } from '../../../utils/api/api';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { notyf } from '../../../utils/notyf.utils';
 import { Router } from '@angular/router';
+import { LanguageSelectorComponent } from '../../../utils/language.utils';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -33,9 +34,11 @@ export class GenerateFlashcardSection {
   activeLanguage = 'en';
   isLanguageDropDownOpen = false;
   extractedText: string = '';
+  language: string = '';
+  filesSelected: FileList | null = null;
   selectedFiles: {name: string, content: string}[] = []; // Array to store multiple files
   textForm: FormGroup;
-
+  allLanguages=LanguageSelectorComponent;
   constructor(
     private pdfService: Pdf,
     private fb: FormBuilder,
@@ -49,23 +52,8 @@ export class GenerateFlashcardSection {
 
   onSubmit() {
     if (this.textForm.valid) {
-      // Prepare data for API - array of objects
-      const uploadData = this.selectedFiles.map(file => ({
-        text: file.content,
-        title: file.name,
-        data_type: this.activeState,
-      }));
 
-      // If we also have text input, include it
-      if (this.textForm.value.text) {
-        uploadData.push({
-          text: this.textForm.value.text,
-          title: 'User Input Text',
-          data_type: this.activeState,
-        });
-      }
-
-      const uploadRes = this.flashcardService.uploadData(uploadData);
+      const uploadRes = this.flashcardService.uploadData(this.filesSelected,this.language);
 
       uploadRes.subscribe({
         next: (res) => {
@@ -88,6 +76,8 @@ export class GenerateFlashcardSection {
 
   async onFileSelected(event: any) {
     const files: FileList = event.target.files;
+    console.log("files",files)
+    this.filesSelected=files
     if (files && files.length > 0) {
       this.selectedFiles = []; // Reset selected files
 
@@ -122,4 +112,9 @@ export class GenerateFlashcardSection {
       this.textForm.patchValue({ text: '' });
     }
   }
+
+  handleSelection(event: any) {
+    console.log("event",event)
+    this.language=event
+   }
 }

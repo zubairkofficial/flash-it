@@ -45,19 +45,27 @@ export class FlashcardService {
         throw new HttpException('No flashcard or raw data found.', HttpStatus.BAD_REQUEST);
       }
   
-      // 2. Process each raw_data item
-      for (const rawData of flashCard.raw_data) {
-        const text = rawData.dataValues.text;
-  
-        const generatedSlides = await generateFlashcardSlides(text);
+      const combinedText = flashCard.raw_data
+  .map(raw => raw.dataValues.text)
+  .join('\n\n'); // or '\n', depending on your preference
+
+  const language = flashCard.raw_data[0].dataValues.language;
+    
+  const generatedSlides = await generateFlashcardSlides(combinedText, language);
         console.log("generatedSlides", typeof generatedSlides);
-  
-        const extractedJson = extractJsonBlock(generatedSlides);
-  
+        let extractedJson;
+        if (typeof generatedSlides === 'object') {
+          // If it's already a parsed object, just use it directly
+          extractedJson = JSON.stringify(generatedSlides);
+        } else {
+          // If it's a string, try to extract JSON
+          extractedJson = extractJsonBlock(generatedSlides);
+        }
+        
         if (!extractedJson) {
           throw new Error('No valid JSON found in OpenAI response');
         }
-  
+        
         let parsedSlides;
         try {
           parsedSlides = JSON.parse(extractedJson);
@@ -71,7 +79,7 @@ export class FlashcardService {
         }
   
         await this.storeParsedSlides(parsedSlides, flashCard.id);
-      }
+      
   
       // 3. Update flashcard to attach user & workspace, remove temp ID
       await flashCard.update(
@@ -110,7 +118,7 @@ export class FlashcardService {
   }
   
 
-  async uploadRawData(files: Express.Multer.File[], req: any) {
+  async uploadRawData(files: Express.Multer.File[],language: string, req: any) {
     const extractedTexts = [];
 
     for (const file of files) {
@@ -125,6 +133,7 @@ export class FlashcardService {
           temporary_flashcard_id: uuidv4(),
           user_id: null,
           workspace_id: null,
+          
         },
         { transaction },
       );
@@ -146,6 +155,7 @@ export class FlashcardService {
             title,
             data_type,
             flashcard_id: flashCard.id,
+            language
           },
           { transaction },
         );

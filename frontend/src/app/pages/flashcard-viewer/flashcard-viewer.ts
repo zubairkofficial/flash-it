@@ -93,6 +93,12 @@ export class FlashcardViewer implements OnInit {
   public onTouchStart(event: TouchEvent): void {
     this.touchStartX = event.changedTouches[0].clientX;
   }
+  public handleFlashCardDownload(flashCardSlide: any): void {
+    console.log("flashCardSlideId",flashCardSlide)
+    const downloadUrl = `http://localhost:3000/flashcard-slides/${flashCardSlide[0].flashcard_id}`;
+
+    window.open(downloadUrl, '_blank');
+    }
 
   public onTouchEnd(event: TouchEvent): void {
     this.touchEndX = event.changedTouches[0].clientX;
@@ -108,6 +114,7 @@ export class FlashcardViewer implements OnInit {
     this.touchEndX = null;
   }
 }
+
 
 
 

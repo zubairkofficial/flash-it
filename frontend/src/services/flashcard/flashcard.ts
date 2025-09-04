@@ -18,10 +18,20 @@ export class FlashcardService {
       ...this.api.authorizationHeader,
     });
   }
+ 
 
-  uploadData(data:any): Observable<any> {
-    return this.api.post('/flashcard/upload-data', data, {
-      ...this.api.contentTypeHeader,
+  uploadData(files: FileList | null,language:string): Observable<any> {
+    if (!files) {
+      throw new Error('No files selected');
+    }
+
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    formData.append('language',language)
+
+    return this.api.post('/flashcard/upload-data', formData, {
       ...this.api.authorizationHeader,
     });
   }

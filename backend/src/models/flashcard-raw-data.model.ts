@@ -38,6 +38,13 @@ export default class FlashCardRawData extends Model {
   })
   declare title: string;
  
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare language: string;
+
   @Column({
     type: DataType.ENUM,
     values: Object.values(DATA_TYPE),

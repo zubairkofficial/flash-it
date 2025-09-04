@@ -1,9 +1,6 @@
 <div class="flex flex-col bg-transparent gap-[25px] w-full">
-  <div class="flex flex-col gap-[2px]">
-    <span
-      class="font-nunito text-black font-bold leading-[150%] tracking-[0%]"
-      style="font-size: clamp(16px, 2vw, 48px)"
-    >
+    <div class="flex flex-col gap-[2px]">
+        <span class="font-nunito text-black font-bold leading-[150%] tracking-[0%]" style="font-size: clamp(16px, 2vw, 48px)">
       Hey, <br />
       <span
         style="font-size: clamp(16px, 2vw, 48px)"
@@ -11,37 +8,23 @@
         >Welcome Back</span
       >
     </span>
-    <p
-      class="font-nunito font-normal text-base text-text-secondary leading-[150%] tracking-[1%]"
-    >
-      We are very happy to see you back
-    </p>
-  </div>
+        <p class="font-nunito font-normal text-base text-text-secondary leading-[150%] tracking-[1%]">
+            We are very happy to see you back
+        </p>
+    </div>
 
-  <div class="flex flex-col gap-[35px] w-full">
-    <form class="flex flex-col gap-[20px]" [formGroup]="form">
-      <app-input-with-label
-        label="Username"
-        placeholder="Enter your username"
-        formControlName="username"
-        styles="px-[12px] py-[16px] h-[45px] w-full"
-      >
-      </app-input-with-label>
+    <div class="flex flex-col gap-[35px] w-full">
+        <form class="flex flex-col gap-[20px]" [formGroup]="form">
+            <app-input-with-label label="Username" placeholder="Enter your username" formControlName="username" styles="px-[12px] py-[16px] h-[45px] w-full">
+            </app-input-with-label>
 
-      <app-input-with-label
-        type="password"
-        label="Password"
-        placeholder="Enter your password"
-        formControlName="password"
-        styles="px-[12px] py-[16px] h-[45px] w-full"
-      >
-      </app-input-with-label>
-    </form>
-    <div class="flex flex-col gap-3 w-full">
-      <div class="flex flex-row gap-2">
-        <input type="checkbox" class="accent-primary"/>
-        <span class="text-xs text-text-secondary"
-          >By signing In you agree to our Terms and conditions and Privacy
+            <app-input-with-label type="password" label="Password" placeholder="Enter your password" formControlName="password" styles="px-[12px] py-[16px] h-[45px] w-full">
+            </app-input-with-label>
+        </form>
+        <div class="flex flex-col gap-3 w-full">
+            <div class="flex flex-row gap-2">
+                <input type="checkbox" class="accent-primary" />
+                <span class="text-xs text-text-secondary">By signing In you agree to our Terms and conditions and Privacy
           policy</span
         >
       </div>
@@ -58,18 +41,13 @@
           <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
           <span class="text-text-secondary"> Or </span>
 
-          <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
-        </div>
+                <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
+            </div>
 
-        <app-buttom-logo-text
-          (click)="submit()"
-          text="Login With Google"
-          styles="flex w-full h-[45px]"
-          style="width: 100%"
-        />
-        <span class="py-2">Don’t have account? SignUp here</span>
-      </div>
+            <app-buttom-logo-text (click)="submit()" text="Login With Google" styles="flex w-full h-[45px]" style="width: 100%" />
+            <span class="py-2">Don’t have account? <span class="text-primary cursor-pointer" (click)="navigate('auth/register')">SignUp here</span></span>
+        </div>
     </div>
-  </div>
-  <div></div>
+</div>
+<div></div>
 </div>

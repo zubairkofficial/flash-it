@@ -48,6 +48,12 @@ export class SignUpForm {
       }
     });
   }
+
+  navigate(path : string){
+    console.log("pat",path)
+    this.router.navigate([path])
+    }
+    
   submit() {
     console.log('register submit called');
     if (this.registerForm.valid) {
@@ -57,7 +63,7 @@ export class SignUpForm {
         registerData.temporary_flashcard_id = this.temporary_flashcard_id;
       }
      const registerRes =  this.authService.register(registerData)
-     
+
     //  registerRes.subscribe({
     //     next: (res) => {
     //       console.log("resiget inside next=================")

@@ -27,7 +27,7 @@ export class ButtonPrimaryDropdown {
 
   toggle() {
     this.isOpen = !this.isOpen;
-    this.isOpenChange.emit(this.isOpen);
+    // this.isOpenChange.emit(this.isOpen);
   }
 
   onChange(newState: string) {

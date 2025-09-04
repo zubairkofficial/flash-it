@@ -48,4 +48,9 @@ export class SigninForm {
       this.form.markAllAsTouched();
     }
   }
+
+  navigate(path : string){
+    console.log("pat",path)
+    this.router.navigate([path])
+    }
 }

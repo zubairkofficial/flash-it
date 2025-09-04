@@ -40,9 +40,9 @@ export class FlashcardController {
 
   @Post('upload-data')
   @UseInterceptors(FilesInterceptor('files'))
- async uploadRawData(@UploadedFiles() files: Array<Express.Multer.File>, @Req() req: any,) {
-  return this.flashCardService.uploadRawData(files, req);
-  // console.log(files);
+ async uploadRawData(@UploadedFiles() files: Array<Express.Multer.File>,@Body('language') language: string, @Req() req: any,) {
+  return this.flashCardService.uploadRawData(files,language, req);
+  
 }
 
   @Get('/:id')

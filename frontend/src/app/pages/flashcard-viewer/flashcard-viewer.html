@@ -50,7 +50,7 @@
                         <button class="btn btn-outline btn-sm"><mat-icon>delete</mat-icon>Delete</button>
                         <button class="btn btn-outline btn-sm"><mat-icon>save</mat-icon>Save</button>
                     </div>
-                    <div class="float-right"></div><button class="btn btn-outline btn-sm"><mat-icon>download</mat-icon>Export</button>
+                    <div class="float-right"></div><button class="btn btn-outline btn-sm" (click)="handleFlashCardDownload(flashcard?.raw_data)"><mat-icon>download</mat-icon>Export</button>
                 </div>
             </div>
         </div>

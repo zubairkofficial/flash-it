@@ -21,6 +21,7 @@ import { diskStorage } from 'multer';
 import { existsSync, mkdirSync } from 'fs';
 import { join, extname } from 'path';
 import { PaymentModule } from './payment/payment.module';
+import { FlashcardSlidesModule } from './flashcard-slides/flashcard-slides.module';
 import FlashCardSlide from './models/flashcard-slide.model';
 
 @Module({
@@ -99,6 +100,7 @@ import FlashCardSlide from './models/flashcard-slide.model';
     PlanModule,
     WorkspaceModule,
     PaymentModule,
+    FlashcardSlidesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

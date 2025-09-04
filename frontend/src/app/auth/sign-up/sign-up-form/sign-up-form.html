@@ -1,85 +1,43 @@
 <div class="flex flex-col bg-transparent gap-[25px] w-full">
-  <div class="flex flex-col gap-[2px]">
-    <span
-      class="font-nunito text-black font-bold leading-[150%] tracking-[0%]"
-      style="font-size: clamp(16px, 2vw, 48px)"
-    >
+    <div class="flex flex-col gap-[2px]">
+        <span class="font-nunito text-black font-bold leading-[150%] tracking-[0%]" style="font-size: clamp(16px, 2vw, 48px)">
       Hey, Welcome <br />
       <!-- <span
         style="font-size: clamp(16px, 2vw, 48px)"
         class="font-nunito text-black font-bold leading-[56px] tracking-[0%]"
         >Welcome</span> -->
-    </span>
-    <p
-      class="font-nunito font-normal text-base text-text-secondary leading-[150%] tracking-[1%]"
-    >
-      We are very happy to see you back
-    </p>
-  </div>
-
-  <div class="flex flex-col gap-[35px] w-full">
-    <form class="flex flex-col gap-[20px]" [formGroup]="registerForm">
-      <app-input-with-label
-        label="Username"
-        type="text"
-        placeholder="Enter your username"
-        formControlName="name"
-        styles="px-[12px] py-[16px] h-[45px] w-full"
-      >
-      </app-input-with-label>
-      <app-input-with-label
-        label="Email"
-        type="email"
-        placeholder="Enter your email"
-        formControlName="email"
-        styles="px-[12px] py-[16px] h-[45px] w-full"
-      >
-      </app-input-with-label>
-
-      <app-input-with-label
-        type="password"
-        label="Password"
-        placeholder="Enter your password"
-        formControlName="password"
-        styles="px-[12px] py-[16px] h-[45px] w-full"
-      >
-      </app-input-with-label>
-      <app-input-with-label
-        type="password"
-        label="Confirm Password"
-        placeholder="Enter password again"
-        formControlName="confirmPassword"
-        styles="px-[12px] py-[16px] h-[45px] w-full"
-      >
-      </app-input-with-label>
-    </form>
-    <div class="flex flex-col gap-3 w-full">
-      <div class="flex flex-col justify-center items-center gap-[10px] w-full">
-        <app-buttom-primary
-          (click)="submit()"
-          type="submit"
-          text="SignUp"
-          styles="w-full h-[45px]"
-          style="width: 100%"
-        ></app-buttom-primary>
-        <div
-          class="flex flex-row items-center justify-center gap-4 w-full h-[45px]"
-        >
-          <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
-          <span class="text-text-secondary"> Or </span>
-
-          <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
-        </div>
-
-        <app-buttom-logo-text
-          (click)="submit()"
-          text="Login With Google"
-          styles="flex w-full h-[45px]"
-          style="width: 100%"
-        />
-        <span class="py-2">Already have an account? SignIn here</span>
-      </div>
+        </span>
+        <p class="font-nunito font-normal text-base text-text-secondary leading-[150%] tracking-[1%]">
+            We are very happy to see you back
+        </p>
     </div>
-  </div>
-  <div></div>
+
+    <div class="flex flex-col gap-[35px] w-full">
+        <form class="flex flex-col gap-[20px]" [formGroup]="registerForm">
+            <app-input-with-label label="Username" type="text" placeholder="Enter your username" formControlName="name" styles="px-[12px] py-[16px] h-[45px] w-full">
+            </app-input-with-label>
+            <app-input-with-label label="Email" type="email" placeholder="Enter your email" formControlName="email" styles="px-[12px] py-[16px] h-[45px] w-full">
+            </app-input-with-label>
+
+            <app-input-with-label type="password" label="Password" placeholder="Enter your password" formControlName="password" styles="px-[12px] py-[16px] h-[45px] w-full">
+            </app-input-with-label>
+            <app-input-with-label type="password" label="Confirm Password" placeholder="Enter password again" formControlName="confirmPassword" styles="px-[12px] py-[16px] h-[45px] w-full">
+            </app-input-with-label>
+        </form>
+        <div class="flex flex-col gap-3 w-full">
+            <div class="flex flex-col justify-center items-center gap-[10px] w-full">
+                <app-buttom-primary (click)="submit()" type="submit" text="SignUp" styles="w-full h-[45px]" style="width: 100%"></app-buttom-primary>
+                <div class="flex flex-row items-center justify-center gap-4 w-full h-[45px]">
+                    <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
+                    <span class="text-text-secondary"> Or </span>
+
+                    <div class="flex w-full bg-black h-[1px] opacity-[30%]"></div>
+                </div>
+
+                <app-buttom-logo-text (click)="submit()" text="Login With Google" styles="flex w-full h-[45px]" style="width: 100%" />
+                <span class="py-2">Already have an account?<span class="text-primary cursor-pointer" (click)="navigate('auth/login')"> SignIn here</span></span>
+            </div>
+        </div>
+    </div>
+    <div></div>
 </div>
