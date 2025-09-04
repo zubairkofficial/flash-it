@@ -14,41 +14,36 @@ export async function generateFlashcardSlides(text: string, language: string) {
     
     # REQUIREMENTS
     1. All three types must cover the same topics with identical titles
-    2. Each category must contain exactly the same number of slides (aim for 5-20 based on content)
+    2. Each category must contain exactly the same number of slides (10-50)
     3. No duplicate slides within the same category
-    4. All content (including titles) must be in ${language}
-    5. For CONCISE slides: Only include titles with EMPTY text content
-    6. Structure must follow this exact JSON format:
+    4. Content must be in ${language}
+    5. Structure must follow this exact JSON format:
     
     {
       "concise": [
-        { "title": "Title 1", "text": "" },
-        { "title": "Title 2", "text": "" }
+        { "title": "Identical Title 1", "text": "Very brief text (5-15 words)" },
+        { "title": "Identical Title 2", "text": "Very brief text (5-15 words)" }
       ],
       "standard": [
-        { "title": "Title 1", "text": "Clear explanation (50-80 words)" },
-        { "title": "Title 2", "text": "Clear explanation (50-80 words)" }
+        { "title": "Identical Title 1", "text": "Clear explanation (50-80 words)" },
+        { "title": "Identical Title 2", "text": "Clear explanation (50-80 words)" }
       ],
       "detailed": [
-        { "title": "Title 1", "text": "Comprehensive explanation with examples (100-200 words)" },
-        { "title": "Title 2", "text": "Comprehensive explanation with examples (100-200 words)" }
+        { "title": "Identical Title 1", "text": "Comprehensive explanation with examples (100-200 words)" },
+        { "title": "Identical Title 2", "text": "Comprehensive explanation with examples (100-200 words)" }
       ]
     }
 
     # CONTENT GUIDELINES
-    - CONCISE: Only titles with EMPTY text content (text should be empty string "")
-    - STANDARD: Complete explanation covering the core concept (1 paragraph, 50-80 words)
-    - DETAILED: In-depth explanation with examples, background, or real-world applications (3-4 paragraphs, 100-200 words)
-    
-    # LANGUAGE REQUIREMENT
-    - All titles and content must be in ${language}
-    - Do not include any text in other languages
+    - CONCISE: Very brief, just the essential point in plain language
+    - STANDARD: Complete explanation covering the core concept (1 paragraph)
+    - DETAILED: In-depth explanation with examples, background, or real-world applications (3-4 paragraphs)
     
     # ADDITIONAL CONSIDERATIONS
-    - Ensure content is suitable for team sharing
+    - Ensure content is suitable for team sharing (as per Team Plan requirements)
     - Structure content to be easily editable by users
     - Make content export-friendly for PDF, PPT, and JSON formats
-    - Create titles that would work well for search/filter functionality
+    - Create titles that would work well for search/filter functionality in History Log
     
     # INPUT TEXT:
     """${text}"""
@@ -58,16 +53,16 @@ export async function generateFlashcardSlides(text: string, language: string) {
     `;
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo', // Consider upgrading to GPT-4 for better content structuring
       messages: [
         { 
           role: 'system', 
-          content: 'You are a helpful assistant that creates educational flashcards. Always respond with valid JSON only. For concise slides, text must be empty string.' 
+          content: 'You are a helpful assistant that creates educational flashcards. Always respond with valid JSON only.' 
         },
         { role: 'user', content: prompt },
       ],
-      // max_tokens: 4000,
-      temperature: 0.7,
+      // max_tokens: 4000, // Increased for detailed content
+      temperature: 0.7, // Balance between creativity and consistency
     });
 
     console.log("Flashcard generation response:", response);
@@ -82,17 +77,12 @@ export async function generateFlashcardSlides(text: string, language: string) {
     const detailedCount = parsedResponse.detailed.length;
     
     if (conciseCount !== standardCount || standardCount !== detailedCount) {
-      console.warn('Flashcard categories have different numbers of slides');
+      throw new Error('Flashcard categories have different numbers of slides');
     }
     
-    // Validate that concise slides have empty text
-    for (const slide of parsedResponse.concise) {
-      if (slide.text !== "") {
-        console.warn(`Concise slide "${slide.title}" has non-empty text: "${slide.text}"`);
-        // Force empty text for concise slides
-        slide.text = "";
-      }
-    }
+    // if (conciseCount < 10 || conciseCount > 50) {
+    //   throw new Error(`Invalid number of slides: ${conciseCount}. Must be between 10 and 50.`);
+    // }
     
     return parsedResponse;
   } catch (error) {

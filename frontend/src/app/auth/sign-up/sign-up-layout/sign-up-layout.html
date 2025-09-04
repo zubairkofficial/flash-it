@@ -1,6 +1,17 @@
-<div class="flex flex-row w-screen min-h-screen overflow-x-none">
+<!-- Main Container -->
+<div class="flex flex-row w-screen min-h-screen overflow-hidden">
 
-    <div class="flex w-full items-center justify-center overflow-y-none">
-        <app-sign-up-form />
+    <div class="flex flex-col w-full items-center px-4 py-6 overflow-y-auto">
+
+        <div class="w-full flex justify-start mb-6">
+            <img src="assets/flash-card.png" alt="Flash Card" width="110" height="58" class="ml-4" />
+        </div>
+
+
+        <div class="w-full max-w-md">
+            <app-sign-up-form></app-sign-up-form>
+        </div>
     </div>
+
+
 </div>
