@@ -46,57 +46,106 @@ export class FlashcardSlidesService {
 
   private generateSlideHtml(slides: any[]): string {
     const styles = `
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          padding: 30px;
-          background: #fff;
-          color: #333;
-        }
-        .slide {
-          page-break-after: always;
-          width:full;
-          height:full;
-          text:center;
-          align-item:center;
-          justify-content:center;
-          margin-bottom: 40px;
-          padding: 20px;
-          border: 1px solid #F36B24;
-          border-radius: 8px;
-        }
-        .title {
-          font-size: 20px;
-          font-weight: bold;
-          margin-bottom: 10px;
-          color:#F36B24
-        }
-        .text {
-          font-size: 16px;
-        }
-        .meta {
-          font-size: 12px;
-          color: #777;
-          margin-top: 10px;
-        }
-      </style>
-    `;
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        margin: 0;
+        background: #fff;
+        color: #333;
+      }
   
-    const body = slides.map(slide => `
-      <div class="slide">
-        <div class="title">${slide.title || '(No title)'}</div>
-        <div class="text">${slide.text || ''}</div>
-        <div class="meta">
-          Type: ${slide.slide_type} <br>
+      .slide-type-heading {
+        font-size: 32px;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #F36B24;
+        margin: 20px 0 20px;
+        text-align: center;
+        page-break-before: always;
+      }
+  
+      .page {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100vh;
+        page-break-after: always;
+      }
+  
+      .slide {
+        flex: 1;
+        margin: 10px 0;
+        border: 1px solid #F36B24;
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+  
+      .title {
+       text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        color: #F36B24;
+        margin-bottom: 10px;
+      }
+  
+      .text {
+        font-size: 16px;
+        text-align: center;
+        padding: 0 10%;
+        margin-bottom: 10px;
+      }
+  
+      .meta {
+        font-size: 14px;
+        color: #777;
+        text-align: right;
+      }
+    </style>
+  `;
+  
+  
+  
+    let lastSlideType = '';
+    let body = '';
+    
+    slides.forEach((slide) => {
+      const currentType = slide.slide_type;
+    
+      // Show heading if new group
+      if (currentType !== lastSlideType) {
+        body += `
+          <div class="slide-type-heading">${currentType}</div>
+        `;
+        lastSlideType = currentType;
+      }
+    
+      // Render the slide
+      body += `
+        <div class="slide">
+          <div class="title">${slide.title || '(No title)'}</div>
+          <div class="text">${slide.text || ''}</div>
+          
         </div>
-      </div>
-    `).join('');
+      `;
+    });
+    
   
     return `
       <html>
-        <head>${styles}</head>
-        <body>${body}</body>
-      </html>
+    <head>
+      ${styles}
+    </head>
+    <body>
+      ${body}
+    </body>
+  </html>
     `;
   }
   

@@ -18,7 +18,15 @@ export class FlashcardService {
       ...this.api.authorizationHeader,
     });
   }
- 
+  generateFirstFlashCard(data: {
+    tempId: string|null;
+  }): Observable<any> {
+    return this.api.put('/flashcard/first/generate', data, {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    });
+  }
+
 
   uploadData(files: FileList | null,language:string): Observable<any> {
     if (!files) {

@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import { AuthService } from 'src/auth/auth.service';
 import WorkSpace from 'src/models/workspace.model';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
+import User from 'src/models/user.model';
 
 @Injectable()
 export class PaymentService {
@@ -50,11 +51,14 @@ export class PaymentService {
       input.token,
     );
     // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
-    const workSpace = await WorkSpace.findOne({
-      where: { admin_user_id: req.user.id },
-    });
-    workSpace.credit = +workSpace.credit + 1000;
-    await workSpace.save();
+    const user=await User.findByPk(+req.user.id)
+    user.credits=+user.credits+1000
+    // const workSpace = await WorkSpace.findOne({
+    //   where: { admin_user_id: req.user.id },
+    // });
+    // workSpace.credit = +workSpace.credit + 1000;
+    // await workSpace.save();
+    await user.save();
     return paymentIntent;
   }
 

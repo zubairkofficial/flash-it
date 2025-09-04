@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
+import { FlashCardFirstGenerateDTO, FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
 import { FlashcardService } from './flashcard.service';
 import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
 import {  FilesInterceptor } from '@nestjs/platform-express/multer';
@@ -27,6 +27,15 @@ export class FlashcardController {
     @Req() req: any,
   ) {
     return this.flashCardService.generateFlashCard(flashCardGenerateDTO, req, null);
+  }
+  @Put('first/generate')
+  @UseGuards(JwtAuthGuard)
+  //   @fix add jwt and roles guard
+  async generateFirstFlashCard(
+    @Body() input: FlashCardFirstGenerateDTO,
+    @Req() req: any,
+  ) {
+    return this.flashCardService.generateFirstFlashCard(input, req, null);
   }
 
   // @Post('upload-data')

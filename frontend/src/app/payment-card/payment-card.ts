@@ -25,6 +25,7 @@ export class PaymentCard implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private paymentService: PaymentService,
+
     private router: Router
   ) {}
 
@@ -36,8 +37,10 @@ export class PaymentCard implements OnInit {
     if (!elements) return;
     this.route.queryParamMap.subscribe((params) => {
       const type = params.get('subscriptionType');
-      if (type === 'free') {
+        if (type === 'free') {
+
         this.router.navigate(['dashboard']);
+
       }
       this.subscriptionType = type;
     });
@@ -53,8 +56,7 @@ export class PaymentCard implements OnInit {
   async onSubmit() {
     this.isLoading = true;
     this.errorMessage = null;
-
-    const { token, error } = await this.stripe!.createToken(this.cardElement, {
+   const { token, error } = await this.stripe!.createToken(this.cardElement, {
       name: this.cardHolderName,
     });
 

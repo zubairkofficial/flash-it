@@ -20,8 +20,8 @@
                         "tsConfig": "tsconfig.app.json",
                         "assets": [{
                             "glob": "**/*",
-                            "input": "./node_modules/pdfjs-dist/build",
-                            "output": "/assets/"
+                            "input": "node_modules/pdfjs-dist/build",
+                            "output": "/src/assets"
                         }],
                         "styles": [
                             "src/custom-theme.scss",

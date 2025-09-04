@@ -1,10 +1,10 @@
 <!-- Page Container -->
 <div class="flex w-full min-h-screen items-center justify-center bg-transparent px-4 py-2">
     <!-- Sign-Up Card -->
-    <div class="w-full max-w-xl flex flex-col gap-8">
+    <div class="w-full max-w-xl flex flex-col gap-4">
         <!-- Welcome Message -->
         <div class="text-start">
-            <h1 class="font-nunito text-black font-bold leading-snug text-[clamp(24px,4vw,48px)]">
+            <h1 class="font-nunito text-black font-bold leading-snug text-[clamp(16px,2vw,48px)]">
                 Hey, Welcome
             </h1>
             <p class=" text-start font-nunito font-normal text-base text-text-secondary leading-relaxed">
@@ -13,7 +13,7 @@
         </div>
 
         <!-- Sign-Up Form -->
-        <div class="w-full flex flex-col gap-6">
+        <div class="w-full flex flex-col">
             <form class="flex flex-col gap-2 w-full" [formGroup]="registerForm">
                 <app-input-with-label label="Username" type="text" placeholder="Enter your username" formControlName="name" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
 

@@ -27,6 +27,7 @@ export interface WorkspaceResponseItem {
   avatar_url: string | null;
   email: string;
   password: string;
+  credits: number;
   plan_id: number;
   createdAt: string;
   updatedAt: string;

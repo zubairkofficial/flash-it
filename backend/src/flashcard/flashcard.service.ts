@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
+import { FlashCardFirstGenerateDTO, FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
 import { Sequelize } from 'sequelize-typescript';
 import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 import FlashCard from 'src/models/flashcard.model';
@@ -9,6 +9,10 @@ import { FLASHCARD_SLIDE_TYPE } from 'src/utils/flashcard-slide-type.enum';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
 import { extractJsonBlock, generateFlashcardSlides } from 'src/utils/openai-flashCard.utils';
 import { PdfService } from 'src/utils/pdf';
+import { PlanController } from 'src/plan/plan.controller';
+import { SubscriptionPlan } from 'src/models/subscription-plan.model';
+import User from 'src/models/user.model';
+import WorkSpace from 'src/models/workspace.model';
 
 
 @Injectable()
@@ -40,6 +44,12 @@ export class FlashcardService {
         ],
         transaction,
       });
+//       const user=await User.findByPk(req.user.id)
+// if(!user)throw new HttpException('user not found: ' , HttpStatus.NOT_FOUND);
+//       const userPlan = await SubscriptionPlan.findOne({
+//       where:{user_id:user.plan_id},
+//         transaction,
+//       });
   
       if (!flashCard || !flashCard.raw_data || flashCard.raw_data.length === 0) {
         throw new HttpException('No flashcard or raw data found.', HttpStatus.BAD_REQUEST);
@@ -87,6 +97,114 @@ export class FlashcardService {
           temporary_flashcard_id: null,
           user_id: req.user.id,
           workspace_id: workspace_id,
+        },
+        {
+          transaction,
+        },
+      );
+  
+      // 4. Final commit
+      if (!outsideTransaction) {
+        await transaction.commit();
+      }
+  
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Flash card created successfully',
+          flash_card: flashCard,
+        },
+      };
+    } catch (error) {
+      console.log('Flashcard generation error:', error);
+  
+      if (!outsideTransaction) {
+        await transaction.rollback();
+      }
+  
+      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  async generateFirstFlashCard(
+    input: FlashCardFirstGenerateDTO,
+    req: any,
+    outsideTransaction: any,
+  ) {
+    console.log("came in flashcard generate");
+  
+    let transaction: any = outsideTransaction || await this.sequelize.transaction();
+    const { tempId } = input;
+  
+    try {
+      // 1. Get flashcard and raw data
+      const flashCard = await FlashCard.findOne({
+        where: {
+          temporary_flashcard_id: {
+            [Op.eq]: tempId,
+          },
+        },
+        include: [
+          {
+            model: FlashCardRawData,
+            as: 'raw_data',
+          },
+        ],
+        transaction,
+      });
+//       const user=await User.findByPk(req.user.id)
+// if(!user)throw new HttpException('user not found: ' , HttpStatus.NOT_FOUND);
+//       const userPlan = await SubscriptionPlan.findOne({
+//       where:{user_id:user.plan_id},
+//         transaction,
+//       });
+  
+      if (!flashCard || !flashCard.raw_data || flashCard.raw_data.length === 0) {
+        throw new HttpException('No flashcard or raw data found.', HttpStatus.BAD_REQUEST);
+      }
+  
+      const combinedText = flashCard.raw_data
+  .map(raw => raw.dataValues.text)
+  .join('\n\n'); // or '\n', depending on your preference
+
+  const language = flashCard.raw_data[0].dataValues.language;
+    
+  const generatedSlides = await generateFlashcardSlides(combinedText, language);
+        console.log("generatedSlides", typeof generatedSlides);
+        let extractedJson;
+        if (typeof generatedSlides === 'object') {
+          // If it's already a parsed object, just use it directly
+          extractedJson = JSON.stringify(generatedSlides);
+        } else {
+          // If it's a string, try to extract JSON
+          extractedJson = extractJsonBlock(generatedSlides);
+        }
+        
+        if (!extractedJson) {
+          throw new Error('No valid JSON found in OpenAI response');
+        }
+        
+        let parsedSlides;
+        try {
+          parsedSlides = JSON.parse(extractedJson);
+        } catch (error) {
+          console.log("JSON parse error:", error.message);
+          throw new Error(error.message || 'Failed to parse JSON');
+        }
+  
+        if (!parsedSlides || typeof parsedSlides !== 'object') {
+          throw new Error('Invalid parsedSlides data');
+        }
+  
+        await this.storeParsedSlides(parsedSlides, flashCard.id);
+      
+      const workspace=await  WorkSpace.findOne({where:{admin_user_id:req.user.id}})
+      // 3. Update flashcard to attach user & workspace, remove temp ID
+      await flashCard.update(
+        {
+          temporary_flashcard_id: null,
+          user_id: req.user.id,
+          workspace_id: workspace.id,
         },
         {
           transaction,

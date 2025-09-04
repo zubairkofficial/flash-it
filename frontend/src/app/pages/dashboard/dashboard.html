@@ -6,6 +6,10 @@
                 <span class="font-nunito font-bold text-lg">Flash-It</span>
             </div>
             <div class="flex items-center gap-3">
+
+                <span class="text-white font-semibold text-sm bg-primary px-2 py-1 rounded-2xl shadow-sm">
+                {{ credits }} credits
+              </span>
                 <button class="btn btn-outline btn-sm" type="button" (click)="onClickUpgrade()">Upgrade</button>
                 <button class="btn btn-primary btn-sm" type="button" (click)="handleWorkspace()">New Workspace</button>
             </div>
@@ -48,10 +52,10 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 text-sm mb-4">
-                    <div>
+                    <!-- <div>
                         <div class="text-text-secondary">Credit</div>
                         <div class="font-semibold">{{ ws.credit }}</div>
-                    </div>
+                    </div> -->
                     <div>
                         <div class="text-text-secondary">Role</div>
                         <div class="font-semibold uppercase">{{ ws?.WorkspaceUser?.role || 'member' }}</div>
@@ -73,7 +77,7 @@
 
             <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Create New Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
                 [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
-          
+
             <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove workspace'" [message]="'Are you sure you want to remove this workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()" (cancelled)="onCancelDelete()"></app-confirm-modal>
         </div>
     </div>

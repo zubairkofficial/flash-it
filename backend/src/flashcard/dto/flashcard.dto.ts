@@ -14,6 +14,13 @@ export class FlashCardGenerateDTO {
   @IsNotEmpty()
   temporary_flashcard_id: string;
 }
+export class FlashCardFirstGenerateDTO {
+
+
+  @IsString()
+  @IsNotEmpty()
+  tempId: string;
+}
 
 export class RawDataUploadDTO {
   @IsString()

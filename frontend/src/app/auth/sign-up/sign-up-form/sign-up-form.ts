@@ -53,7 +53,7 @@ export class SignUpForm {
     console.log("pat",path)
     this.router.navigate([path])
     }
-    
+
   submit() {
     console.log('register submit called');
     if (this.registerForm.valid) {

@@ -41,68 +41,68 @@
                     </div>
                     <!-- Invite Link Modal -->
                     <div *ngIf="isInviteModalOpen" class="modal-backdrop" (click)="closeInviteModal()">
-                       
-                            <div class="modal-card" (click)="$event.stopPropagation()">
-                                <div class="modal-header">
-                                    <div class="modal-title">Invite Link</div>
-                                    <button class="close-btn" type="button" (click)="closeInviteModal()">×</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="url-box">
-                                        <input class="url-input" [value]="InviteLink?.url" readonly />
-                                        <button class="copy-btn" type="button" (click)="copyInviteUrl()">{{ isCopySuccess ? 'Copied!' : 'Copy' }}</button>
-                                    </div>
-                                    <a class="text-blue-600 underline" [href]="InviteLink?.url" target="_blank">Open invite link</a>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="ok-btn" type="button" (click)="closeInviteModal()">Close</button>
-                                </div>
-                            </div>
 
+                        <div class="modal-card" (click)="$event.stopPropagation()">
+                            <div class="modal-header">
+                                <div class="modal-title">Invite Link</div>
+                                <button class="close-btn" type="button" (click)="closeInviteModal()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="url-box">
+                                    <input class="url-input" [value]="InviteLink?.url" readonly />
+                                    <button class="copy-btn" type="button" (click)="copyInviteUrl()">{{ isCopySuccess ? 'Copied!' : 'Copy' }}</button>
+                                </div>
+                                <a class="text-blue-600 underline" [href]="InviteLink?.url" target="_blank">Open invite link</a>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="ok-btn" type="button" (click)="closeInviteModal()">Close</button>
+                            </div>
                         </div>
 
-                        <ng-template #emptyFlashcards>
-                            <div class="rounded-lg border border-dashed border-gray-300 p-6 text-center text-text-secondary">
-                                No flashcards yet.
-                            </div>
-                        </ng-template>
                     </div>
 
-                    <div class="rounded-xl border border-gray-200 bg-white p-4">
-                        <h3 class="font-semibold mb-3">Members</h3>
-                        <div class="space-y-2" *ngIf="workspace.members?.length; else emptyMembers">
-                            <div class="flex items-center justify-between" *ngFor="let m of workspace.members">
-                                <div class="flex items-center gap-2">
-
-                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-semibold">
-                                        {{ m.name?.charAt(0) | uppercase }}
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-medium">{{ m.name }}</div>
-                                        <div class="text-xs text-text-secondary">{{ m.email }}</div>
-                                    </div>
-                                    <span class="text-xs uppercase text-text-secondary">{{ m.WorkspaceUser?.role }}</span>
-
-                                </div>
-                                <div *ngIf="workspace.admin_user_id!==m.id && isUserAdmin" class="text-primary" (click)="onRequestDelete(m.WorkspaceUser.workspace_id,m.WorkspaceUser.user_id)">
-                                    <mat-icon>delete</mat-icon>
-                                </div>
-                            </div>
+                    <ng-template #emptyFlashcards>
+                        <div class="rounded-lg border border-dashed border-gray-300 p-6 text-center text-text-secondary">
+                            No flashcards yet.
                         </div>
-                        <ng-template #emptyMembers>
-                            <div class="rounded-lg border border-dashed border-gray-300 p-4 text-center text-text-secondary">
-                                No members.
-                            </div>
-                        </ng-template>
-                        <div class="mt-4">
-                            <div class="text-sm text-text-secondary">Credit</div>
-                            <div class="font-semibold">{{ workspace.credit }}</div>
-                        </div>
-                    </div>
+                    </ng-template>
                 </div>
 
-                <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove member'" [message]="'Are you sure you want to remove this member from the workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()"
-                    (cancelled)="onCancelDelete()"></app-confirm-modal>
+                <div class="rounded-xl border border-gray-200 bg-white p-4">
+                    <h3 class="font-semibold mb-3">Members</h3>
+                    <div class="space-y-2" *ngIf="workspace.members?.length; else emptyMembers">
+                        <div class="flex items-center justify-between" *ngFor="let m of workspace.members">
+                            <div class="flex items-center gap-2">
+
+                                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-semibold">
+                                    {{ m.name?.charAt(0) | uppercase }}
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">{{ m.name }}</div>
+                                    <div class="text-xs text-text-secondary">{{ m.email }}</div>
+                                </div>
+                                <span class="text-xs uppercase text-text-secondary">{{ m.WorkspaceUser?.role }}</span>
+
+                            </div>
+                            <div *ngIf="workspace.admin_user_id!==m.id && isUserAdmin" class="text-primary" (click)="onRequestDelete(m.WorkspaceUser.workspace_id,m.WorkspaceUser.user_id)">
+                                <mat-icon>delete</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <ng-template #emptyMembers>
+                        <div class="rounded-lg border border-dashed border-gray-300 p-4 text-center text-text-secondary">
+                            No members.
+                        </div>
+                    </ng-template>
+                    <!-- <div class="mt-4">
+                            <div class="text-sm text-text-secondary">Credit</div>
+                            <div class="font-semibold">{{ workspace.credit }}</div>
+                        </div> -->
+                </div>
             </div>
+
+            <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove member'" [message]="'Are you sure you want to remove this member from the workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()"
+                (cancelled)="onCancelDelete()"></app-confirm-modal>
         </div>
     </div>
+</div>

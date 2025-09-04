@@ -39,8 +39,12 @@ export class AuthService {
           //       notyf.error('error generating flash card');
           //     },
           //   });
-          this.router.navigate(['plans']);
-        } else {
+          this.router.navigate(['plans'], {
+            queryParams: {
+              temporary_flashcard_id: userData.temporary_flashcard_id
+            }
+          });
+           } else {
           this.router.navigate(['dashboard']);
         }
       },

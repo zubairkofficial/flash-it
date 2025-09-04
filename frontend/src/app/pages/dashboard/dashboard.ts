@@ -20,6 +20,7 @@ export class Dashboard implements OnInit {
   public isConfirmModalOpen: boolean = false;
   public confirmModalOpen: boolean = false;
   public workspaceId: number = 0;
+  public credits: number = 0;
   public editingWorkspace: JoinedWorkspace | null = null;
 
   constructor(private workspaceService: WorkspaceService, private router: Router) {}
@@ -35,6 +36,7 @@ export class Dashboard implements OnInit {
       next: (data: WorkspaceResponseItem[]) => {
         const firstUser = Array.isArray(data) && data.length > 0 ? data[0] : null;
         this.workspaces = firstUser?.joined_workspaces ?? [];
+       this.credits=data[0]?.credits??0
         this.isLoading = false;
       },
       error: (err: any) => {

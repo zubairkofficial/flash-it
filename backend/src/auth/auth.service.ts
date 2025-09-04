@@ -92,18 +92,18 @@ export class AuthService {
               // @fix find flashcard against temp_id if it exist
 
 
-        await this.flashCardService.generateFlashCard(
-          {
-            temporary_flashcard_id,
-            workspace_id: defaultWorkspace.id,
-          },
-          {
-            user: {
-              id: newUser.id,
-            },
-          },
-          transaction,
-        );
+        // await this.flashCardService.generateFlashCard(
+        //   {
+        //     temporary_flashcard_id,
+        //     workspace_id: defaultWorkspace.id,
+        //   },
+        //   {
+        //     user: {
+        //       id: newUser.id,
+        //     },
+        //   },
+        //   transaction,
+        // );
 
       }
 
