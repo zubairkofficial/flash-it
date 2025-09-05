@@ -13,6 +13,7 @@ import { PlanController } from 'src/plan/plan.controller';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import User from 'src/models/user.model';
 import WorkSpace from 'src/models/workspace.model';
+import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
 
 
 @Injectable()
@@ -44,12 +45,12 @@ export class FlashcardService {
         ],
         transaction,
       });
-//       const user=await User.findByPk(req.user.id)
-// if(!user)throw new HttpException('user not found: ' , HttpStatus.NOT_FOUND);
-//       const userPlan = await SubscriptionPlan.findOne({
-//       where:{user_id:user.plan_id},
-//         transaction,
-//       });
+      const user=await User.findByPk(req.user.id)
+if(!user)throw new HttpException('user not found: ' , HttpStatus.NOT_FOUND);
+      const userPlan = await SubscriptionPlan.findOne({
+      where:{id:user.plan_id},
+        transaction,
+      });
   
       if (!flashCard || !flashCard.raw_data || flashCard.raw_data.length === 0) {
         throw new HttpException('No flashcard or raw data found.', HttpStatus.BAD_REQUEST);
@@ -61,7 +62,7 @@ export class FlashcardService {
 
   const language = flashCard.raw_data[0].dataValues.language;
     
-  const generatedSlides = await generateFlashcardSlides(combinedText, language);
+  const generatedSlides = await generateFlashcardSlides(combinedText, language,userPlan.plan_type);
         console.log("generatedSlides", typeof generatedSlides);
         let extractedJson;
         if (typeof generatedSlides === 'object') {
@@ -169,7 +170,7 @@ export class FlashcardService {
 
   const language = flashCard.raw_data[0].dataValues.language;
     
-  const generatedSlides = await generateFlashcardSlides(combinedText, language);
+  const generatedSlides = await generateFlashcardSlides(combinedText, language,SUBSCRIPTION_TYPE.FREE);
         console.log("generatedSlides", typeof generatedSlides);
         let extractedJson;
         if (typeof generatedSlides === 'object') {

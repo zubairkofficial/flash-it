@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePaymentDto } from './dto/payment.dto';
+import { CardPaymentDto, CreatePaymentDto } from './dto/payment.dto';
 import Stripe from 'stripe';
 import { AuthService } from 'src/auth/auth.service';
 import WorkSpace from 'src/models/workspace.model';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import User from 'src/models/user.model';
 import { FlashcardService } from 'src/flashcard/flashcard.service';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
-  constructor(private authService: AuthService, private flashCardService: FlashcardService) {}
+  constructor(private authService: AuthService, private flashCardService: FlashcardService,  private sequelize: Sequelize,) {}
   private async initializeStripe(): Promise<void> {
     if (!this.stripe) {
       const stripeApiKey = process.env.STRIPE_KEY; // Fetch API key from DB
@@ -39,11 +40,12 @@ export class PaymentService {
   }
 
   async cardPaymentCreate(
-    input: { price: number; token: string; subscriptionType: any },
+    input: CardPaymentDto,
     req: any,
   ) {
     await this.initializeStripe();
-
+    // const transaction = await this.sequelize.transaction();
+ 
     // const user = await this.authService.getUserById(req.user.id);
 
     const paymentIntent = await this.createPaymentIntent(
@@ -57,23 +59,24 @@ export class PaymentService {
     const workSpace = await WorkSpace.findOne({
       where: { admin_user_id: req.user.id },
     });
-    // workSpace.credit = +workSpace.credit + 1000;
-    // await workSpace.save();
+   
+if(input.tempId)
 
-
-    // await this.flashCardService.generateFlashCard(
-    //       {
-    //         temporary_flashcard_id,
-    //         workspace_id: workSpace.id,
-    //       },
-    //       {
-    //         user: {
-    //           id: newUser.id,
-    //         },
-    //       },
-    //       transaction,
-    //     );
-
+  {
+    await this.flashCardService.generateFlashCard(
+          {
+            temporary_flashcard_id: input.tempId,
+            workspace_id: workSpace.id,
+          },
+          {
+            user: {
+              id: req.user.id,
+            },
+          },
+          null
+         
+        );
+}
     await user.save();
     return paymentIntent;
   }

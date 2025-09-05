@@ -1,10 +1,11 @@
 import { OpenAI } from 'openai';
+import { SUBSCRIPTION_TYPE } from './subscription.enum';
 
 const openai = new OpenAI({
   apiKey: process.env.OPEN_API_KEY,
 });
 
-export async function generateFlashcardSlides(text: string, language: string) {
+export async function generateFlashcardSlides(text: string, language: string,planType:SUBSCRIPTION_TYPE) {
   try {
     const prompt = `
     You are an expert educational content designer specializing in creating structured flashcards from various types of content.
@@ -53,7 +54,7 @@ export async function generateFlashcardSlides(text: string, language: string) {
     `;
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo', // Consider upgrading to GPT-4 for better content structuring
+      model: planType===SUBSCRIPTION_TYPE.FREE?'gpt-3.5-turbo':'gpt-4o', // Consider upgrading to GPT-4 for better content structuring
       messages: [
         { 
           role: 'system', 

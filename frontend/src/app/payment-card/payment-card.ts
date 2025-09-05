@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PricePlanSection } from '../landing-page/price-plan-section/price-plan-section';
+import { notyf } from '../../utils/notyf.utils';
 
 @Component({
   selector: 'app-payment-card',
@@ -23,6 +24,7 @@ export class PaymentCard implements OnInit {
   public result: any = null;
   public subscriptionType: any = null;
   public amount: any = null;
+  public tempId = '';
   constructor(
     private route: ActivatedRoute,
     private paymentService: PaymentService,
@@ -38,8 +40,8 @@ export class PaymentCard implements OnInit {
     if (!elements) return;
     this.route.queryParamMap.subscribe((params) => {
       const type = params.get('subscriptionType');
+       this.tempId = params.get('tempId')??"";
         if (type === 'free') {
-
         this.router.navigate(['dashboard']);
 
       }
@@ -75,17 +77,19 @@ export class PaymentCard implements OnInit {
         token: token.id,
         subscriptionType: this.subscriptionType,
         price: this.amount,
+        tempId:this.tempId
       })
       .subscribe({
         next: (res) => {
           this.isLoading = false;
-          alert('Payment successful');
+          notyf.success('Payment successful');
 
           this.router.navigate(['dashboard']);
         },
         error: (err) => {
           this.isLoading = false;
           this.errorMessage = err?.error?.message || 'Payment failed.';
+          notyf.error(`${this.errorMessage}`)
         },
       });
   }

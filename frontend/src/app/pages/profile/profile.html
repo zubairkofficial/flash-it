@@ -3,7 +3,6 @@
     <form [formGroup]="form" class="flex flex-col gap-4">
         <app-input-with-label label="Name" placeholder="Your name" formControlName="name" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
         <app-input-with-label label="Email" placeholder="you@example.com" formControlName="email" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
-        <app-input-with-label label="Avatar URL" placeholder="https://..." formControlName="avatar_url" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
         <app-buttom-primary (click)="save()" text="Save Changes" styles="w-full h-[45px]"></app-buttom-primary>
     </form>
 </div>

@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { SUBSCRIPTION_TYPE } from "src/utils/subscription.enum";
 
 export class CreatePaymentDto {
@@ -20,4 +20,18 @@ expiry:string
 
 @IsString()
 name:string
+}
+export class CardPaymentDto {
+   @IsNumber()
+    price: number; 
+    
+    @IsString()
+    token: string;
+    
+    @IsEnum(SUBSCRIPTION_TYPE)
+    subscriptionType: SUBSCRIPTION_TYPE
+
+    @IsOptional()
+    @IsString()
+    tempId:string
 }

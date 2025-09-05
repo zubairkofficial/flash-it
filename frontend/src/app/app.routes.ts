@@ -10,6 +10,8 @@ import { FlashcardViewer } from './pages/flashcard-viewer/flashcard-viewer';
 import { WorkspaceInvite } from './workspace-invite/workspace-invite';
 import { PaymentCard } from './payment-card/payment-card';
 import { Component } from '@angular/core';
+import { Profile } from './pages/profile/profile';
+import { ChangePassword } from './pages/change-password/change-password';
 
 export const routes: Routes = [
   //   {
@@ -76,11 +78,13 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
+    component:Profile
+    // loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
   },
   {
     path: 'change-password',
-    loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
+    component:ChangePassword
+    // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
   },
 
 ];

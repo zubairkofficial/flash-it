@@ -46,7 +46,7 @@ export class SubscriptionPlanCard {
       .subscribe({
         next: (res) => {
           this.isLoading = false;
-
+          notyf.success('enjoy free plan')
           this.router.navigate(['dashboard']);
         },
         error: (err) => {
@@ -58,6 +58,7 @@ export class SubscriptionPlanCard {
     this.router.navigate(['/payment/card'], {
       queryParams: {
         subscriptionType:availablePlan.subscriptionType,
+        tempId:this.temporary_flashcard_id
       },
     });
     // this.authService

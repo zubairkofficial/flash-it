@@ -1,11 +1,6 @@
 <div class="relative inline-block w-full">
-  <!-- Main button -->
-  <button
-  type="button"
-    [class]="concatClass"
-    style="width: -webkit-fill-available"
-    (click)="toggle()"
-  >
+    <!-- Main button -->
+    <button type="button" [class]="concatClass" style="width: -webkit-fill-available" (click)="toggle()">
     <span>{{ text }}: {{ active || "Select" }}</span>
     <span class="ml-2">
       <svg
@@ -23,22 +18,16 @@
     </span>
   </button>
 
-  <!-- Dropdown menu -->
-  @if ( isOpen ) {
-  <div
-    class="absolute z-10 mt-2 w-full rounded-lg bg-white shadow-lg border border-gray-200"
-  >
-    <ul class="py-2">
-      @for (item of availableState; track $index) {
-      <li
-        (click)="onChange(item)"
-        class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-        [class.font-bold]="item === active"
-      >
-        {{ item }}
-      </li>
-      }
-    </ul>
-  </div>
-  }
+    <!-- Dropdown menu -->
+    @if ( isOpen ) {
+    <div class="absolute z-10 mt-2 w-full h-56 overflow-auto rounded-lg bg-white shadow-lg border border-gray-200 ">
+        <ul class="py-2">
+            @for (item of availableState; track $index) {
+            <li (click)="onChange(item)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer" [class.font-bold]="item === active">
+                {{ item }}
+            </li>
+            }
+        </ul>
+    </div>
+    }
 </div>
