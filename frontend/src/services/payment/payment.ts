@@ -12,7 +12,7 @@ export class PaymentService {
   createCardPayment(token: { token: string;subscriptionType: any,price:number,tempId:string }): Observable<any> {
     return this.api.post('/payment/', {...token}, {
       ...this.api.contentTypeHeader,
-      Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      ...this.api.authorizationHeader
     });
   }
 

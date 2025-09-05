@@ -46,108 +46,147 @@ export class FlashcardSlidesService {
 
   private generateSlideHtml(slides: any[]): string {
     const styles = `
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        font-family: Arial, sans-serif;
-        padding: 40px;
-        margin: 0;
-        background: #fff;
-        color: #333;
-      }
+      <style>
+        * {
+          box-sizing: border-box;
+        }
   
-      .slide-type-heading {
-        font-size: 32px;
-        text-transform: uppercase;
-        font-weight: bold;
-        color: #F36B24;
-        margin: 20px 0 20px;
-        text-align: center;
-        page-break-before: always;
-      }
+        html, body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 0;
+          padding: 2rem;
+          background-color: #ffffff;
+          color: #333333;
+          line-height: 1.6;
+        }
   
-      .page {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100vh;
-        page-break-after: always;
-      }
+        .slide-type-heading {
+          font-size: 2rem;
+          text-transform: uppercase;
+          font-weight: 700;
+          color: #F36B24;
+          margin: 3rem 0 1.5rem;
+          text-align: center;
+          page-break-before: always;
+        }
   
-      .slide {
-        flex: 1;
-        margin: 10px 0;
-        border: 1px solid #F36B24;
-        border-radius: 8px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
+        .page {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          min-height: 100vh;
+          page-break-after: always;
+        }
   
-      .title {
-       text-align: center;
-        font-size: 20px;
-        font-weight: bold;
-        color: #F36B24;
-        margin-bottom: 10px;
-      }
+        .slide {
+          margin: 1.5rem 0;
+          border: 2px solid #F36B24;
+          border-radius: 0.5rem;
+          padding: 1.5rem;
+          background-color: #fafafa;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
   
-      .text {
-        font-size: 16px;
-        text-align: center;
-        padding: 0 10%;
-        margin-bottom: 10px;
-      }
+        .title {
+          text-align: center;
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #F36B24;
+          margin-bottom: 1rem;
+        }
   
-      .meta {
-        font-size: 14px;
-        color: #777;
-        text-align: right;
-      }
-    </style>
-  `;
+        .text {
+          font-size: 1rem;
+          text-align: center;
+          padding: 0 10%;
+          margin-bottom: 1rem;
+        }
   
+        .meta {
+          font-size: 0.875rem;
+          color: #777;
+          text-align: right;
+        }
   
+        @media screen and (max-width: 768px) {
+          body {
+            padding: 1rem;
+          }
+  
+          .slide {
+            padding: 1rem;
+          }
+  
+          .text {
+            padding: 0 5%;
+          }
+  
+          .slide-type-heading {
+            font-size: 1.5rem;
+          }
+  
+          .title {
+            font-size: 1.25rem;
+          }
+        }
+  
+        @media print {
+          body {
+            padding: 0;
+          }
+  
+          .slide {
+            page-break-inside: avoid;
+          }
+  
+          .slide-type-heading {
+            page-break-before: always;
+          }
+  
+          .page {
+            page-break-after: always;
+          }
+        }
+      </style>
+    `;
   
     let lastSlideType = '';
     let body = '';
-    
+  
     slides.forEach((slide) => {
       const currentType = slide.slide_type;
-    
-      // Show heading if new group
+  
       if (currentType !== lastSlideType) {
         body += `
           <div class="slide-type-heading">${currentType}</div>
         `;
         lastSlideType = currentType;
       }
-    
-      // Render the slide
+  
       body += `
         <div class="slide">
           <div class="title">${slide.title || '(No title)'}</div>
           <div class="text">${slide.text || ''}</div>
-          
         </div>
       `;
     });
-    
   
     return `
       <html>
-    <head>
-      ${styles}
-    </head>
-    <body>
-      ${body}
-    </body>
-  </html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          ${styles}
+        </head>
+        <body>
+          ${body}
+        </body>
+      </html>
     `;
   }
+  
   
   
   findAll() {

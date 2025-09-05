@@ -1,7 +1,13 @@
 <button
   [class]="concatClass"
   style="width: -webkit-fill-available"
+  [disabled]="isLoading"
   (click)="onClick()"
 >
-  {{ text }}
+  <ng-container *ngIf="isLoading; else normalText">
+    <span class="spinner mr-2"></span> Loading...
+  </ng-container>
+  <ng-template #normalText>
+    {{ text }}
+  </ng-template>
 </button>

@@ -10,7 +10,7 @@ import { FlashcardService } from '../../../services/flashcard/flashcard';
 @Component({
   selector: 'app-subscription-plan-card',
   imports: [ButtomOutlined],
-  providers: [Api, AuthService],
+  providers: [Api, AuthService, FlashcardService],
   templateUrl: './subscription-plan-card.html',
   styleUrl: './subscription-plan-card.css',
 })
@@ -39,6 +39,7 @@ export class SubscriptionPlanCard {
   onClickPaymentPage(availablePlan: any) {
     console.log("subscriptionType",availablePlan.subscriptionType)
     if(availablePlan.subscriptionType==='free'){
+      this.isLoading=true
       this.flashcardService
       .generateFirstFlashCard({
         tempId: this.temporary_flashcard_id
@@ -55,12 +56,13 @@ export class SubscriptionPlanCard {
         },
       });
     }
-    this.router.navigate(['/payment/card'], {
+    else{
+      this.router.navigate(['/payment/card'], {
       queryParams: {
         subscriptionType:availablePlan.subscriptionType,
         tempId:this.temporary_flashcard_id
       },
-    });
+    });}
     // this.authService
     //   .updateUserPlan({
     //     subscribePlan:subscriptionType,
