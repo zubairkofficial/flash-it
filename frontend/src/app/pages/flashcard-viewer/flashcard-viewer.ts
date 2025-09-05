@@ -3,6 +3,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
+import { globalInstance } from '../../../utils/global.utils';
 
 type Slide = {
   id: number;
@@ -95,7 +96,7 @@ export class FlashcardViewer implements OnInit {
   }
   public handleFlashCardDownload(flashCardSlide: any): void {
     console.log("flashCardSlideId",flashCardSlide)
-    const downloadUrl = `http://localhost:3000/flashcard-slides/${flashCardSlide[0].flashcard_id}`;
+    const downloadUrl =  `${globalInstance.getInstance().getURL()}/flashcard-slides/${flashCardSlide[0].flashcard_id}`;
 
     window.open(downloadUrl, '_blank');
     }
