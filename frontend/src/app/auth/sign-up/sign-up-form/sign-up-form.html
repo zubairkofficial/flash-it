@@ -1,7 +1,7 @@
 <!-- Page Container -->
-<div class="flex w-full min-h-screen items-center justify-center bg-transparent px-4 py-2">
+<div class="flex w-full min-h-screen items-center justify-center bg-transparent px-4">
     <!-- Sign-Up Card -->
-    <div class="w-full max-w-xl flex flex-col gap-4">
+    <div class="w-full max-w-xl flex flex-col ">
         <!-- Welcome Message -->
         <div class="text-start">
             <h1 class="font-nunito text-black font-bold leading-snug text-[clamp(16px,2vw,48px)]">
@@ -14,7 +14,7 @@
 
         <!-- Sign-Up Form -->
         <div class="w-full flex flex-col">
-            <form class="flex flex-col gap-2 w-full" [formGroup]="registerForm">
+            <form class="flex flex-col gap-1 w-full" [formGroup]="registerForm">
                 <app-input-with-label label="Username" type="text" placeholder="Enter your username" formControlName="name" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
 
                 <app-input-with-label label="Email" type="email" placeholder="Enter your email" formControlName="email" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
@@ -43,10 +43,10 @@
                 <span class="text-primary font-semibold cursor-pointer" (click)="navigate('auth/login')">
           Sign in here
         </span>
-                <div class="mt-4">
+                <!-- <div class="mt-4">
                     <p style="color: #AEAEAE;">Smarter study tools for individuals and teams.</p>
                     <p style="color: #AEAEAE;">Upload a file or paste text we’ll do the rest.</p>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

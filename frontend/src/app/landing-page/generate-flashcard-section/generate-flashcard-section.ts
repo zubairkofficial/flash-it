@@ -14,7 +14,7 @@ import { Api } from '../../../utils/api/api';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { notyf } from '../../../utils/notyf.utils';
 import { Router } from '@angular/router';
-import { LanguageSelectorComponent } from '../../../utils/language.utils';
+import { ALL_LANGUAGES } from '../../../utils/constants/languages';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -39,7 +39,8 @@ export class GenerateFlashcardSection {
   filesSelected: FileList | null = null;
   selectedFiles: {name: string, content: string}[] = []; // Array to store multiple files
   textForm: FormGroup;
-  allLanguages=LanguageSelectorComponent;
+  popularLanguages = ALL_LANGUAGES;
+  popularLanguageCodes: string[] = ALL_LANGUAGES.map(l => l.code);
   constructor(
     private pdfService: Pdf,
     private fb: FormBuilder,

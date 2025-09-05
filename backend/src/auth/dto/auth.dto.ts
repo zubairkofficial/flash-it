@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MinLength,
 } from 'class-validator';
 import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
 
@@ -44,4 +45,29 @@ export class LoginDTO {
 export class UpdatePlanDTO {
   // @IsEnum(SUBSCRIPTION_TYPE)
   subscribePlan: SUBSCRIPTION_TYPE;
+}
+
+export class UpdateProfileDTO {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar_url?: string;
+}
+
+export class ChangePasswordDTO {
+  @IsString()
+  @IsNotEmpty()
+  currentPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  newPassword: string;
 }

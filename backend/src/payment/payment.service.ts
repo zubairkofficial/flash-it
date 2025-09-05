@@ -5,11 +5,12 @@ import { AuthService } from 'src/auth/auth.service';
 import WorkSpace from 'src/models/workspace.model';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import User from 'src/models/user.model';
+import { FlashcardService } from 'src/flashcard/flashcard.service';
 
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private flashCardService: FlashcardService) {}
   private async initializeStripe(): Promise<void> {
     if (!this.stripe) {
       const stripeApiKey = process.env.STRIPE_KEY; // Fetch API key from DB
@@ -53,11 +54,26 @@ export class PaymentService {
     // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
     const user=await User.findByPk(+req.user.id)
     user.credits=+user.credits+1000
-    // const workSpace = await WorkSpace.findOne({
-    //   where: { admin_user_id: req.user.id },
-    // });
+    const workSpace = await WorkSpace.findOne({
+      where: { admin_user_id: req.user.id },
+    });
     // workSpace.credit = +workSpace.credit + 1000;
     // await workSpace.save();
+
+
+    // await this.flashCardService.generateFlashCard(
+    //       {
+    //         temporary_flashcard_id,
+    //         workspace_id: workSpace.id,
+    //       },
+    //       {
+    //         user: {
+    //           id: newUser.id,
+    //         },
+    //       },
+    //       transaction,
+    //     );
+
     await user.save();
     return paymentIntent;
   }

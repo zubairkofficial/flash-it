@@ -1,1 +1,15 @@
-<p>signed-in-header works!</p>
+<div class="w-full border-b border-gray-200 bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <img src="assets/flash-card-books.png" alt="Flash-It" class="h-[40px]" />
+            <span class="font-nunito font-bold text-lg">Flash-It</span>
+        </div>
+        <nav class="flex items-center gap-4 text-sm">
+            <a routerLink="/dashboard" class="hover:underline">Dashboard</a>
+            <a routerLink="/plans" class="hover:underline">Plans</a>
+            <a routerLink="/profile" class="hover:underline" (click)="profile()">Profile</a>
+            <a routerLink="/change-password" class="hover:underline">Password</a>
+            <button class="btn btn-outline btn-sm" type="button" (click)="logout()">Logout</button>
+        </nav>
+    </div>
+</div>

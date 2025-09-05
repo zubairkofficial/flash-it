@@ -9,6 +9,7 @@ import { WorkspaceDetail } from './pages/workspace-detail/workspace-detail';
 import { FlashcardViewer } from './pages/flashcard-viewer/flashcard-viewer';
 import { WorkspaceInvite } from './workspace-invite/workspace-invite';
 import { PaymentCard } from './payment-card/payment-card';
+import { Component } from '@angular/core';
 
 export const routes: Routes = [
   //   {
@@ -73,5 +74,13 @@ export const routes: Routes = [
     path: 'payment/card',
     component: PaymentCard,
   },
- 
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
+  },
+  {
+    path: 'change-password',
+    loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
+  },
+
 ];

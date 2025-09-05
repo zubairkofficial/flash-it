@@ -2,11 +2,10 @@
     <div class="w-full border-b border-gray-200">
         <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="/assets/flash-card-books.png" alt="hoha" class="h-[50px] p-0" />
+                <img src="assets/flash-card-books.png" alt="hoha" class="h-[50px] p-0" />
                 <span class="font-nunito font-bold text-lg">Flash-It</span>
             </div>
             <div class="flex items-center gap-3">
-
                 <span class="text-white font-semibold text-sm bg-primary px-2 py-1 rounded-2xl shadow-sm">
                 {{ credits }} credits
               </span>
@@ -16,69 +15,73 @@
         </div>
     </div>
 
-    <div class="mx-auto max-w-6xl px-4 py-8">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h2 class="text-2xl font-bold">Your Workspaces</h2>
-                <p class="text-sm text-text-secondary">Manage and jump back into your workspaces.</p>
-            </div>
+    <div class="flex">
+        <app-signed-in-sidebar></app-signed-in-sidebar>
 
-        </div>
-
-        <div class="text-sm text-text-secondary" *ngIf="isLoading">Loading workspaces...</div>
-        <div class="text-sm text-red-600" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="!isLoading && !errorMessage">
-            <div class="rounded-xl border border-gray-200 bg-white p-4 hover:shadow-sm transition" *ngFor="let ws of workspaces">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                        {{ ws.name.charAt(0) | uppercase }}
-                    </div>
-                    <div>
-                        <div class="font-semibold">{{ ws.name }}</div>
-                        <div class="text-xs text-text-secondary">ID #{{ ws.id }}</div>
-                    </div>
-                    <div class="flex-1"></div>
-                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer" (click)="editWorkspace(ws)">
-                        <mat-icon class="text-white">edit</mat-icon>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer" (click)="deleteWorkspace(ws.id)">
-                        <mat-icon class="text-white">delete</mat-icon>
-                    </div>
-
-                    <!-- <div class="flex rounded-xl border border-gray-200 text-white bg-primary rounded-full ">
-                    <mat-icon class="text-white">edit</mat-icon>
-                </div> -->
+        <div class="flex-1 mx-auto max-w-6xl px-4 py-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Your Workspaces</h2>
+                    <p class="text-sm text-text-secondary">Manage and jump back into your workspaces.</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 text-sm mb-4">
-                    <!-- <div>
+            </div>
+
+            <div class="text-sm text-text-secondary" *ngIf="isLoading">Loading workspaces...</div>
+            <div class="text-sm text-red-600" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="!isLoading && !errorMessage">
+                <div class="rounded-xl border border-gray-200 bg-white p-4 hover:shadow-sm transition" *ngFor="let ws of workspaces">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                            {{ ws.name.charAt(0) | uppercase }}
+                        </div>
+                        <div>
+                            <div class="font-semibold">{{ ws.name }}</div>
+                            <div class="text-xs text-text-secondary">ID #{{ ws.id }}</div>
+                        </div>
+                        <div class="flex-1"></div>
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer" (click)="editWorkspace(ws)">
+                            <mat-icon class="text-white">edit</mat-icon>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer" (click)="deleteWorkspace(ws.id)">
+                            <mat-icon class="text-white">delete</mat-icon>
+                        </div>
+
+                        <!-- <div class="flex rounded-xl border border-gray-200 text-white bg-primary rounded-full ">
+                    <mat-icon class="text-white">edit</mat-icon>
+                </div> -->
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                        <!-- <div>
                         <div class="text-text-secondary">Credit</div>
                         <div class="font-semibold">{{ ws.credit }}</div>
                     </div> -->
-                    <div>
-                        <div class="text-text-secondary">Role</div>
-                        <div class="font-semibold uppercase">{{ ws?.WorkspaceUser?.role || 'member' }}</div>
+                        <div>
+                            <div class="text-text-secondary">Role</div>
+                            <div class="font-semibold uppercase">{{ ws?.WorkspaceUser?.role || 'member' }}</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline btn-sm " type="button" (click)="openWorkspace(ws.id)">Open</button>
+
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <button class="btn btn-outline btn-sm " type="button" (click)="openWorkspace(ws.id)">Open</button>
 
+                <div class="col-span-full" *ngIf="workspaces.length === 0">
+                    <div class="rounded-xl border border-dashed border-gray-300 p-8 text-center text-text-secondary">
+                        No workspaces yet. Create your first one.
+                    </div>
                 </div>
+                <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
+                    [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
+
+                <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Create New Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
+                    [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
+
+                <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove workspace'" [message]="'Are you sure you want to remove this workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()" (cancelled)="onCancelDelete()"></app-confirm-modal>
             </div>
-
-            <div class="col-span-full" *ngIf="workspaces.length === 0">
-                <div class="rounded-xl border border-dashed border-gray-300 p-8 text-center text-text-secondary">
-                    No workspaces yet. Create your first one.
-                </div>
-            </div>
-            <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
-                [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
-
-            <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Create New Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
-                [cancelText]="'Cancel'" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
-
-            <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove workspace'" [message]="'Are you sure you want to remove this workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()" (cancelled)="onCancelDelete()"></app-confirm-modal>
         </div>
     </div>
 </div>

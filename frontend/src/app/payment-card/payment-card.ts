@@ -4,12 +4,13 @@ import { Component, OnInit } from '@angular/core';
 import { loadStripe, Stripe, StripeCardElement } from '@stripe/stripe-js';
 import { PaymentService } from '../../services/payment/payment';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PricePlanSection } from '../landing-page/price-plan-section/price-plan-section';
 
 @Component({
   selector: 'app-payment-card',
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './payment-card.html',
   styleUrl: './payment-card.css',
 })
