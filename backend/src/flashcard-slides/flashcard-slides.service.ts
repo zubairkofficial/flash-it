@@ -15,7 +15,17 @@ export class FlashcardSlidesService {
   attributes: ['title'], // 👈 Select only the 'title' column
 });
   const getFlashCard=await FlashCardSlide.findAll({where:{flashcard_id:flashCardId}})
-    const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+ 
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--single-process'
+      ],
+      timeout: 60000, // Increase to 60 seconds
+    });
     const page = await browser.newPage();
     const html = this.generateSlideHtml(getFlashCard);
    
