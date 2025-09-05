@@ -81,4 +81,24 @@ export class AuthService {
       ...this.api.authorizationHeader,
     });
   }
+
+  logout() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    this.router.navigate(['auth/login']);
+  }
+
+  updateProfile(data: { name?: string; email?: string; avatar_url?: string }): Observable<any> {
+    return this.api.put('/auth/update-profile', data, {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    });
+  }
+
+  changePassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
+    return this.api.put('/auth/change-password', data, {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    });
+  }
 }

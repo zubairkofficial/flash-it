@@ -5,7 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDTO, RegisterDTO, UpdatePlanDTO } from './dto/auth.dto';
+import { ChangePasswordDTO, LoginDTO, RegisterDTO, UpdatePlanDTO, UpdateProfileDTO } from './dto/auth.dto';
 import { Sequelize } from 'sequelize-typescript';
 import User from 'src/models/user.model';
 import FlashCard from 'src/models/flashcard.model';
@@ -276,4 +276,59 @@ export class AuthService {
     }
   }
 
+  async updateProfile(updateProfileDTO: UpdateProfileDTO, req: any) {
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+      if (!existingUser) {
+        throw new HttpException('no user logged IN', HttpStatus.NOT_FOUND);
+      }
+
+      const { name, email, avatar_url } = updateProfileDTO;
+      await existingUser.update({
+        ...(name ? { name } : {}),
+        ...(email ? { email } : {}),
+        ...(avatar_url ? { avatar_url } : {}),
+      });
+
+      const { password, ...safeUser } = existingUser as any;
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Profile Updated Successfully',
+          user: safeUser,
+        },
+      };
+    } catch (error: any) {
+      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async changePassword(changePasswordDTO: ChangePasswordDTO, req: any) {
+    const { currentPassword, newPassword } = changePasswordDTO;
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+      if (!existingUser) {
+        throw new HttpException('no user logged IN', HttpStatus.NOT_FOUND);
+      }
+
+      const isValid = await existingUser.validatePassword(currentPassword);
+      if (!isValid) {
+        throw new UnauthorizedException('Current password is incorrect');
+      }
+
+      existingUser.password = newPassword;
+      await existingUser.save();
+
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Password changed successfully',
+        },
+      };
+    } catch (error: any) {
+      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

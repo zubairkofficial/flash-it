@@ -28,7 +28,7 @@ export class SubscriptionPlanCard {
     features: string[];
   };
 
-  constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute, private flashcardService: FlashcardService,) {}
+  constructor( private router: Router, private route: ActivatedRoute, private flashcardService: FlashcardService,) {}
   async ngOnInit() {
     this.route.queryParamMap.subscribe((params) => {
       const tempId = params.get('temporary_flashcard_id');
@@ -46,7 +46,7 @@ export class SubscriptionPlanCard {
       .subscribe({
         next: (res) => {
           this.isLoading = false;
-        
+
           this.router.navigate(['dashboard']);
         },
         error: (err) => {
