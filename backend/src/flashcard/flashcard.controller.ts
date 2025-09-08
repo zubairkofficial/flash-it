@@ -38,13 +38,13 @@ export class FlashcardController {
     return this.flashCardService.generateFirstFlashCard(input, req, null);
   }
 
-  // @Post('upload-data')
-  // async uploadRawData(
-  //   @Body() rawDataUploadDTO: RawDataUploadDTO[],
-  //   @Req() req: any,
-  // ) {
-  //   return this.flashCardService.uploadRawData(rawDataUploadDTO, req);
-  // }
+  @Post('upload-text')
+  async uploadRawDataText(
+    @Body() rawDataUploadDTO: RawDataUploadDTO,
+    @Req() req: any,
+  ) {
+    return this.flashCardService.uploadRawDataText(rawDataUploadDTO, req);
+  }
 
 
   @Post('upload-data')
@@ -53,6 +53,7 @@ export class FlashcardController {
   return this.flashCardService.uploadRawData(files,language, req);
   
 }
+
 
   @Get('/:id')
   @UseGuards(JwtAuthGuard)

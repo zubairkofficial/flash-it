@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { DATA_TYPE } from 'src/utils/data-type.enum';
@@ -28,7 +29,11 @@ export class RawDataUploadDTO {
  
   @IsString()
   title: string;
+
+  @IsString()
+  language: string;
   
+  @IsOptional()
   @IsEnum(DATA_TYPE)
   @IsNotEmpty()
   data_type: DATA_TYPE;

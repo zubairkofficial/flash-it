@@ -53,7 +53,28 @@ export class GenerateFlashcardSection {
   }
 
   onSubmit() {
-    if (this.textForm.valid) {
+   if(this.textForm.value.text){
+    console.log("this.textForm.value.text",this.textForm.value)
+const uploadText=this.flashcardService.uploadDataText(this.textForm.value.text,this.language)
+uploadText.subscribe({
+  next: (res) => {
+    if (res && res.data.temporary_flashcard_id) {
+      this.isLoading=false
+      this.router.navigate(['/auth/register'], {
+        queryParams: {
+          temp_id: res.data.temporary_flashcard_id,
+        },
+      });
+    } else {
+      this.isLoading=false
+      notyf.error('No temporary_flashcard_id returned.');
+    }
+  },error: (error) => {
+    notyf.error('error: ' + error.message);
+  },
+})
+}
+    else if (this.textForm.valid) {
      this.isLoading=true
       const uploadRes = this.flashcardService.uploadData(this.filesSelected,this.language);
 
@@ -100,8 +121,8 @@ export class GenerateFlashcardSection {
       }
 
       // Update the form with all extracted text
-      const allText = this.selectedFiles.map(file => file.content).join('\n\n');
-      this.textForm.patchValue({ text: allText });
+      // const allText = this.selectedFiles.map(file => file.content).join('\n\n');
+      // this.textForm.patchValue({ text: allText });
     }
   }
 

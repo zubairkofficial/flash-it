@@ -296,6 +296,60 @@ if(!user)throw new HttpException('user not found: ' , HttpStatus.NOT_FOUND);
       throw new HttpException('Error ' + error.message, error.status);
     }
   }
+  async uploadRawDataText(rawDataUploadDTO: RawDataUploadDTO, req: any) {
+   
+     const transaction = await this.sequelize.transaction();
+  
+    try {
+      const flashCard = await FlashCard.create(
+        {
+          temporary_flashcard_id: uuidv4(),
+          user_id: null,
+          workspace_id: null,
+          
+        },
+        { transaction },
+      );
+  
+      if (!flashCard) {
+        await transaction.rollback();
+        throw new HttpException(
+          'Error while creating flashcard',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+  
+      for (const item of [rawDataUploadDTO]) {
+        const { text, title, data_type,language } = item;
+  
+        await FlashCardRawData.create(
+          {
+            text,
+            title,
+            data_type,
+            flashcard_id: flashCard.id,
+            language:language
+           },
+          { transaction },
+        );
+      }
+  
+      await transaction.commit();
+  
+      return {
+        status: HttpStatus.OK,
+        success: true,
+        data: {
+          message: 'Upload successful',
+          temporary_flashcard_id: flashCard.temporary_flashcard_id,
+        },
+      };
+    } catch (error) {
+      console.log('error', error.message);
+      await transaction.rollback();
+      throw new HttpException('Error ' + error.message, error.status);
+    }
+  }
   
 
   async getFlashCardById(id:number, req: any) {

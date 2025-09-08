@@ -28,18 +28,24 @@ export class FlashcardService {
   }
 
 
-  uploadData(files: FileList | null,language:string): Observable<any> {
-    if (!files) {
-      throw new Error('No files selected');
+    uploadData(files: FileList | null,language:string): Observable<any> {
+      if (!files) {
+        throw new Error('No files selected');
+      }
+
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+      formData.append('language',language)
+
+      return this.api.post('/flashcard/upload-data', formData, {
+        ...this.api.authorizationHeader,
+      });
     }
 
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
-    formData.append('language',language)
-
-    return this.api.post('/flashcard/upload-data', formData, {
+  uploadDataText(text: string,language:string): Observable<any> {
+    return this.api.post('/flashcard/upload-text', {text,language}, {
       ...this.api.authorizationHeader,
     });
   }
