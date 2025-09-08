@@ -323,7 +323,7 @@ export class WorkspaceService {
         });
       }
       // Generate the base URL with the invite ID
-      const baseUrl = `${process.env.BASE_URL_FRONTEND}/workspace/invited/${existInvite.id ?? invite.id}`;
+      const baseUrl = `${process.env.BASE_URL_FRONTEND}/workspace/invited/${existInvite?.id ?? invite?.id}`;
 
       return { url: baseUrl };
     } catch (error) {

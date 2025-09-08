@@ -49,9 +49,16 @@
                             </div>
                             <div class="modal-body">
                                 <div class="url-box">
+                                  <div *ngIf="!InviteLink?.url; else showInput" class="loading-spinner">
+                                    Loading...
+                                  </div> 
+                                  <ng-template #showInput>
                                     <input class="url-input" [value]="InviteLink?.url" readonly />
-                                    <button class="copy-btn" type="button" (click)="copyInviteUrl()">{{ isCopySuccess ? 'Copied!' : 'Copy' }}</button>
-                                </div>
+                                    <button class="copy-btn" type="button" (click)="copyInviteUrl()">
+                                      {{ isCopySuccess ? 'Copied!' : 'Copy' }}
+                                    </button>
+                                  </ng-template>
+                                 </div>
                                 <a class="text-blue-600 underline" [href]="InviteLink?.url" target="_blank">Open invite link</a>
                             </div>
                             <div class="modal-footer">

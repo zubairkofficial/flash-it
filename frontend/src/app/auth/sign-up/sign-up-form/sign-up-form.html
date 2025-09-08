@@ -24,7 +24,7 @@
                 <app-input-with-label type="password" label="Confirm Password" placeholder="Enter password again" formControlName="confirmPassword" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
 
                 <!-- Sign Up Button -->
-                <app-buttom-primary (click)="submit()" type="submit" text="Sign Up" styles="w-full h-[45px]"></app-buttom-primary>
+                <app-buttom-primary (click)="submit()" [isLoading]="isLoading" type="submit" text="Sign Up" styles="w-full h-[45px]"></app-buttom-primary>
             </form>
 
             <!-- Divider -->

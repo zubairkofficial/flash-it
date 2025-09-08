@@ -195,7 +195,7 @@ export async function generateFlashcardSlides(text: string, language: string,pla
     `;
 
     const response = await openai.chat.completions.create({
-      model: planType===SUBSCRIPTION_TYPE.FREE?'gpt-4o':'gpt-4o', // Consider upgrading to GPT-4 for better content structuring
+      model: planType===SUBSCRIPTION_TYPE.FREE?'gpt-3.5-turbo':'gpt-4o', // Consider upgrading to GPT-4 for better content structuring
       messages: [
         { 
           role: 'system', 

@@ -27,6 +27,7 @@ export class FlashcardViewer implements OnInit {
   public currentIndex: number = 0;
   private touchStartX: number | null = null;
   private touchEndX: number | null = null;
+  public tabs: Array<'concise' | 'standard' | 'detailed'> = ['concise', 'standard', 'detailed'];
 
   constructor(private route: ActivatedRoute, private flashcardService: FlashcardService) {}
 
@@ -115,6 +116,7 @@ export class FlashcardViewer implements OnInit {
     this.touchEndX = null;
   }
 }
+
 
 
 

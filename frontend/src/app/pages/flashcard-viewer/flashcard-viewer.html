@@ -11,47 +11,60 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-semibold">{{ flashcard?.raw_data?.title || 'Flashcard' }}</h2>
-                    <div class="text-xs text-text-secondary">Slides: {{ flashcard?.slides?.length || 0 }}</div>
+                    <div class="text-xs text-text-secondary"> {{ flashcard?.slides?.length || 0 }}</div>
                 </div>
             </div>
 
-            <div class="flex gap-2">
-                <button class="btn btn-outline btn-sm" [class.btn-primary]="activeTab === 'concise'" (click)="setTab('concise')">Concise</button>
-                <button class="btn btn-outline btn-sm" [class.btn-primary]="activeTab === 'standard'" (click)="setTab('standard')">Standard</button>
-                <button class="btn btn-outline btn-sm" [class.btn-primary]="activeTab === 'detailed'" (click)="setTab('detailed')">Detailed</button>
+
+            <div class="flex text-gray-300 border-b border-gray-300 mb-4" role="tablist">
+                <ng-container *ngFor="let tab of tabs">
+                    <button role="tab " [attr.aria-selected]="activeTab===tab " (click)="setTab(tab) " class="px-6 py-2 text-sm font-medium border-b-3 transition-colors " [ngClass]="{ 'border-primary text-primary': activeTab===tab, 'border-transparent text-muted-foreground hover:text-foreground': activeTab !==tab } ">
+                  {{ tab | titlecase }}
+                </button>
+                </ng-container>
             </div>
 
             <div class="viewer">
-                <div class="viewer-card" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
-                    <ng-container *ngIf="filteredSlides.length; else empty">
-                        <button class="nav nav-left" (click)="prev()" aria-label="Previous slide"><mat-icon>chevron_left</mat-icon></button>
-                        <button class="nav nav-right" (click)="next()" aria-label="Next slide"><mat-icon>chevron_right</mat-icon></button>
-                        <div class="card-inner">
-                            <div class="meta">
-                                <div class="count">Slide {{ currentIndex + 1 }} / {{ filteredSlides.length }}</div>
-                                <div class="tab-pill">{{ activeTab | uppercase }}</div>
+                <div class="flex flex-col relative">
+                    <div class="viewer-card" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+                        <button class="nav nav-left" (click)="prev()" aria-label="Previous slide">
+                          <mat-icon>chevron_left</mat-icon>
+                      </button>
+                        <button class="nav nav-right" (click)="next()" aria-label="Next slide">
+                          <mat-icon>chevron_right</mat-icon>
+                      </button>
+
+                        <ng-container *ngIf="filteredSlides.length; else empty">
+                            <div class="card-inner">
+
+                                <div class="title">{{ filteredSlides[currentIndex]?.title || 'Untitled' }}</div>
+                                <div class="content">{{ filteredSlides[currentIndex]?.text }}</div>
+                                <div class="meta">
+                                  <div class="count">Slide {{ currentIndex + 1 }} / {{ filteredSlides.length }}</div>
+                              </div>
                             </div>
-                            <div class="title">{{ filteredSlides[currentIndex]?.title || 'Untitled' }}</div>
-                            <div class="content">{{ filteredSlides[currentIndex]?.text }}</div>
-                        </div>
-                        <div class="dots">
-                            <div class="progress">
-                                <div class="bar" [style.width.%]="progressPercent"></div>
-                            </div>
-                        </div>
-                    </ng-container>
-                    <ng-template #empty>
-                        <div class="empty">No slides in this tab.</div>
-                    </ng-template>
-                </div>
-                <div class="actions">
-                    <div class="sub-actions">
-                        <button class="btn btn-outline btn-sm" type="button">  <mat-icon>edit</mat-icon>Edit</button>
-                        <button class="btn btn-outline btn-sm"><mat-icon>delete</mat-icon>Delete</button>
-                        <button class="btn btn-outline btn-sm"><mat-icon>save</mat-icon>Save</button>
+                        </ng-container>
+
+                        <ng-template #empty>
+                            <div class="empty">No slides in this tab.</div>
+                        </ng-template>
                     </div>
-                    <div class="float-right"></div><button class="btn btn-outline btn-sm" (click)="handleFlashCardDownload(flashcard?.raw_data)"><mat-icon>download</mat-icon>Export</button>
+
+                    <!-- Move dots BELOW the card -->
+                    <div class="dots">
+                        <div class="progress">
+                            <div class="bar" [style.width.%]="progressPercent"></div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <div class="actions ">
+                <div class="sub-actions ">
+                    <button class="btn btn-outline btn-sm " type="button ">  <mat-icon>edit</mat-icon>Edit</button>
+                    <button class="btn btn-outline btn-sm "><mat-icon>delete</mat-icon>Delete</button>
+                    <button class="btn btn-outline btn-sm "><mat-icon>save</mat-icon>Save</button>
+                </div>
+                <div class="float-right "></div><button class="btn btn-outline btn-sm " (click)="handleFlashCardDownload(flashcard?.raw_data) "><mat-icon>download</mat-icon>Export</button>
             </div>
         </div>
     </div>

@@ -27,6 +27,7 @@ export class RawDataUploadDTO {
   @IsString()
   text: string; //it will be user input text or extracted text from the pdf file
  
+  @IsOptional()
   @IsString()
   title: string;
 

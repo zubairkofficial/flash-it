@@ -11,7 +11,7 @@ export class FlashcardSlidesController {
     
     return new StreamableFile(pdfBuffer.pdfBuffer , {
       type: 'application/pdf',
-      disposition: `attachment; filename="${pdfBuffer.getFlashCardTitles[0].title}.pdf"`,
+      disposition: `attachment; filename="${pdfBuffer.getFlashCardTitles[0]?.title||`flashcard`}.pdf"`,
     });
   }
 

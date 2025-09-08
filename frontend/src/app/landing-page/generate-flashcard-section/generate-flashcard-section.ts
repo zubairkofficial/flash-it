@@ -35,7 +35,7 @@ export class GenerateFlashcardSection {
   isLanguageDropDownOpen = false;
   isLoading = false;
   extractedText: string = '';
-  language: string = '';
+  language: string = 'en';
   filesSelected: FileList | null = null;
   selectedFiles: {name: string, content: string}[] = []; // Array to store multiple files
   textForm: FormGroup;

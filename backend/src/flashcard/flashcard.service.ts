@@ -14,6 +14,7 @@ import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import User from 'src/models/user.model';
 import WorkSpace from 'src/models/workspace.model';
 import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
+import { DATA_TYPE } from 'src/utils/data-type.enum';
 
 
 @Injectable()
@@ -320,13 +321,13 @@ if(!user)throw new HttpException('user not found: ' , HttpStatus.NOT_FOUND);
       }
   
       for (const item of [rawDataUploadDTO]) {
-        const { text, title, data_type,language } = item;
+        const { text,language } = item;
   
         await FlashCardRawData.create(
           {
             text,
-            title,
-            data_type,
+            title:'',
+            data_type:DATA_TYPE.TEXT,
             flashcard_id: flashCard.id,
             language:language
            },

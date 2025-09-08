@@ -24,11 +24,10 @@ import { notyf } from '../../../../utils/notyf.utils';
 export class SignUpForm {
   registerForm: FormGroup;
   temporary_flashcard_id?: string;
-
+  isLoading:boolean=false
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private flashcardService: FlashcardService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -57,13 +56,25 @@ export class SignUpForm {
   submit() {
     console.log('register submit called');
     if (this.registerForm.valid) {
+      this.isLoading=true
       const { name, email, password } = this.registerForm.value;
       const registerData: any = { name, email, password };
       if (this.temporary_flashcard_id) {
         registerData.temporary_flashcard_id = this.temporary_flashcard_id;
       }
-     const registerRes =  this.authService.register(registerData)
+     const registerRes =  this.authService.register(registerData).subscribe({
+          next: (res) => {
+            this.isLoading=false
+            notyf.success("SignUp successfuly")
 
+          },
+          error: (err) => {
+                  console.log('err in register', err.message);
+                  this.isLoading=false
+                  notyf.error(err.message)
+                  // Error is already handled in AuthService, but you can add more logic here if needed
+                },
+        })
     //  registerRes.subscribe({
     //     next: (res) => {
     //       console.log("resiget inside next=================")
@@ -92,6 +103,7 @@ export class SignUpForm {
     //     },
     //   });
     } else {
+      this.isLoading=false
       this.registerForm.markAllAsTouched();
     }
   }
