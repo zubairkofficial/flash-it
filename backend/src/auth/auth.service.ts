@@ -51,10 +51,7 @@ export class AuthService {
         },
       });
 
-      // if (plan) {
-
-      // }
-      // @fix check if plan exist in DB
+  
       const newUser = await User.create(
         {
           name,
@@ -117,7 +114,7 @@ export class AuthService {
         success: true,
         data: {
           message: 'SignUP successfull',
-          token: token, // @fix generate jwt token
+          token: token, 
           user: safeUser,
           workspace_id: defaultWorkspace.id,
         },

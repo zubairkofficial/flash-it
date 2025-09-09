@@ -28,9 +28,9 @@ export class FlashcardController {
   ) {
     return this.flashCardService.generateFlashCard(flashCardGenerateDTO, req, null);
   }
+  
   @Put('first/generate')
   @UseGuards(JwtAuthGuard)
-  //   @fix add jwt and roles guard
   async generateFirstFlashCard(
     @Body() input: FlashCardFirstGenerateDTO,
     @Req() req: any,

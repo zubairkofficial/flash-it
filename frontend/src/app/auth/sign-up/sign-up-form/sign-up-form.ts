@@ -56,13 +56,15 @@ export class SignUpForm {
   submit() {
     console.log('register submit called');
     if (this.registerForm.valid) {
+    if (this.isLoading) return;
       this.isLoading=true
       const { name, email, password } = this.registerForm.value;
       const registerData: any = { name, email, password };
       if (this.temporary_flashcard_id) {
         registerData.temporary_flashcard_id = this.temporary_flashcard_id;
       }
-     const registerRes =  this.authService.register(registerData).subscribe({
+     const registerRes =  this.authService.register(registerData).subscribe(
+      {
           next: (res) => {
             this.isLoading=false
             notyf.success("SignUp successfuly")

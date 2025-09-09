@@ -17,8 +17,9 @@ export class WorkSpaceModal {
   @Input() public cancelText: string = 'Cancel';
   @Input() public initialName: string = '';
   public workspaceName: string = '';
+  public workspaceCredits:number = 0;
   public workspaceRole: string = '';
-  @Output() public confirmed = new EventEmitter<{ name: string; role: string }>();
+  @Output() public confirmed = new EventEmitter<{ name: string; role: string,credits:number }>();
 
   @Output() public cancelled = new EventEmitter<void>();
 public WORKSPACE_USER_PERMISSION=""
@@ -33,6 +34,7 @@ public WORKSPACE_USER_PERMISSION=""
   public onConfirm(): void {
     this.confirmed.emit({
       name: this.workspaceName,
+      credits:this.workspaceCredits,
       role: this.workspaceRole
     });
   }

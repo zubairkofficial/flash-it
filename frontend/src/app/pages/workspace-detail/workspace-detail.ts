@@ -4,12 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../../services/workspace/workspace';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
-import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
 // import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal,WorkSpaceModal],
+  imports: [CommonModule,MatIconModule, ConfirmModal],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
