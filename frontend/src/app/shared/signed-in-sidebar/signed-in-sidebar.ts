@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth';
+import { UiService } from '../ui/ui.service';
 
 @Component({
   selector: 'app-signed-in-sidebar',
   standalone: true,
-  imports: [RouterLink,RouterModule ],
+  imports: [CommonModule, RouterLink, RouterModule],
   templateUrl: './signed-in-sidebar.html',
   styleUrl: './signed-in-sidebar.css'
 })
 export class SignedInSidebar {
   currentPath: string = '';
-  isMenuOpen: boolean = false;
-  constructor(private authService: AuthService,private route: ActivatedRoute) {}
+  constructor(private authService: AuthService,private route: ActivatedRoute, public ui: UiService) {}
   ngOnInit() {
     this.route.url.subscribe(segments => {
       this.currentPath = segments.map(segment => segment.path).join('/');

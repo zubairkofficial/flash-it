@@ -6,11 +6,12 @@ import { InputWithLabel } from '../../components/inputs/input-with-label/input-w
 import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { notyf } from '../../../utils/notyf.utils';
+import { SiteHeader } from '../../shared/site-header/site-header';
 
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputWithLabel, ButtomPrimary,SignedInSidebar],
+  imports: [CommonModule, ReactiveFormsModule, InputWithLabel, ButtomPrimary,SignedInSidebar,SiteHeader],
   providers:[AuthService],
   templateUrl: './change-password.html',
   styleUrl: './change-password.css'

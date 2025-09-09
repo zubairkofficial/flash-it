@@ -6,11 +6,12 @@ import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
+import { SiteHeader } from '../../shared/site-header/site-header';
 import { notyf } from '../../../utils/notyf.utils';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal,SignedInSidebar],
+  imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal,SignedInSidebar,SiteHeader],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
