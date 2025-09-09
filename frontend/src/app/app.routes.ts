@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes, CanActivateFn } from '@angular/router';
 import { Auth } from './auth/auth';
 import { SignedOutLayout } from './layout/signed-out-layout/signed-out-layout';
 // import { FlashCardLayout } from './layout/flash-card-layout/flash-card-layout';
@@ -9,9 +9,13 @@ import { WorkspaceDetail } from './pages/workspace-detail/workspace-detail';
 import { FlashcardViewer } from './pages/flashcard-viewer/flashcard-viewer';
 import { WorkspaceInvite } from './workspace-invite/workspace-invite';
 import { PaymentCard } from './payment-card/payment-card';
-import { Component } from '@angular/core';
 import { Profile } from './pages/profile/profile';
 import { ChangePassword } from './pages/change-password/change-password';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+
+const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
+export const authGuard: CanActivateFn = () => isAuthenticated();
+export const guestGuard: CanActivateFn = () => !isAuthenticated();
 
 export const routes: Routes = [
   //   {
@@ -51,6 +55,7 @@ export const routes: Routes = [
     path: 'auth',
     component: Auth,
     loadChildren: () => import('./auth/auth-module').then((m) => m.AuthModule),
+    canActivate: [guestGuard],
   },
   {
     path: 'plans',
@@ -59,10 +64,12 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
+    canActivate: [authGuard],
   },
   {
     path: 'workspace/:id',
     component: WorkspaceDetail,
+    canActivate: [authGuard],
   },
   {
     path: 'workspace/invited/:id',
@@ -75,16 +82,20 @@ export const routes: Routes = [
   {
     path: 'payment/card',
     component: PaymentCard,
+    canActivate: [authGuard],
   },
   {
     path: 'profile',
-    component:Profile
+    component:Profile,
+    canActivate: [authGuard]
     // loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
   },
   {
     path: 'change-password',
-    component:ChangePassword
+    component:ChangePassword,
+    canActivate: [authGuard]
     // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
   },
+  { path: '**', component: NotFoundComponent, },
 
 ];

@@ -78,15 +78,15 @@ export class WorkspaceService {
     return this.api.delete<any>(`/workspace/${workspace_id}/${user_id}`, headers);
   }
 
-  public createWorkspace(name: string): Observable<any> {
+  public createWorkspace(data: { name: string; role: string; credits: number; }): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
     };
-    return this.api.post<any>('/workspace', { name }, headers);
+    return this.api.post<any>('/workspace', { ...data }, headers);
   }
 
-  public updateWorkspace(id: number, data:{name:string,role:string}): Observable<any> {
+  public updateWorkspace(id: number, data:{name:string,role:string,credits:number}): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,

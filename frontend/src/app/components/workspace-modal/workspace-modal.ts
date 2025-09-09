@@ -16,6 +16,8 @@ export class WorkSpaceModal {
   @Input() public confirmText: string = 'Yes';
   @Input() public cancelText: string = 'Cancel';
   @Input() public initialName: string = '';
+  @Input() public intialWorkspaceRole: WORKSPACE_USER_PERMISSION = WORKSPACE_USER_PERMISSION.RE;
+  @Input() public credits: number = 0;
   public workspaceName: string = '';
   public workspaceCredits:number = 0;
   public workspaceRole: string = '';
@@ -41,6 +43,9 @@ public WORKSPACE_USER_PERMISSION=""
 
   public ngOnChanges(): void {
     this.workspaceName = this.initialName || '';
+    // The modal expects a string for role input binding, ensure consistent type
+    this.workspaceRole = (this.intialWorkspaceRole as unknown as string) || '';
+    this.workspaceCredits = Number(this.credits || 0);
   }
 
   public permissionOptions = [

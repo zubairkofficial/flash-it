@@ -56,24 +56,34 @@ export class SignUpForm {
   submit() {
     console.log('register submit called');
     if (this.registerForm.valid) {
-    if (this.isLoading) return;
       this.isLoading=true
       const { name, email, password } = this.registerForm.value;
       const registerData: any = { name, email, password };
       if (this.temporary_flashcard_id) {
         registerData.temporary_flashcard_id = this.temporary_flashcard_id;
       }
-     const registerRes =  this.authService.register(registerData).subscribe(
-      {
+       this.authService.register(registerData).subscribe({
           next: (res) => {
+            console.log("rsp",res,registerData)
             this.isLoading=false
             notyf.success("SignUp successfuly")
-
+            localStorage.setItem('authToken', res.data.token);
+            localStorage.setItem('userData', JSON.stringify(res.data.user));
+    
+            if (registerData.temporary_flashcard_id) {
+              this.router.navigate(['plans'], {
+                queryParams: {
+                  temporary_flashcard_id: registerData.temporary_flashcard_id
+                }
+              });
+               } else {
+              this.router.navigate(['dashboard']);
+            }
           },
           error: (err) => {
                   console.log('err in register', err.message);
                   this.isLoading=false
-                  notyf.error(err.message)
+                  notyf.error(err?.error?.message || err.message || 'Login failed.')
                   // Error is already handled in AuthService, but you can add more logic here if needed
                 },
         })

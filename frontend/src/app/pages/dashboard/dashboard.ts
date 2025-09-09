@@ -97,15 +97,16 @@ this.workspaceService.deleteWorkspace(this.workspaceId).subscribe({
     this.confirmModalOpen=false
 
   }
-  public onConfirmSave(data: { name: string; role: string }): void {
-
+  public onConfirmSave(data: { name: string; role: string,credits:number }): void {
+console.log("data.......",data)
     this.isConfirmModalOpen = false;
     const name = (data.name || '').trim();
     const role = (data.role || '').trim();
+    const credits = (data.credits || 0);
     if (!name || !role) return;
     this.isLoading = true;
     if (this.editingWorkspace) {
-      this.workspaceService.updateWorkspace(this.editingWorkspace.id, { name, role }).subscribe({
+      this.workspaceService.updateWorkspace(this.editingWorkspace.id, { name, role,credits }).subscribe({
         next: () => {
           this.fetchWorkspaces();
         },
@@ -115,7 +116,7 @@ this.workspaceService.deleteWorkspace(this.workspaceId).subscribe({
         }
       });
     } else {
-      this.workspaceService.createWorkspace(name).subscribe({
+      this.workspaceService.createWorkspace(data).subscribe({
         next: () => {
           this.fetchWorkspaces();
         },

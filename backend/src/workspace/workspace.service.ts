@@ -19,7 +19,7 @@ export class WorkspaceService {
     private sequelize: Sequelize
   ) {}
   async createWorkspace(createWorkspaceDTO: CreateWorkspaceDTO, req: any) {
-    const { name } = createWorkspaceDTO;
+    const { name,credits,role } = createWorkspaceDTO;
     const transaction = await this.sequelize.transaction();
     try {
       const existingUser = await User.findByPk(req.user.id);
@@ -31,7 +31,7 @@ export class WorkspaceService {
       const workspace = await WorkSpace.create(
         {
           name,
-          credit: 0,
+          credit: credits,
           admin_user_id: existingUser.id,
         },
         { transaction },
@@ -98,6 +98,7 @@ export class WorkspaceService {
         );
       }
   
+      if(updateWorkspaceDTO.credits)workspace.credit=updateWorkspaceDTO.credits
       // Update workspace name
       if (updateWorkspaceDTO.name) {
         workspace.name = updateWorkspaceDTO.name;
@@ -106,8 +107,8 @@ export class WorkspaceService {
   
       // Update user role in workspace
       if (updateWorkspaceDTO.role) {
-        const workspaceUser = await WorkspaceUser.findOne({
-          where: { workspace_id: id, user_id: userId },
+        const workspaceUser =   await WorkspaceUser.findOne({
+          where: { workspace_id: +id, user_id: userId },
           transaction,
         });
   
