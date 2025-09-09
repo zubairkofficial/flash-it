@@ -4,11 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../../services/workspace/workspace';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
+import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
 // import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal],
+  imports: [CommonModule,MatIconModule, ConfirmModal,WorkSpaceModal],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
@@ -41,6 +42,7 @@ export class WorkspaceDetail implements OnInit {
     this.isLoading = true;
     this.workspaceService.getWorkspaceById(id).subscribe({
       next: (data: any) => {
+        this.isLoading=false
         this.workspace = data;
        const user= (localStorage.getItem("userData"))
        const userData=JSON.parse(user??"")

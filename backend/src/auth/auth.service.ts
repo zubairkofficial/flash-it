@@ -17,6 +17,8 @@ import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
 import { generateToken } from 'src/utils/jwt.utils';
 import WorkspaceUser from 'src/models/workspace-user.model';
 import { WORKSPACE_USER_ROLE } from 'src/utils/workspace-user-role.enum';
+import WorkspaceUserPermission from 'src/models/workspace-user-permission.model';
+import { WORKSPACE_USER_PERMISSION } from 'src/utils/permission.enum';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +28,7 @@ export class AuthService {
   ) {}
 
   async register(registerDTO: RegisterDTO) {
-    const { name, email, password, temporary_flashcard_id } = registerDTO;
+    const { name, email,  temporary_flashcard_id } = registerDTO;
     const transaction = await this.sequelize.transaction();
     try {
       const userExist = await User.findOne({
@@ -74,8 +76,8 @@ export class AuthService {
           transaction,
         },
       );
-
-     await WorkspaceUser.create({
+ 
+    const workspaceUser= await WorkspaceUser.create({
      workspace_id:defaultWorkspace.id,
      user_id:newUser.id,
      role:WORKSPACE_USER_ROLE.ADMIN},
@@ -83,6 +85,13 @@ export class AuthService {
           transaction,
         },
  )
+
+ await WorkspaceUserPermission.create({
+  permissions:WORKSPACE_USER_PERMISSION.RE,
+  workspace_user_id:workspaceUser.id
+ }, {
+  transaction,
+},)
 
       if (temporary_flashcard_id && defaultWorkspace) {
 
@@ -296,6 +305,20 @@ export class AuthService {
           user: safeUser,
         },
       };
+    } catch (error: any) {
+      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  async getProfile( req: any) {
+    try {
+      const existingUser = await User.findByPk(req.user.id);
+      if (!existingUser) {
+        throw new HttpException('no user logged IN', HttpStatus.NOT_FOUND);
+      }
+
+    return existingUser
+     
     } catch (error: any) {
       throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }

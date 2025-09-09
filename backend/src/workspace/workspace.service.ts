@@ -97,12 +97,25 @@ export class WorkspaceService {
           HttpStatus.FORBIDDEN
         );
       }
+      
   
-      if(updateWorkspaceDTO.credits)workspace.credit=updateWorkspaceDTO.credits
+      if(updateWorkspaceDTO.credits)
+        {
+          if(existingUser.credits>updateWorkspaceDTO.credits){
+            existingUser.credits=existingUser.credits-updateWorkspaceDTO.credits
+          }else{
+            throw new HttpException('Recharge your account', HttpStatus.BAD_REQUEST);
+  
+          }
+
+          workspace.credit=updateWorkspaceDTO.credits
+
+        }
       // Update workspace name
       if (updateWorkspaceDTO.name) {
         workspace.name = updateWorkspaceDTO.name;
         await workspace.save({ transaction });
+        await existingUser.save({ transaction });
       }
   
       // Update user role in workspace

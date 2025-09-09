@@ -1,4 +1,5 @@
-import { Routes, CanActivateFn } from '@angular/router';
+import { Routes, CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
 import { Auth } from './auth/auth';
 import { SignedOutLayout } from './layout/signed-out-layout/signed-out-layout';
 // import { FlashCardLayout } from './layout/flash-card-layout/flash-card-layout';
@@ -14,7 +15,12 @@ import { ChangePassword } from './pages/change-password/change-password';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
-export const authGuard: CanActivateFn = () => isAuthenticated();
+export const authGuard: CanActivateFn = () => {
+  if (isAuthenticated()) return true;
+  const router = inject(Router);
+  router.navigate(['auth/login']);
+  return false;
+};
 export const guestGuard: CanActivateFn = () => !isAuthenticated();
 
 export const routes: Routes = [

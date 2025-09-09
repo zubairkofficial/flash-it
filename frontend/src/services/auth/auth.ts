@@ -59,6 +59,13 @@ export class AuthService {
     });
   }
 
+  getProfile(): Observable<any> {
+    return this.api.get('/auth/profile', {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    });
+  }
+
   changePassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
     return this.api.put('/auth/change-password', data, {
       ...this.api.contentTypeHeader,

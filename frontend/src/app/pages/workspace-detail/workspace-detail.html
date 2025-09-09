@@ -1,6 +1,9 @@
 <div class="w-full min-h-screen bg-background text-text-primary">
     <div class="mx-auto max-w-6xl px-4 py-8">
-        <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
+      <div class="mb-4">
+        <a class="text-primary" href="javascript:history.back()">← Back</a>
+    </div>
+      <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
         <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div>
 
         <div *ngIf="!isLoading && !errorMessage && workspace" class="space-y-6">

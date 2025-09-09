@@ -6,6 +6,7 @@ import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
+import { notyf } from '../../../utils/notyf.utils';
 
 @Component({
   selector: 'app-dashboard',
@@ -109,10 +110,12 @@ console.log("data.......",data)
       this.workspaceService.updateWorkspace(this.editingWorkspace.id, { name, role,credits }).subscribe({
         next: () => {
           this.fetchWorkspaces();
+          notyf.success("update successfully")
         },
         error: (err: any) => {
           this.errorMessage = err?.error?.message || 'Failed to update workspace.';
           this.isLoading = false;
+          notyf.error(err?.error?.message || 'Failed to update workspace.')
         }
       });
     } else {
