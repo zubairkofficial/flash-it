@@ -1,7 +1,7 @@
 <header class="w-full border-b border-gray-200 bg-white/95 backdrop-blur">
     <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
-        <div class="flex items-center gap-3">
-            <button class="md:hidden btn btn-outline btn-sm" type="button" (click)="toggleMenu()">Menu</button>
+        <div class="flex items-center gap-2">
+          <div class="text-primary md:hidden"> <mat-icon class="md:hidden" (click)="toggleMenu()">menu</mat-icon></div>
             <a routerLink="/dashboard" class="flex items-center gap-2">
                 <img src="assets/flash-card-books.png" alt="logo" class="h-[36px] md:h-[44px]" />
                 <span class="font-nunito font-bold text-lg">Flash-It</span>
@@ -15,3 +15,4 @@
         </div>
     </div>
 </header>
+

@@ -41,7 +41,7 @@ export class AuthService {
       });
       console.log('asdfsadfasdfasdfsadfsad=======================', userExist);
       if (userExist) {
-        await transaction.rollback();
+        // await transaction.rollback();
         throw new HttpException('User Already Exist', HttpStatus.BAD_REQUEST);
       }
 

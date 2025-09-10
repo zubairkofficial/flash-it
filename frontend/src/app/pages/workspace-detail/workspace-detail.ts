@@ -5,11 +5,12 @@ import { WorkspaceService } from '../../../services/workspace/workspace';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
+import { GenerateFlashcardSection } from '../../landing-page/generate-flashcard-section/generate-flashcard-section';
 // import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal,WorkSpaceModal],
+  imports: [CommonModule,MatIconModule, ConfirmModal,WorkSpaceModal,GenerateFlashcardSection],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
@@ -22,6 +23,7 @@ export class WorkspaceDetail implements OnInit {
   public deleteMessage: any = null;
   public isInviteModalOpen: boolean = false;
   public isCopySuccess: boolean = false;
+  public generateFlashCard: boolean = false;
   public isUserAdmin: boolean = false; // Add this property
   public confirmModalOpen: boolean = false;
   public toDelete: { workspace_id: number; user_id: number } | null = null;
@@ -82,6 +84,10 @@ export class WorkspaceDetail implements OnInit {
   public closeInviteModal(): void {
     this.isInviteModalOpen = false;
     this.isCopySuccess = false;
+  }
+  public handleFlashCard(): void {
+    this.generateFlashCard = true;
+  
   }
 
   public copyInviteUrl(): void {

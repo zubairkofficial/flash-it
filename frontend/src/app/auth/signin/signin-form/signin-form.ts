@@ -11,6 +11,7 @@ import {
 import { ButtomLogoText } from '../../../components/buttons/buttom-logo-text/buttom-logo-text';
 import { Router } from '@angular/router';
 import { Api } from '../../../../utils/api/api';
+import { notyf } from '../../../../utils/notyf.utils';
 
 @Component({
   selector: 'app-signin-form',
@@ -21,7 +22,7 @@ import { Api } from '../../../../utils/api/api';
 })
 export class SigninForm {
   form: FormGroup;
-
+  isLoading:boolean=false
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -36,11 +37,16 @@ export class SigninForm {
   submit() {
     if (this.form.valid) {
       const { username, password } = this.form.value;
+      this.isLoading=true
       this.authService.login({ email: username, password }).subscribe({
         next: (response) => {
+          this.isLoading=false
+          notyf.success("Login successfully")
           this.router.navigate(['dashboard']);
         },
         error: (err) => {
+          notyf.error(err.message)
+          this.isLoading=false
           // Error is already handled in AuthService, but you can add more logic here if needed
         },
       });

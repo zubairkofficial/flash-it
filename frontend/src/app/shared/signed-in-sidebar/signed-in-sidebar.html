@@ -6,10 +6,10 @@
     </div> -->
     <nav class="mt-4 flex flex-col gap-1 text-sm">
         <a routerLink="/dashboard" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
-        <a routerLink="/plans" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Plans</a>
+        <!-- <a routerLink="/plans" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Plans</a> -->
         <a routerLink="/profile" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Profile</a>
         <a routerLink="/change-password" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Change Password</a>
-        <button class="mt-4 btn btn-outline btn-sm" type="button" (click)="logout()">Logout</button>
+        <button class="mt-4 btn btn-outline btn-sm" type="button" (click)="logout()"><mat-icon>logout</mat-icon>Logout</button>
     </nav>
 </aside>
 
@@ -24,11 +24,13 @@
             <img src="assets/flash-card-books.png" alt="hoha" class="h-[40px] p-0" />
             <span class="font-nunito font-bold text-lg">Flash-It</span>
         </div> -->
-        <button class="btn btn-outline btn-sm" type="button" (click)="ui.closeMenu()">Close</button>
+        <!-- <button class="btn btn-outline btn-sm" type="button" (click)="ui.closeMenu()"> -->
+         <div class="text-primary"> <mat-icon (click)="ui.closeMenu()">close</mat-icon></div>
+        <!-- </button> -->
     </div>
     <nav class="flex flex-col gap-1 text-sm">
         <a routerLink="/dashboard" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
-        <a routerLink="/plans" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Plans</a>
+        <!-- <a routerLink="/plans" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Plans</a> -->
         <a routerLink="/profile" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Profile</a>
         <a routerLink="/change-password" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Change Password</a>
         <button class="mt-4 btn btn-outline btn-sm" type="button" (click)="logout()">Logout</button>

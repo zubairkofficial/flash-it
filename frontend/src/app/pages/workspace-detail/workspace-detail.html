@@ -3,10 +3,13 @@
       <div class="mb-4">
         <a class="text-primary" href="javascript:history.back()">← Back</a>
     </div>
-      <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
+    <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
+      <app-generate-flashcard-section></app-generate-flashcard-section>
+    </div>
+        <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
         <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div>
 
-        <div *ngIf="!isLoading && !errorMessage && workspace" class="space-y-6">
+        <div *ngIf="!generateFlashCard && !isLoading && !errorMessage && workspace" class="space-y-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
@@ -21,7 +24,7 @@
                     <button *ngIf="isUserAdmin" class="btn btn-outline btn-sm" type="button" [disabled]="!isUserAdmin" (click)="openInvitLink(workspace.id)">
               Invite
           </button>
-                    <button class="btn btn-primary btn-sm" type="button">Create Flashcards</button>
+                    <button class="btn btn-primary btn-sm py-2" type="button" (click)="handleFlashCard()">Create Flashcards</button>
                 </div>
             </div>
 
