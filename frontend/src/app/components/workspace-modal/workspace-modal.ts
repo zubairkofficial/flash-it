@@ -18,6 +18,7 @@ export class WorkSpaceModal {
   @Input() public initialName: string = '';
   @Input() public intialWorkspaceRole: WORKSPACE_USER_PERMISSION = WORKSPACE_USER_PERMISSION.RE;
   @Input() public credits: number = 0;
+  @Input() public isLoading: boolean = false;
   public workspaceName: string = '';
   public workspaceCredits:number = 0;
   public workspaceRole: string = '';

@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
-                    [cancelText]="'Cancel'" [credits]="+(editingWorkspace?.credit ?? 0)" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal>
+                    [cancelText]="'Cancel'" [credits]="+(editingWorkspace?.credit ?? 0)" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()" [isLoading]="isLoading"></app-workspace-modal>
 
                 <!-- <app-workspace-modal [open]="isConfirmModalOpen" [title]="editingWorkspace ? 'Update Workspace' : 'Create New Workspace'" [message]="editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'" [confirmText]="editingWorkspace ? 'Update' : 'Save'"
                     [cancelText]="'Cancel'" [credits]="editingWorkspace.credit||0" [initialName]="editingWorkspace?.name || ''" (confirmed)="onConfirmSave($event)" (cancelled)="onCancelSave()"></app-workspace-modal> -->

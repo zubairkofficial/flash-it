@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FlashCardFirstGenerateDTO, FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
+import { FlashCardFirstGenerateDTO, FlashCardGenerateDTO, RawDataUploadDTO, UploadPdfGenerateDTO } from './dto/flashcard.dto';
 import { Sequelize } from 'sequelize-typescript';
 import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 import FlashCard from 'src/models/flashcard.model';
@@ -275,7 +275,7 @@ async generateFlashCardGeneric(
       throw new Error('Invalid parsedSlides data');
     }
 
-    await this.storeParsedSlides(extractedJson, flashCard.id);
+    await this.storeParsedSlides(extractedJson, flashCard.id,transaction);
 
     let finalWorkspaceId = workspaceId;
 
@@ -360,7 +360,7 @@ async generateFlashCard(
 }
 
 
-  async uploadRawData(files: Express.Multer.File[],language: string, req: any) {
+  async uploadRawData(files: Express.Multer.File[],input: UploadPdfGenerateDTO, req: any) {
     const extractedTexts = [];
 
     for (const file of files) {
@@ -372,6 +372,10 @@ async generateFlashCard(
     try {
       const flashCard = await FlashCard.create(
         {
+          // temporary_flashcard_id:input.workspaceId ? null : uuidv4(),
+          // user_id: input.workspaceId ? req.user.id : null,
+          // workspace_id: input.workspaceId ? input.workspaceId : null,
+         
           temporary_flashcard_id: uuidv4(),
           user_id: null,
           workspace_id: null,
@@ -397,10 +401,13 @@ async generateFlashCard(
             title,
             data_type,
             flashcard_id: flashCard.id,
-            language
+            language:input.language
           },
           { transaction },
         );
+      }
+      if(input.workspaceId){
+        await this.generateFlashCard( {temporary_flashcard_id:flashCard.temporary_flashcard_id,workspace_id:+input.workspaceId},req,transaction);
       }
   
       await transaction.commit();
@@ -410,7 +417,7 @@ async generateFlashCard(
         success: true,
         data: {
           message: 'Upload successful',
-          temporary_flashcard_id: flashCard.temporary_flashcard_id,
+          temporary_flashcard_id: input.workspaceId ? null : flashCard.temporary_flashcard_id,
         },
       };
     } catch (error) {
@@ -456,7 +463,9 @@ async generateFlashCard(
           { transaction },
         );
       }
-  
+      if(rawDataUploadDTO.workspaceId){
+        await this.generateFlashCard( {temporary_flashcard_id:flashCard.temporary_flashcard_id,workspace_id:+rawDataUploadDTO.workspaceId },req,transaction);
+      }
       await transaction.commit();
   
       return {
@@ -464,7 +473,7 @@ async generateFlashCard(
         success: true,
         data: {
           message: 'Upload successful',
-          temporary_flashcard_id: flashCard.temporary_flashcard_id,
+          temporary_flashcard_id: rawDataUploadDTO.workspaceId  ? null : flashCard.temporary_flashcard_id,
         },
       };
     } catch (error) {
@@ -504,7 +513,8 @@ async generateFlashCard(
     }
   }
 
-  async storeParsedSlides  (parsedSlides: Record<string, any[]>,flashcardId:number) {
+  async storeParsedSlides  (parsedSlides: Record<string, any[]>,flashcardId:number,transaction?:any) {
+    const internalTransaction = transaction || await this.sequelize.transaction();
     const slidesToInsert = Object.entries(parsedSlides).flatMap(([key, slides]) => {
       const upperKey = key.toUpperCase().trim();
     
@@ -529,7 +539,9 @@ async generateFlashCard(
     });
   
     try {
-      await FlashCardSlide.bulkCreate(slidesToInsert);
+
+      await FlashCardSlide.bulkCreate(slidesToInsert, { transaction: internalTransaction });
+    if(!transaction)  await internalTransaction.commit();
       console.log('✅ Slides stored successfully!');
     } catch (error) {
       console.error('❌ Error saving slides:', error);

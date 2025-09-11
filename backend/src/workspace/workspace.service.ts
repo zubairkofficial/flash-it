@@ -28,6 +28,18 @@ export class WorkspaceService {
         throw new HttpException('no user logged IN', HttpStatus.BAD_REQUEST);
       }
 
+
+      if(createWorkspaceDTO.credits)
+        {
+          if(existingUser.credits>createWorkspaceDTO.credits){
+            existingUser.credits=existingUser.credits-createWorkspaceDTO.credits
+          }else{
+            throw new HttpException('Recharge your account', HttpStatus.BAD_REQUEST);
+  
+          }
+
+
+        }
       const workspace = await WorkSpace.create(
         {
           name,
@@ -53,6 +65,7 @@ export class WorkspaceService {
         },
         { transaction },
       );
+      await existingUser.save({ transaction });
       await transaction.commit();
       return {
         status: HttpStatus.OK,

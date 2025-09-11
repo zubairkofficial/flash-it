@@ -22,6 +22,16 @@ export class FlashCardFirstGenerateDTO {
   @IsNotEmpty()
   tempId: string;
 }
+export class UploadPdfGenerateDTO {
+ 
+  @IsString()
+  @IsNotEmpty()
+  language: string;
+
+  @IsOptional()
+  @IsString()
+  workspaceId?: string;
+}
 
 export class RawDataUploadDTO {
   @IsString()
@@ -38,4 +48,8 @@ export class RawDataUploadDTO {
   @IsEnum(DATA_TYPE)
   @IsNotEmpty()
   data_type: DATA_TYPE;
+
+  @IsOptional()
+  @IsNumber()
+  workspaceId?: number;
 }

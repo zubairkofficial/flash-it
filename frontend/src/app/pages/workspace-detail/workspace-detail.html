@@ -4,7 +4,7 @@
         <a class="text-primary" href="javascript:history.back()">← Back</a>
     </div>
     <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
-      <app-generate-flashcard-section></app-generate-flashcard-section>
+      <app-generate-flashcard-section [workspaceId]="workspace.id"></app-generate-flashcard-section>
     </div>
         <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
         <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div>

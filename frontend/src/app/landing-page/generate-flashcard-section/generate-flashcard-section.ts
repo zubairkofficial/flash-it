@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ButtonToggle } from '../../components/buttons/button-toggle/button-toggle';
 import { ButtonPrimaryDropdown } from '../../components/buttons/button-primary-dropdown/button-primary-dropdown';
 import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
@@ -29,6 +29,7 @@ import { ALL_LANGUAGES } from '../../../utils/constants/languages';
   styleUrl: './generate-flashcard-section.css',
 })
 export class GenerateFlashcardSection {
+  @Input() workspaceId!: number;
   activeState = DATA_TYPE.FILE;
   availableStates = Object.values(DATA_TYPE);
   activeLanguage = 'en';
@@ -55,7 +56,8 @@ export class GenerateFlashcardSection {
   onSubmit() {
    if(this.textForm.value.text){
     console.log("this.textForm.value.text",this.textForm.value)
-const uploadText=this.flashcardService.uploadDataText(this.textForm.value.text,this.language)
+
+const uploadText= this.workspaceId?this.flashcardService.uploadDataTextAuth(this.textForm.value.text,this.language,+this.workspaceId):this.flashcardService.uploadDataText(this.textForm.value.text,this.language)
 uploadText.subscribe({
   next: (res) => {
     if (res && res.data.temporary_flashcard_id) {
@@ -65,7 +67,12 @@ uploadText.subscribe({
           temp_id: res.data.temporary_flashcard_id,
         },
       });
-    } else {
+    }
+     else if(res && !res.data.temporary_flashcard_id){
+      this.isLoading=false
+      this.router.navigate(['dashboard']);
+    }
+     else {
       this.isLoading=false
       notyf.error('No temporary_flashcard_id returned.');
     }
@@ -76,7 +83,7 @@ uploadText.subscribe({
 }
     else if (this.textForm.valid) {
      this.isLoading=true
-      const uploadRes = this.flashcardService.uploadData(this.filesSelected,this.language);
+      const uploadRes = this.workspaceId?this.flashcardService.uploadAuthData(this.filesSelected,this.language,+this.workspaceId): this.flashcardService.uploadData(this.filesSelected,this.language);
 
       uploadRes.subscribe({
         next: (res) => {
@@ -87,7 +94,11 @@ uploadText.subscribe({
                 temp_id: res.data.temporary_flashcard_id,
               },
             });
-          } else {
+          }else if(res && !res.data.temporary_flashcard_id){
+            this.isLoading=false
+            this.router.navigate(['dashboard']);
+          }
+           else {
             this.isLoading=false
             notyf.error('No temporary_flashcard_id returned.');
           }

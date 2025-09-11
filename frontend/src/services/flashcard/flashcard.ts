@@ -38,14 +38,34 @@ export class FlashcardService {
         formData.append('files', files[i]);
       }
       formData.append('language',language)
-
       return this.api.post('/flashcard/upload-data', formData, {
+        ...this.api.authorizationHeader,
+      });
+    }
+
+    uploadAuthData(files: FileList | null,language:string,workspaceId?:number): Observable<any> {
+      if (!files) {
+        throw new Error('No files selected');
+      }
+
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+      formData.append('language',language)
+      formData.append('workspaceId',workspaceId?.toString() || '')
+      return this.api.post('/flashcard/authorized/upload-data', formData, {
         ...this.api.authorizationHeader,
       });
     }
 
   uploadDataText(text: string,language:string): Observable<any> {
     return this.api.post('/flashcard/upload-text', {text,language}, {
+      ...this.api.authorizationHeader,
+    });
+  }
+  uploadDataTextAuth(text: string,language:string,workspaceId?:number): Observable<any> {
+    return this.api.post('/flashcard/authorized/upload-text', {text,language,workspaceId}, {
       ...this.api.authorizationHeader,
     });
   }

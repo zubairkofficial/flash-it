@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FlashCardFirstGenerateDTO, FlashCardGenerateDTO, RawDataUploadDTO } from './dto/flashcard.dto';
+import { FlashCardFirstGenerateDTO, FlashCardGenerateDTO, RawDataUploadDTO, UploadPdfGenerateDTO } from './dto/flashcard.dto';
 import { FlashcardService } from './flashcard.service';
 import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
 import {  FilesInterceptor } from '@nestjs/platform-express/multer';
@@ -45,12 +45,27 @@ export class FlashcardController {
   ) {
     return this.flashCardService.uploadRawDataText(rawDataUploadDTO, req);
   }
+  @Post('authorized/upload-text')
+  @UseGuards(JwtAuthGuard)
+  async uploadRawDataTextAuth(
+    @Body() rawDataUploadDTO: RawDataUploadDTO,
+    @Req() req: any,
+  ) {
+    return this.flashCardService.uploadRawDataText(rawDataUploadDTO, req);
+  }
 
 
   @Post('upload-data')
   @UseInterceptors(FilesInterceptor('files'))
- async uploadRawData(@UploadedFiles() files: Array<Express.Multer.File>,@Body('language') language: string, @Req() req: any,) {
-  return this.flashCardService.uploadRawData(files,language, req);
+ async uploadRawData(@UploadedFiles() files: Array<Express.Multer.File>,@Body() input: UploadPdfGenerateDTO, @Req() req: any,) {
+  return this.flashCardService.uploadRawData(files,input, req);
+  
+}
+  @Post('/authorized/upload-data')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('files'))
+ async uploadAuthRawData(@UploadedFiles() files: Array<Express.Multer.File>,@Body() input: UploadPdfGenerateDTO, @Req() req: any,) {
+  return this.flashCardService.uploadRawData(files,input, req);
   
 }
 

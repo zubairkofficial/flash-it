@@ -61,8 +61,6 @@ export class Dashboard implements OnInit {
   }
 
 
-
-
   public onCancelSave(): void {
     this.isConfirmModalOpen = false;
 
@@ -80,6 +78,7 @@ export class Dashboard implements OnInit {
 
 
   }
+
   public onConfirmDelete(): void {
 this.isLoading = true;
 
@@ -95,10 +94,12 @@ this.workspaceService.deleteWorkspace(this.workspaceId).subscribe({
 });
 
   }
+
   public onCancelDelete(): void {
     this.confirmModalOpen=false
 
   }
+
   public onConfirmSave(data: { name: string; role: string,credits:number }): void {
 console.log("data.......",data)
     this.isConfirmModalOpen = false;
@@ -111,6 +112,7 @@ console.log("data.......",data)
       this.workspaceService.updateWorkspace(this.editingWorkspace.id, { name, role,credits }).subscribe({
         next: () => {
           this.fetchWorkspaces();
+          this.isLoading = false;
           notyf.success("update successfully")
         },
         error: (err: any) => {
@@ -122,11 +124,16 @@ console.log("data.......",data)
     } else {
       this.workspaceService.createWorkspace(data).subscribe({
         next: () => {
+          notyf.success("create workspace successfully")
           this.fetchWorkspaces();
+          this.isLoading = false;
         },
         error: (err: any) => {
           this.errorMessage = err?.error?.message || 'Failed to create workspace.';
           this.isLoading = false;
+          this.fetchWorkspaces();
+          this.isConfirmModalOpen = false;
+          notyf.error(err?.error?.message || 'Failed to create workspace.')
         }
       });
     }
