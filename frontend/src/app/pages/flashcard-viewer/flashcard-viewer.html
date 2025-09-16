@@ -39,9 +39,7 @@
 
                                 <div class="title">{{ filteredSlides[currentIndex]?.title || 'Untitled' }}</div>
                                 <div class="content">{{ filteredSlides[currentIndex]?.text }}</div>
-                                <div class="meta">
-                                  <div class="count">Slide {{ currentIndex + 1 }} / {{ filteredSlides.length }}</div>
-                              </div>
+                              
                             </div>
                         </ng-container>
 
@@ -54,7 +52,10 @@
                     <div class="dots">
                         <div class="progress">
                             <div class="bar" [style.width.%]="progressPercent"></div>
+                            
                         </div>
+                        <div class="flex flex-row items-center justify-center mt-1 font-nunito">Slide {{ currentIndex + 1 }} / {{ filteredSlides.length }}</div>
+
                     </div>
                 </div>
             </div>

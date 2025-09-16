@@ -52,7 +52,7 @@
 
                   <!-- Centered file name -->
                   <span class="truncate max-w-full text-center text-base font-medium px-2">{{ file.name }}</span>
-                  <span class="text-xs text-[#6b7280] mt-1">{{ formatBytes(file.size) }}</span>
+                  <span  class="text-xs text-[#6b7280] mt-1">{{!isBytesSelected? formatBytes(file.size):"" }}</span>
 
 
                 </div>

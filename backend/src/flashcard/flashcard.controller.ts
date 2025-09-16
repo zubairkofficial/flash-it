@@ -78,4 +78,13 @@ export class FlashcardController {
   ) {
     return this.flashCardService.getFlashCardById(+id, req);
   }
+  
+  @Get('/temp/:tempId')
+  @UseGuards(JwtAuthGuard)
+  async getFlashCardByTempId(
+  @Param('tempId') tempId: string,
+    @Req() req: any,
+  ) {
+    return this.flashCardService.getFlashCardByTempId(tempId, req);
+  }
 }

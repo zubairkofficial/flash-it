@@ -44,10 +44,17 @@ export class SubscriptionPlanCard {
       this.isLoading=true
       this.planService.creatPlan({tempId: this.temporary_flashcard_id,subscriptionType:availablePlan.subscriptionType}).subscribe({
           next: (res) => {
-            console.log("res======================",res)
             this.isLoading = false;
+            localStorage.setItem('tempId',this.temporary_flashcard_id)
             notyf.success('enjoy free plan')
-            this.router.navigate([`/uploaded-file?workspace=${res.data.workspaceId}`]);
+            this.router.navigate([`/uploaded-file`],
+              {
+                queryParams: {
+                  workspaceId: res.data.workspaceId
+                }
+              }
+
+            );
           },
           error: (err) => {
             this.isLoading = false;
@@ -57,6 +64,7 @@ export class SubscriptionPlanCard {
       
     }
     else{
+      localStorage.setItem('tempId',this.temporary_flashcard_id)
       this.router.navigate(['/payment/card'], {
       queryParams: {
         subscriptionType:availablePlan.subscriptionType,

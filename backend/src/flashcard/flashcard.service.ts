@@ -33,7 +33,7 @@ async generateFlashCardGeneric(
   try {
     // Fetch flashcard with lean data
     const flashCard = await FlashCard.findOne({
-      where: { id: tempId },
+      where: { temporary_flashcard_id: tempId },
       include: [{ model: FlashCardRawData, as: 'raw_data', attributes: ['text', 'language'] }],
       transaction: internalTransaction,
     });
@@ -276,6 +276,34 @@ async generateFlashCard(
       const flashCard = await FlashCard.findOne({
         where: {
           id: id,
+        },
+        include:[{
+          model:FlashCardSlide,
+          as:'slides',
+        },
+        {
+          model:FlashCardRawData,
+          as:'raw_data'
+        }
+      ]
+      });
+      if(!flashCard){
+        throw new HttpException('Flash card not found', HttpStatus.NOT_FOUND);
+      }
+      return flashCard;
+    } catch (error) {
+      console.log('error', error.message);
+     
+      throw new HttpException('Error ' + error.message, error.status);
+    }
+  }
+  async getFlashCardByTempId(tempId:string, req: any) {
+   
+    try {
+
+      const flashCard = await FlashCard.findOne({
+        where: {
+          temporary_flashcard_id: tempId,
         },
         include:[{
           model:FlashCardSlide,

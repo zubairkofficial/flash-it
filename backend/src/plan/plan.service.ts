@@ -38,10 +38,9 @@ export class PlanService {
     }
   }
   async createPlan(input: CreatePlanDto, req: any) {
-    const transaction = await this.sequelize.transaction(); 
+    const transaction = await this.sequelize.transaction();
+  
     try {
-      let workspace
-   
       const plan = await SubscriptionPlan.findOne({
         where: { plan_type: input.subscriptionType },
         transaction,
@@ -52,52 +51,36 @@ export class PlanService {
       }
   
       const user = await User.findByPk(req.user.id, { transaction });
+  
       if (!user) {
         throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
       }
   
-     
       user.plan_id = plan.id;
       await user.save({ transaction });
   
-      // Handle temporary flashcard (if provided)
-      if (input.tempId) {
-        const flashcard = await FlashCard.findOne({
-          where: { temporary_flashcard_id: input.tempId },
-          transaction,
-        });
-  
-        if (!flashcard) {
-          throw new HttpException("Flashcard not found", HttpStatus.BAD_REQUEST);
-        }
-         workspace= await WorkSpace.findOne({where:{admin_user_id:req.user.id}})
-  
-        flashcard.temporary_flashcard_id = null;
-        flashcard.user_id = req.user.id;
-        flashcard.workspace_id = workspace.id;
-        
-        await flashcard.save({ transaction });
-      }
-  
-      // Commit transaction
-      await transaction.commit();
-  
+      await transaction.commit(); // ✅ Commit once all is good
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
           message: `${input.subscriptionType} subscription plan successful`,
           plan: plan,
-          workspaceId:workspace.id
+          // workspaceId:workspace.id
 
         },
       };
-  
+
     } catch (error) {
-      await transaction.rollback(); // Rollback on error
-      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      // ✅ Only rollback if not already committed or rolled back
+      if (!(transaction as any).finished) {
+        await transaction.rollback();
+      }
+  
+      throw error; // Or handle/log it
     }
   }
+  
   
 
 

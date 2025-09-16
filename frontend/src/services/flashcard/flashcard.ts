@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Api } from '../../utils/api/api';
-import { DATA_TYPE } from '../../utils/enum';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -18,6 +17,15 @@ export class FlashcardService {
       ...this.api.authorizationHeader,
     });
   }
+  generateFirstFlashCardByTempId(data: {
+    tempId: string;
+  }): Observable<any> {
+    return this.api.put('/flashcard/generate/'+data.tempId,null, {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    });
+  }
+
   generateFirstFlashCard(data: {
     tempId: string|null;
   }): Observable<any> {
@@ -70,6 +78,12 @@ export class FlashcardService {
     });
   }
 
+  getFlashcardByTempId(id: string): Observable<any> {
+    return this.api.get(`/flashcard/temp/${id}`, {
+      ...this.api.contentTypeHeader,
+      ...this.api.authorizationHeader,
+    });
+  }
   getFlashcardById(id: number): Observable<any> {
     return this.api.get(`/flashcard/${id}`, {
       ...this.api.contentTypeHeader,

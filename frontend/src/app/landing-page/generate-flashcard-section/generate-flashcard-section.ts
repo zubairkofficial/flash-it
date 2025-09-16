@@ -1,8 +1,8 @@
+import { formatBytes } from './../../../utils/file.utils';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { ButtonToggle } from '../../components/buttons/button-toggle/button-toggle';
 import { ButtonPrimaryDropdown } from '../../components/buttons/button-primary-dropdown/button-primary-dropdown';
 import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
-import { Pdf } from '../../../services/pdf/pdf';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -13,7 +13,7 @@ import { DATA_TYPE } from '../../../utils/enum';
 import { Api } from '../../../utils/api/api';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { notyf } from '../../../utils/notyf.utils';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ALL_LANGUAGES } from '../../../utils/constants/languages';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -24,19 +24,21 @@ import { MatIconModule } from '@angular/material/icon';
     ButtonPrimaryDropdown,
     ButtomPrimary,
     ReactiveFormsModule,
-    MatIconModule
+    MatIconModule,
   ],
-  providers: [Pdf, Api, FlashcardService],
+  providers: [ Api, FlashcardService],
   templateUrl: './generate-flashcard-section.html',
   styleUrl: './generate-flashcard-section.css',
 })
 export class GenerateFlashcardSection {
   @Input() workspaceId!: number;
+  tempId: string | null = localStorage.getItem('tempId') || null;
   activeState = DATA_TYPE.FILE;
   availableStates = Object.values(DATA_TYPE);
   activeLanguage = 'en';
   isLanguageDropDownOpen = false;
   isLoading = false;
+  isBytesSelected = false;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   extractedText: string = '';
   language: string = 'en';
@@ -44,82 +46,132 @@ export class GenerateFlashcardSection {
   selectedFiles: File[] = []; // Keep actual File objects for upload/UI
   textForm: FormGroup;
   popularLanguages = ALL_LANGUAGES;
-  popularLanguageCodes: string[] = ALL_LANGUAGES.map(l => l.code);
+  popularLanguageCodes: string[] = ALL_LANGUAGES.map((l) => l.code);
   constructor(
-    private pdfService: Pdf,
     private fb: FormBuilder,
     private flashcardService: FlashcardService,
-    private router: Router
+   
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.textForm = this.fb.group({
       text: ['', [Validators.min(100)]],
     });
   }
 
+  public ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.tempId = localStorage.getItem('tempId') || null;
+      this.isBytesSelected=false;
+      console.log('this.tempId', this.tempId);
+
+      if (this.tempId) {
+        this.flashcardService
+          .getFlashcardByTempId(this.tempId)
+          .subscribe({
+            next: (res) => {
+            
+             if(!res.raw_data[0].title){
+              this.textForm.patchValue({ text: res.raw_data[0].text });
+             }
+             else{ 
+              res.raw_data.forEach((item: any)=>
+               {
+                 const name = item.title;
+
+              this.selectedFiles.push(new File([], name));
+            }
+            )}
+              const dataTransfer = new DataTransfer();
+              this.selectedFiles.forEach((f: File) => dataTransfer.items.add(f));
+              this.filesSelected = dataTransfer.files;
+              this.isBytesSelected = true;
+            },
+            error: (error) => {
+              this.isLoading=false
+              this.isBytesSelected = false;
+              notyf.error('error: ' + error.message);
+            },
+          });
+      }
+    });
+  }
+
   formatBytes(bytes: number): string {
-    if (!bytes && bytes !== 0) return '';
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const i = bytes > 0 ? Math.floor(Math.log(bytes) / Math.log(1024)) : 0;
-    const value = bytes / Math.pow(1024, i);
-    const fixed = value >= 100 || i === 0 ? 0 : value >= 10 ? 1 : 2;
-    return `${value.toFixed(fixed)} ${units[i]}`;
+    return formatBytes(bytes);
   }
 
   onSubmit() {
-   if(this.textForm.value.text){
-    console.log("this.textForm.value.text",this.textForm.value)
+    if (this.textForm.value.text) {
+      console.log('this.textForm.value.text', this.textForm.value);
 
-const uploadText= this.workspaceId?this.flashcardService.uploadDataTextAuth(this.textForm.value.text,this.language,+this.workspaceId):this.flashcardService.uploadDataText(this.textForm.value.text,this.language)
-uploadText.subscribe({
-  next: (res) => {
-    if (res && res.data.temporary_flashcard_id) {
-      this.isLoading=false
-      notyf.success("upload successfully")
-      this.router.navigate(['/auth/register'], {
-        queryParams: {
-          temp_id: res.data.temporary_flashcard_id,
-        },
-      });
-    }
-     else if(res && !res.data.temporary_flashcard_id){
-      this.isLoading=false
-      notyf.success("upload successfully")
-      this.router.navigate(['dashboard']);
-    }
-     else {
-      this.isLoading=false
-      notyf.error('No temporary_flashcard_id returned.');
-    }
-  },error: (error) => {
-    notyf.error('error: ' + error.message);
-  },
-})
-}
-    else if (this.textForm.valid) {
-     this.isLoading=true
-      const uploadRes = this.workspaceId?this.flashcardService.uploadAuthData(this.filesSelected,this.language,+this.workspaceId): this.flashcardService.uploadData(this.filesSelected,this.language);
-
-      uploadRes.subscribe({
+      const uploadText =this.tempId?this.flashcardService.generateFirstFlashCardByTempId({tempId: this.tempId}): this.workspaceId
+        ? this.flashcardService.uploadDataTextAuth(
+            this.textForm.value.text,
+            this.language,
+            +this.workspaceId
+          )
+        : this.flashcardService.uploadDataText(
+            this.textForm.value.text,
+            this.language
+          );
+      uploadText.subscribe({
         next: (res) => {
           if (res && res.data.temporary_flashcard_id) {
-            this.isLoading=false
-            notyf.success(res.data.message)
+            this.isLoading = false;
+            notyf.success('upload successfully');
             this.router.navigate(['/auth/register'], {
               queryParams: {
                 temp_id: res.data.temporary_flashcard_id,
               },
             });
-          }else if(res && !res.data.temporary_flashcard_id){
-            this.isLoading=false
-            notyf.success(res.data.message)
+          } else if (res && !res.data.temporary_flashcard_id) {
+            this.isLoading = false;
+            notyf.success('upload successfully');
             this.router.navigate(['dashboard']);
-          }
-           else {
-            this.isLoading=false
+          } else {
+            this.isLoading = false;
             notyf.error('No temporary_flashcard_id returned.');
           }
         },
         error: (error) => {
+          this.isLoading=false
+          notyf.error('error: ' + error.message);
+        },
+      });
+    } else if (this.textForm.valid) {
+      this.isLoading = true;
+      const uploadRes =this.tempId?this.flashcardService.generateFirstFlashCardByTempId({tempId: this.tempId}): this.workspaceId
+        ? this.flashcardService.uploadAuthData(
+            this.filesSelected,
+            this.language,
+            +this.workspaceId
+          )
+        : this.flashcardService.uploadData(this.filesSelected, this.language);
+
+      uploadRes.subscribe({
+        next: (res) => {
+          if (res && res.data.temporary_flashcard_id) {
+            this.isLoading = false;
+            notyf.success(res.data.message);
+            this.router.navigate(['/auth/register'], {
+              queryParams: {
+                temp_id: res.data.temporary_flashcard_id,
+              },
+            });
+          } else if (res && !res.data.temporary_flashcard_id) {
+            this.tempId=null
+            localStorage.removeItem('tempId')
+            this.isLoading = false;
+            notyf.success(res.data.message);
+            this.router.navigate(['dashboard']);
+          } else {
+            this.isLoading = false;
+            notyf.error('No temporary_flashcard_id returned.');
+          }
+        },
+        error: (error) => {
+          this.isLoading=false
           notyf.error('error: ' + error.message);
         },
       });
@@ -160,7 +212,7 @@ uploadText.subscribe({
   }
 
   handleSelection(event: any) {
-    console.log("event",event)
-    this.language=event
-   }
+    console.log('event', event);
+    this.language = event;
+  }
 }
