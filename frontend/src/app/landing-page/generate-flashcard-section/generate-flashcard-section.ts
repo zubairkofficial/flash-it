@@ -77,10 +77,16 @@ export class GenerateFlashcardSection {
              else{ 
               res.raw_data.forEach((item: any)=>
                {
-                 const name = item.title;
-
-              this.selectedFiles.push(new File([], name));
-            }
+                const name = item.title;
+                const size = parseInt(item.file_size); // or Math.round(...) if needed
+                const dummyContent = new Uint8Array(size); // simulate content of that size
+              
+                const file = new File([dummyContent], name, {
+                  type: 'application/pdf',
+                });
+              
+                this.selectedFiles.push(file);
+              }              
             )}
               const dataTransfer = new DataTransfer();
               this.selectedFiles.forEach((f: File) => dataTransfer.items.add(f));

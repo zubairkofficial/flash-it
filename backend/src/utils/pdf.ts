@@ -7,10 +7,11 @@ const pdfParse = require('pdf-parse');
 
 @Injectable()
 export class PdfService {
-  async extractTextFromBuffer(buffer: Buffer): Promise<{title:string,text:string,data_type: DATA_TYPE}> {
+  async extractTextFromBuffer(buffer: Buffer): Promise<{title:string,text:string,data_type: DATA_TYPE,file_size:string}> {
     const data = await pdfParse(buffer);
     const title=await this.extractTitleFromBuffer(buffer)
-    return {title:title,text:data.text,data_type:DATA_TYPE.FILE};
+    const sizeInKB = Math.round(buffer.length / 1024);
+    return {title:title,text:data.text,data_type:DATA_TYPE.FILE,file_size:`${sizeInKB}`};
   }
 
   async extractTitleFromBuffer(buffer: Buffer): Promise<string> {

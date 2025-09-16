@@ -36,6 +36,12 @@ export default class FlashCardRawData extends Model {
     type: DataType.TEXT,
     allowNull: true,
   })
+  declare file_size: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
   declare title: string;
  
 

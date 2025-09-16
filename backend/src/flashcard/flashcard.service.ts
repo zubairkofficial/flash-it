@@ -4,12 +4,10 @@ import { Sequelize } from 'sequelize-typescript';
 import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 import FlashCard from 'src/models/flashcard.model';
 import { v4 as uuidv4 } from 'uuid';
-import { Op } from 'sequelize';
 import { FLASHCARD_SLIDE_TYPE } from 'src/utils/flashcard-slide-type.enum';
 import FlashCardSlide from 'src/models/flashcard-slide.model';
 import { extractJsonBlock, generateFlashcardSlides } from 'src/utils/openai-flashCard.utils';
 import { PdfService } from 'src/utils/pdf';
-import { PlanController } from 'src/plan/plan.controller';
 import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import User from 'src/models/user.model';
 import WorkSpace from 'src/models/workspace.model';
@@ -157,9 +155,6 @@ async generateFlashCard(
     try {
       const flashCard = await FlashCard.create(
         {
-          // temporary_flashcard_id:input.workspaceId ? null : uuidv4(),
-          // user_id: input.workspaceId ? req.user.id : null,
-          // workspace_id: input.workspaceId ? input.workspaceId : null,
          
           temporary_flashcard_id: uuidv4(),
           user_id: null,
@@ -178,13 +173,14 @@ async generateFlashCard(
       }
   
       for (const item of extractedTexts) {
-        const { text, title, data_type } = item;
+        const { text, title, data_type,file_size } = item;
   
         await FlashCardRawData.create(
           {
             text,
             title,
             data_type,
+            file_size,
             flashcard_id: flashCard.id,
             language:input.language
           },
