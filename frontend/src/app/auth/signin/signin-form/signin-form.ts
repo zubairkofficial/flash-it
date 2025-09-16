@@ -40,12 +40,15 @@ export class SigninForm {
       this.isLoading=true
       this.authService.login({ email: username, password }).subscribe({
         next: (response) => {
+          localStorage.setItem('authToken', response.data.token);
+          localStorage.setItem('userData', JSON.stringify(response.data.user));  
           this.isLoading=false
           notyf.success("Login successfully")
-          this.router.navigate(['dashboard']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          notyf.error(err.message)
+          notyf.error(err?.error?.message || err.message || 'Login failed.');
+    
           this.isLoading=false
           // Error is already handled in AuthService, but you can add more logic here if needed
         },
