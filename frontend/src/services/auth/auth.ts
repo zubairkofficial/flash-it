@@ -26,15 +26,15 @@ export class AuthService {
     temporary_flashcard_id?: string;
   }): Observable<any> {
     const res = this.api.post('/auth/login', credentials, {});
-    res.subscribe({
-      next: (response: any) => {
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('userData', JSON.stringify(response.data.user));
-      },
-      error: (err) => {
-        notyf.error(err?.error?.message || err.message || 'Login failed.');
-      },
-    });
+    // res.subscribe({
+    //   next: (response: any) => {
+    //     localStorage.setItem('authToken', response.data.token);
+    //     localStorage.setItem('userData', JSON.stringify(response.data.user));
+    //   },
+    //   error: (err) => {
+    //     notyf.error(err?.error?.message || err.message || 'Login failed.');
+    //   },
+    // });
 
     return res;
   }
