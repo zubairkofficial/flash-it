@@ -7,11 +7,12 @@ import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 import User from 'src/models/user.model';
 import { FlashcardService } from 'src/flashcard/flashcard.service';
 import { Sequelize } from 'sequelize-typescript';
+import { PlanService } from 'src/plan/plan.service';
 
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
-  constructor(private authService: AuthService, private flashCardService: FlashcardService,  private sequelize: Sequelize,) {}
+  constructor(private planSrvice: PlanService, private flashCardService: FlashcardService,  private sequelize: Sequelize,) {}
   private async initializeStripe(): Promise<void> {
     if (!this.stripe) {
       const stripeApiKey = process.env.STRIPE_KEY; // Fetch API key from DB
@@ -56,26 +57,31 @@ export class PaymentService {
     // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
     const user=await User.findByPk(+req.user.id)
     user.credits=+user.credits+1000
-    const workSpace = await WorkSpace.findOne({
-      where: { admin_user_id: req.user.id },
-    });
+    // const workSpace = await WorkSpace.findOne({
+    //   where: { admin_user_id: req.user.id },
+    // });
    
 if(input.tempId)
 
   {
-    await this.flashCardService.generateFlashCard(
-          {
-            temporary_flashcard_id: input.tempId,
-            workspace_id: workSpace.id,
-          },
-          {
-            user: {
-              id: req.user.id,
-            },
-          },
-          null
+    const payload={
+      tempId:input.tempId,
+      subscriptionType:input.subscriptionType
+    }
+    await this.planSrvice.createPlan(payload,req)
+    // await this.flashCardService.generateFlashCard(
+    //       {
+    //         temporary_flashcard_id: input.tempId,
+    //         workspace_id: workSpace.id,
+    //       },
+    //       {
+    //         user: {
+    //           id: req.user.id,
+    //         },
+    //       },
+    //       null
          
-        );
+    //     );
 }
     await user.save();
     return paymentIntent;

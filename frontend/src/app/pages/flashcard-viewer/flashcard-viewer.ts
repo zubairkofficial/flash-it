@@ -131,3 +131,6 @@ export class FlashcardViewer implements OnInit {
 
 
 
+
+
+

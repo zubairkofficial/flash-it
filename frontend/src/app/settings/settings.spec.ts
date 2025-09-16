@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SignedInHeader } from './signed-in-header';
+import { Settings } from './settings';
 
-describe('SignedInHeader', () => {
-  let component: SignedInHeader;
-  let fixture: ComponentFixture<SignedInHeader>;
+describe('Settings', () => {
+  let component: Settings;
+  let fixture: ComponentFixture<Settings>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SignedInHeader]
+      imports: [Settings]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SignedInHeader);
+    fixture = TestBed.createComponent(Settings);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

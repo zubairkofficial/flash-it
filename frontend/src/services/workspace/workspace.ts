@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Api } from '../../utils/api/api';
+import { SUBSCRIPTION_TYPE } from '../../utils/enum';
 
 export interface WorkspaceUserPivot {
   id: number;
@@ -20,6 +21,17 @@ export interface JoinedWorkspace {
   updatedAt: string;
   WorkspaceUser: WorkspaceUserPivot;
 }
+export interface PlanType {
+  id: number,
+  plan_type: SUBSCRIPTION_TYPE,
+  price: number,
+  features: [
+               string
+            ],
+  createdAt: string;
+  updatedAt: string;
+  
+}
 
 export interface WorkspaceResponseItem {
   id: number;
@@ -31,6 +43,7 @@ export interface WorkspaceResponseItem {
   plan_id: number;
   createdAt: string;
   updatedAt: string;
+  plan:PlanType;
   joined_workspaces: JoinedWorkspace[];
 }
 

@@ -12,6 +12,7 @@ import { WORKSPACE_USER_ROLE } from 'src/utils/workspace-user-role.enum';
 import { Identifier } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { WORKSPACE_USER_PERMISSION } from 'src/utils/permission.enum';
+import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 
 @Injectable()
 export class WorkspaceService {
@@ -246,6 +247,12 @@ export class WorkspaceService {
       const workspaceUsers = await User.findAll({
         where: { id: req.user.id },
         include: [
+           {
+            model: SubscriptionPlan,
+            as: 'plan', // If you want to include the workspace relation
+            required: true, // Ensure the user is related to a workspace
+          
+          },
            {
             model: WorkSpace,
             as: 'joined_workspaces', // If you want to include the workspace relation

@@ -8,10 +8,11 @@
   /* Colors */
   --color-primary: #F36B24;
   --color-secondary: #737373;
-
+  --color-text:#A7A7A7;
   /* Text Colors */
   --color-text-primary: #323A46;
-  --color-text-secondary: #737373;
+ 
+  --color-text-secondary: #A7A7A7;
   --color-text-secondary2: #4A494A;
   --color-text-secondary3: #6F6C8F;
   --color-text-light: #AEAEAE;

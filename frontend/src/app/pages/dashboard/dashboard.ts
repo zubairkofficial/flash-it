@@ -8,10 +8,12 @@ import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { SiteHeader } from '../../shared/site-header/site-header';
 import { notyf } from '../../../utils/notyf.utils';
+import { Api } from '../../../utils/api/api';
 
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal,SignedInSidebar,SiteHeader],
+  providers:[WorkspaceService,Api],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -24,6 +26,7 @@ export class Dashboard implements OnInit {
   public confirmModalOpen: boolean = false;
   public workspaceId: number = 0;
   public credits: number = 0;
+  public firstUser:WorkspaceResponseItem |null = null;
   public editingWorkspace: JoinedWorkspace | null = null;
 
   constructor(private workspaceService: WorkspaceService, private router: Router) {}
@@ -39,8 +42,10 @@ export class Dashboard implements OnInit {
       next: (data: WorkspaceResponseItem[]) => {
         const firstUser = Array.isArray(data) && data.length > 0 ? data[0] : null;
         this.workspaces = firstUser?.joined_workspaces ?? [];
-       this.credits=data[0]?.credits??0
-        this.isLoading = false;
+    
+      this.firstUser=firstUser
+      this.credits=data[0]?.credits??0
+      this.isLoading = false;
       },
       error: (err: any) => {
         this.errorMessage = err?.error?.message || 'Failed to load workspaces.';

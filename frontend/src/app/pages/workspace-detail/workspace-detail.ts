@@ -4,13 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../../services/workspace/workspace';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
-import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
 import { GenerateFlashcardSection } from '../../landing-page/generate-flashcard-section/generate-flashcard-section';
+import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
+import { SiteHeader } from '../../shared/site-header/site-header';
 // import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal,WorkSpaceModal,GenerateFlashcardSection],
+  imports: [CommonModule,MatIconModule, ConfirmModal,GenerateFlashcardSection,SignedInSidebar,SiteHeader],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
@@ -27,7 +28,7 @@ export class WorkspaceDetail implements OnInit {
   public isUserAdmin: boolean = false; // Add this property
   public confirmModalOpen: boolean = false;
   public toDelete: { workspace_id: number; user_id: number } | null = null;
-
+  public credits=0;
   constructor(private route: ActivatedRoute, private router: Router, private workspaceService: WorkspaceService) {}
 
   public ngOnInit(): void {
@@ -65,6 +66,9 @@ export class WorkspaceDetail implements OnInit {
   public openFlashcard(flashcardId: number): void {
     this.router.navigate(['/flashcard', flashcardId]);
   }
+  public generateFlashcard(flashcardId: number): void {
+    this.router.navigate(['/flashcard', flashcardId]);
+  }
 
   public openInvitLink(id: number): void {
     this.isLoading = true;
@@ -87,7 +91,7 @@ export class WorkspaceDetail implements OnInit {
   }
   public handleFlashCard(): void {
     this.generateFlashCard = true;
-  
+
   }
 
   public copyInviteUrl(): void {

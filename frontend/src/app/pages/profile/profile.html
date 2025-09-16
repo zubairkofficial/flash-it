@@ -1,12 +1,12 @@
-<app-site-header></app-site-header>
-<div class="flex bg-white">
-    <app-signed-in-sidebar></app-signed-in-sidebar>
-    <div class="flex-1 mx-auto max-w-3xl px-4 py-8 pb-20 md:pb-8">
-        <h1 class="text-2xl font-bold mb-6">Profile</h1>
-        <form [formGroup]="form" class="flex flex-col gap-4 px-5 py-5 bg-outline border-1 border-amber-600 w-full rounded-2xl shadow-2xl">
+<div class="w-full">
+    <h1 class="text-2xl font-bold mb-6 font-nunito">Profile Information</h1>
+    <div class="w-full">
+        <form [formGroup]="form" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
             <app-input-with-label label="Name" placeholder="Your name" formControlName="name" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
             <app-input-with-label label="Email" placeholder="you@example.com" formControlName="email" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
-            <app-buttom-primary (click)="save()" text="Save Changes" styles="w-full h-[45px]"></app-buttom-primary>
+            <div class="md:col-span-2 flex justify-end">
+                <app-buttom-primary (click)="save()" text="Save Changes" styles="w-full md:w-auto h-[45px]"></app-buttom-primary>
+            </div>
         </form>
     </div>
 </div>

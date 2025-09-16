@@ -1,4 +1,3 @@
-import { Plan } from './../../services/plan/plan';
 
 import { Component, OnInit } from '@angular/core';
 import { loadStripe, Stripe, StripeCardElement } from '@stripe/stripe-js';

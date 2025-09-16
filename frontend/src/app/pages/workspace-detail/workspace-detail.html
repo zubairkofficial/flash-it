@@ -1,15 +1,17 @@
-<div class="w-full min-h-screen bg-background text-text-primary">
-    <div class="mx-auto max-w-6xl px-4 py-8">
-      <div class="mb-4">
-        <a class="text-primary" href="javascript:history.back()">← Back</a>
-    </div>
-    <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
-      <app-generate-flashcard-section [workspaceId]="workspace.id"></app-generate-flashcard-section>
-    </div>
+<app-signed-in-sidebar></app-signed-in-sidebar>
+<div class="w-full min-h-screen bg-background text-text-primary overflow-x-hidden">
+  <app-site-header [credits]="credits"></app-site-header>
+  <div class="flex flex-col md:flex-row md:w-4/5 md:ml-auto">
+        <!-- <div class="mb-4">
+            <a class="text-primary" href="javascript:history.back()">← Back</a>
+        </div> -->
+        <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
+            <app-generate-flashcard-section [workspaceId]="workspace.id"></app-generate-flashcard-section>
+        </div>
         <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
         <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div>
-
-        <div *ngIf="!generateFlashCard && !isLoading && !errorMessage && workspace" class="space-y-6">
+<div class="p-3 border border-gray-200 m-3 min-h-96 rounded-2xl w-full">
+        <div *ngIf="!generateFlashCard && !isLoading && !errorMessage && workspace" class="space-y-6 w-full px-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
@@ -17,7 +19,7 @@
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold">{{ workspace.name }}</h2>
-                        <div class="text-sm text-text-secondary">ID #{{ workspace.id }}</div>
+                        <div class="text-sm text-text-secondary">Id #{{ workspace.id }}</div>
                     </div>
                 </div>
                 <div class="flex gap-2">
@@ -31,7 +33,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div class="rounded-xl border border-gray-200 bg-white p-4 lg:col-span-2">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-semibold">Flashcards</h3>
+                        <h3 class="font-extrabold">Flashcards</h3>
                         <span class="text-xs text-text-secondary">{{ workspace.flashcards?.length || 0 }} sets</span>
                     </div>
                     <div class="space-y-3" *ngIf="workspace.flashcards?.length; else emptyFlashcards">
@@ -41,8 +43,11 @@
                                     <div class="font-medium">{{ fc?.raw_data?.title || 'Flashcard' }}</div>
                                     <div class="text-xs text-text-secondary">Slides: {{ fc.slides?.length || 0 }}</div>
                                 </div>
-                                <button class="btn btn-outline btn-sm" type="button" (click)="openFlashcard(fc.id)">Open</button>
-                            </div>
+                                <div class="flex flex-row  justify-end">
+                                <button class="btn btn-outline btn-sm mx-2" type="button" (click)="openFlashcard(fc.id)">Open</button>
+                                <!-- <button class="btn btn-outline btn-sm" type="button" (click)="generateFlashcard(fc.id)">Generate</button> -->
+                              </div>
+                              </div>
                         </div>
                     </div>
                     <!-- Invite Link Modal -->
@@ -55,16 +60,16 @@
                             </div>
                             <div class="modal-body">
                                 <div class="url-box">
-                                  <div *ngIf="!InviteLink?.url; else showInput" class="loading-spinner">
-                                    Loading...
-                                  </div> 
-                                  <ng-template #showInput>
-                                    <input class="url-input" [value]="InviteLink?.url" readonly />
-                                    <button class="copy-btn" type="button" (click)="copyInviteUrl()">
+                                    <div *ngIf="!InviteLink?.url; else showInput" class="loading-spinner">
+                                        Loading...
+                                    </div>
+                                    <ng-template #showInput>
+                                        <input class="url-input" [value]="InviteLink?.url" readonly />
+                                        <button class="copy-btn" type="button" (click)="copyInviteUrl()">
                                       {{ isCopySuccess ? 'Copied!' : 'Copy' }}
                                     </button>
-                                  </ng-template>
-                                 </div>
+                                    </ng-template>
+                                </div>
                                 <a class="text-blue-600 underline" [href]="InviteLink?.url" target="_blank">Open invite link</a>
                             </div>
                             <div class="modal-footer">
@@ -117,5 +122,6 @@
             <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove member'" [message]="'Are you sure you want to remove this member from the workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()"
                 (cancelled)="onCancelDelete()"></app-confirm-modal>
         </div>
+      </div>
     </div>
 </div>

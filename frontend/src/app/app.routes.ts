@@ -13,6 +13,8 @@ import { PaymentCard } from './payment-card/payment-card';
 import { Profile } from './pages/profile/profile';
 import { ChangePassword } from './pages/change-password/change-password';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { GenerateFlashcardSection } from './landing-page/generate-flashcard-section/generate-flashcard-section';
+import { Settings } from './settings/settings';
 
 const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
 export const authGuard: CanActivateFn = () => {
@@ -73,6 +75,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'uploaded-file',
+    component: GenerateFlashcardSection,
+    canActivate: [authGuard],
+  },
+  {
     path: 'workspace/:id',
     component: WorkspaceDetail,
     canActivate: [authGuard],
@@ -99,6 +106,12 @@ export const routes: Routes = [
   {
     path: 'change-password',
     component:ChangePassword,
+    canActivate: [authGuard]
+    // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
+  },
+  {
+    path: 'settings',
+    component:Settings,
     canActivate: [authGuard]
     // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
   },

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { ButtonToggle } from '../../components/buttons/button-toggle/button-toggle';
 import { ButtonPrimaryDropdown } from '../../components/buttons/button-primary-dropdown/button-primary-dropdown';
 import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
@@ -15,6 +15,7 @@ import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { notyf } from '../../../utils/notyf.utils';
 import { Router } from '@angular/router';
 import { ALL_LANGUAGES } from '../../../utils/constants/languages';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -23,6 +24,7 @@ import { ALL_LANGUAGES } from '../../../utils/constants/languages';
     ButtonPrimaryDropdown,
     ButtomPrimary,
     ReactiveFormsModule,
+    MatIconModule
   ],
   providers: [Pdf, Api, FlashcardService],
   templateUrl: './generate-flashcard-section.html',
@@ -35,10 +37,11 @@ export class GenerateFlashcardSection {
   activeLanguage = 'en';
   isLanguageDropDownOpen = false;
   isLoading = false;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   extractedText: string = '';
   language: string = 'en';
   filesSelected: FileList | null = null;
-  selectedFiles: {name: string, content: string}[] = []; // Array to store multiple files
+  selectedFiles: File[] = []; // Keep actual File objects for upload/UI
   textForm: FormGroup;
   popularLanguages = ALL_LANGUAGES;
   popularLanguageCodes: string[] = ALL_LANGUAGES.map(l => l.code);
@@ -53,6 +56,15 @@ export class GenerateFlashcardSection {
     });
   }
 
+  formatBytes(bytes: number): string {
+    if (!bytes && bytes !== 0) return '';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = bytes > 0 ? Math.floor(Math.log(bytes) / Math.log(1024)) : 0;
+    const value = bytes / Math.pow(1024, i);
+    const fixed = value >= 100 || i === 0 ? 0 : value >= 10 ? 1 : 2;
+    return `${value.toFixed(fixed)} ${units[i]}`;
+  }
+
   onSubmit() {
    if(this.textForm.value.text){
     console.log("this.textForm.value.text",this.textForm.value)
@@ -62,6 +74,7 @@ uploadText.subscribe({
   next: (res) => {
     if (res && res.data.temporary_flashcard_id) {
       this.isLoading=false
+      notyf.success("upload successfully")
       this.router.navigate(['/auth/register'], {
         queryParams: {
           temp_id: res.data.temporary_flashcard_id,
@@ -70,6 +83,7 @@ uploadText.subscribe({
     }
      else if(res && !res.data.temporary_flashcard_id){
       this.isLoading=false
+      notyf.success("upload successfully")
       this.router.navigate(['dashboard']);
     }
      else {
@@ -89,6 +103,7 @@ uploadText.subscribe({
         next: (res) => {
           if (res && res.data.temporary_flashcard_id) {
             this.isLoading=false
+            notyf.success(res.data.message)
             this.router.navigate(['/auth/register'], {
               queryParams: {
                 temp_id: res.data.temporary_flashcard_id,
@@ -96,6 +111,7 @@ uploadText.subscribe({
             });
           }else if(res && !res.data.temporary_flashcard_id){
             this.isLoading=false
+            notyf.success(res.data.message)
             this.router.navigate(['dashboard']);
           }
            else {
@@ -112,41 +128,35 @@ uploadText.subscribe({
 
   async onFileSelected(event: any) {
     const files: FileList = event.target.files;
-    console.log("files",files)
-    this.filesSelected=files
     if (files && files.length > 0) {
-      this.selectedFiles = []; // Reset selected files
-
-      // Process each selected file
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        try {
-          const fileContent = await this.pdfService.extractText(file);
-          this.selectedFiles.push({
-            name: file.name,
-            content: fileContent
-          });
-        } catch (error) {
-          notyf.error(`Error processing ${file.name}: ${error}`);
-        }
+        const isAlreadySelected = this.selectedFiles.some(
+          (f) => f.name === file.name && f.size === file.size
+        );
+        if (isAlreadySelected) continue;
+        this.selectedFiles.push(file);
       }
 
-      // Update the form with all extracted text
-      // const allText = this.selectedFiles.map(file => file.content).join('\n\n');
-      // this.textForm.patchValue({ text: allText });
+      // Build a FileList (for existing service signature)
+      const dataTransfer = new DataTransfer();
+      this.selectedFiles.forEach((f: File) => dataTransfer.items.add(f));
+      this.filesSelected = dataTransfer.files;
+
+      // Clear input so same file can be selected again
+      event.target.value = '';
     }
+  }
+
+  triggerFileSelect(): void {
+    this.fileInput.nativeElement.click();
   }
 
   removeFile(index: number) {
     this.selectedFiles.splice(index, 1);
-
-    // Update the form text if files remain
-    if (this.selectedFiles.length > 0) {
-      const allText = this.selectedFiles.map(file => file.content).join('\n\n');
-      this.textForm.patchValue({ text: allText });
-    } else {
-      this.textForm.patchValue({ text: '' });
-    }
+    const dataTransfer = new DataTransfer();
+    this.selectedFiles.forEach((f: File) => dataTransfer.items.add(f));
+    this.filesSelected = dataTransfer.files;
   }
 
   handleSelection(event: any) {
