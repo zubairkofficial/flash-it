@@ -18,8 +18,10 @@
                 <img src="assets/profile.png" alt="Profile" class="object-cover w-full h-full" />
               </div>
               <div class="hidden sm:flex flex-col text-left px-2">
-                <span class="text-sm text-gray-800 font-bold">Shivani Chauhan</span>
-                <span class="text-xs text-gray-500">User</span>
+                <span class="text-sm text-gray-800 font-bold">
+                  {{ userData?.name ?? 'Guest User' }}
+                </span>
+                    <span class="text-xs text-gray-500">User</span>
               </div>
             </div>
 
