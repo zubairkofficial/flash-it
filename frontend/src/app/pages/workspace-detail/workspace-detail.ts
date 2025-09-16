@@ -42,16 +42,20 @@ export class WorkspaceDetail implements OnInit {
   }
 
   private fetchWorkspace(id: number): void {
+    console.log("id",id)
     this.isLoading = true;
-    this.workspaceService.getWorkspaceById(id).subscribe({
+    this.workspaceService.getWorkspaceById(+id).subscribe({
       next: (data: any) => {
         this.isLoading=false
         this.workspace = data;
-       const user= (localStorage.getItem("userData"))
-       const userData=JSON.parse(user??"")
-        if (this.workspace  && this.workspace.admin.id) {
-          this.isUserAdmin = this.workspace.admin.id === userData.dataValues.id;
-         } else {
+        const user = localStorage.getItem("userData");
+        const userData = user ? JSON.parse(user) : null;
+        const workspaceAdminId = this.workspace?.admin?.id;
+        const currentUserId = userData?.id;
+        
+        if (workspaceAdminId && currentUserId) {
+          this.isUserAdmin = workspaceAdminId === currentUserId;
+        } else {
           this.isUserAdmin = false;
         }
         this.isLoading = false;

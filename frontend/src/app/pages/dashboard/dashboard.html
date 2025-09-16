@@ -28,9 +28,9 @@
                     <div class="w-full lg:w-[25%] flex items-center justify-center">
                         <div class="bg-white rounded-4xl border border-white flex items-center justify-center px-2 py-2 w-fit h-auto md:h-[3rem] lg:h-[3rem]">
 
-                            <span class="text-[#C3C3C3] mr-2 text-xs sm:text-sm md:text-base lg:text-lg border-r-2 px-3 font-nunito">Current Plan</span>
+                            <span class="text-[#C3C3C3] font-semibold mr-2 text-xs sm:text-sm md:text-base lg:text-base border-r-2 px-3 font-nunito">Current Plan</span>
 
-                            <span class="text-primary font-semibold text-sm md:text-base lg:text-lg font-nunito px-3">{{firstUser?.plan?.plan_type}}</span>
+                            <span class="text-primary font-bold text-sm md:text-base lg:text-base font-nunito px-3 uppercase">{{firstUser?.plan?.plan_type}}</span>
                         </div>
                     </div>
 
@@ -53,7 +53,7 @@
             <div class="text-sm text-red-600" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-3 sm:gap-4 me-3" *ngIf="!isLoading && !errorMessage">
-                <div class="relative rounded-xl border bg-[#FFFFFF] shadow-xl border-gray-200 p-4 hover:shadow-sm transition group" *ngFor="let ws of workspaces; ">
+                <div class="relative rounded-xl border bg-[#FFFFFF] shadow-sm border-gray-200 p-4 hover:shadow-sm transition group" *ngFor="let ws of workspaces; ">
                     <div class="absolute top-3 right-3 hidden sm:flex gap-2 group-hover:flex">
                         <button class="w-8 h-8 rounded-full border border-amber-600 bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition" title="Edit" type="button" (click)="editWorkspace(ws)">
                             <mat-icon class="text-inherit">edit</mat-icon>
