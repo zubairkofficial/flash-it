@@ -81,9 +81,17 @@ export class PaymentCard implements OnInit {
       .subscribe({
         next: (res) => {
           this.isLoading = false;
+          console.log("res",res)
           notyf.success('Payment successful');
+          this.router.navigate([`/uploaded-file`],
+            // {
+            //   queryParams: {
+            //     workspaceId: res.data.workspaceId
+            //   }
+            // }
 
-          this.router.navigate(['dashboard']);
+          );
+          // this.router.navigate(['dashboard']);
         },
         error: (err) => {
           this.isLoading = false;
