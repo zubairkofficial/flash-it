@@ -10,7 +10,7 @@ export class PdfService {
   async extractTextFromBuffer(buffer: Buffer): Promise<{title:string,text:string,data_type: DATA_TYPE,file_size:string}> {
     const data = await pdfParse(buffer);
     const title=await this.extractTitleFromBuffer(buffer)
-    const sizeInKB = Math.round(buffer.length / 1024);
+    const sizeInKB = Math.round(buffer.length );
     return {title:title,text:data.text,data_type:DATA_TYPE.FILE,file_size:`${sizeInKB}`};
   }
 

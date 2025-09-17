@@ -64,7 +64,7 @@ export class SubscriptionPlanCard {
       
     }
     else{
-      localStorage.setItem('tempId',this.temporary_flashcard_id)
+      this.temporary_flashcard_id &&  localStorage.setItem('tempId',this.temporary_flashcard_id)
       this.router.navigate(['/payment/card'], {
       queryParams: {
         subscriptionType:availablePlan.subscriptionType,
