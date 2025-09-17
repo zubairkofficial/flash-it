@@ -106,10 +106,22 @@ async generateFirstFlashCard(
   req: any,
   outsideTransaction?: any,
 ) {
+  const user = await User.findByPk(req.user.id, { attributes: ['plan_id'] });
+  if (!user) {
+    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  }
+
+  const userPlan = await SubscriptionPlan.findByPk(user.plan_id, {
+    attributes: ['plan_type']
+  });
+
+  if (!userPlan) {
+    throw new HttpException('Subscription plan not found', HttpStatus.NOT_FOUND);
+  }
   return this.generateFlashCardGeneric(
     id,
     req.user.id,
-    SUBSCRIPTION_TYPE.FREE,
+    userPlan.plan_type,
     undefined, // workspace will be fetched
     outsideTransaction
   );

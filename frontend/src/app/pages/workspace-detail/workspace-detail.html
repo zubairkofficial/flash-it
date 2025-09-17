@@ -2,9 +2,7 @@
 <div class="w-full min-h-screen bg-background text-text-primary overflow-x-hidden">
     <app-site-header [credits]="credits"></app-site-header>
     <div class="flex flex-col md:flex-row md:w-4/5 md:ml-auto">
-        <!-- <div class="mb-4">
-            <a class="text-primary" href="javascript:history.back()">← Back</a>
-        </div> -->
+       
         <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
             <div class="mb-4">
                 <a class="text-primary" href="javascript:history.back()"> <span class="font-lg me-2 font-bold">< </span> Back</a>
@@ -12,11 +10,13 @@
             </div>
             <app-generate-flashcard-section [width]="74" [workspaceId]="workspace.id"></app-generate-flashcard-section>
         </div>
-        <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
-        <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div>
         <div class="p-3 border border-gray-200 m-3 min-h-96 rounded-2xl w-full">
-            <div *ngIf="!generateFlashCard && !isLoading && !errorMessage && workspace" class="space-y-6 w-full px-4">
-                <div class="flex items-center justify-between">
+          <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
+          <!-- <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div> -->
+           
+          <div *ngIf="!generateFlashCard && !isLoading && !errorMessage && workspace" class="space-y-6 w-full px-4">
+                
+              <div class="flex items-center justify-between">
                     <div class="mb-4">
                         <a class="text-primary" href="javascript:history.back()"> <span class="font-lg me-2 font-bold">< </span> Back</a>
                         <h3 class="font-extrabold mt-3 text-lg">Details</h3>

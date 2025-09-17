@@ -94,10 +94,12 @@ export class GenerateFlashcardSection {
               this.filesSelected = dataTransfer.files;
               this.isBytesSelected = true;
             },
-            error: (error) => {
+            error: (err) => {
               this.isLoading=false
               this.isBytesSelected = false;
-              notyf.error('error: ' + error.message);
+              notyf.error(err?.error?.message || err.message );
+    
+              // notyf.error('error: ' + error.message);
             },
           });
       }
@@ -141,9 +143,11 @@ export class GenerateFlashcardSection {
             notyf.error('No temporary_flashcard_id returned.');
           }
         },
-        error: (error) => {
+        error: (err) => {
           this.isLoading=false
-          notyf.error('error: ' + error.message);
+          notyf.error(err?.error?.message || err.message );
+    
+          // notyf.error('error: ' + error.message);
         },
       });
     } else if (this.textForm.valid) {
@@ -179,7 +183,9 @@ export class GenerateFlashcardSection {
         },
         error: (error) => {
           this.isLoading=false
-          notyf.error('error: ' + error.message);
+          notyf.error(error?.error?.message || error.message || 'flashcard proccessing failed.');
+    
+          // notyf.error('error: ' + error.message);
         },
       });
     }
