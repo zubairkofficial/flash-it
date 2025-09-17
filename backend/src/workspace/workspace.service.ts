@@ -236,13 +236,17 @@ export class WorkspaceService {
   //     throw new HttpException('Error: ' + error.message, error.status);
   //   }
   // }
-  async getWorkspace(req: any) {
+  async getWorkspace(req: any, query?: any) {
     try {
       const existingUser = await User.findByPk(req.user.id);
 
       if (!existingUser) {
         throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
       }
+
+      const q = (query?.q || '').toString().toLowerCase();
+      const page = Math.max(1, parseInt(query?.page ?? '1', 10));
+      const pageSize = Math.max(1, Math.min(100, parseInt(query?.pageSize ?? '50', 10)));
 
       const workspaceUsers = await User.findAll({
         where: { id: req.user.id },
@@ -253,11 +257,11 @@ export class WorkspaceService {
             required: true, // Ensure the user is related to a workspace
           
           },
-           {
+          {
             model: WorkSpace,
-            as: 'joined_workspaces', // If you want to include the workspace relation
-            required: true, // Ensure the user is related to a workspace
-          
+            as: 'joined_workspaces',
+            required: true,
+            where: q ? this.sequelize.where(this.sequelize.fn('LOWER', this.sequelize.col('joined_workspaces.name')), 'LIKE', `%${q}%`) : undefined,
           },
             
           // {
@@ -273,18 +277,34 @@ export class WorkspaceService {
         ],
       });
 
+      // Manual paginate joined_workspaces array on returned record
+      if (Array.isArray(workspaceUsers) && workspaceUsers[0]) {
+        const user = workspaceUsers[0] as any;
+        const all = (user.joined_workspaces || []) as any[];
+        const start = (page - 1) * pageSize;
+        const items = all.slice(start, start + pageSize);
+        // attach meta
+        (user as any).joined_workspaces = items;
+        (user as any).joined_workspaces_total = all.length;
+        (user as any).joined_workspaces_page = page;
+        (user as any).joined_workspaces_pageSize = pageSize;
+      }
       return workspaceUsers;
     } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);
     }
   }
-  async getWorkspaceById(id: number, req: any) {
+  async getWorkspaceById(id: number, req: any, query?: any) {
     try {
       const existingUser = await User.findByPk(req.user.id);
 
       if (!existingUser) {
         throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
       }
+
+      const q = (query?.q || '').toString().toLowerCase();
+      const page = Math.max(1, parseInt(query?.page ?? '1', 10));
+      const pageSize = Math.max(1, Math.min(100, parseInt(query?.pageSize ?? '50', 10)));
 
       const workspaceUsers = await WorkSpace.findOne({
         where: { id },
@@ -301,18 +321,13 @@ export class WorkspaceService {
           },
           {
             model: FlashCard,
-            as: 'flashcards', // Alias for the flashcards relationship
-            required: false, // Optional, if no flashcards exist
+            as: 'flashcards',
+            required: false,
             include: [
-              {
-                model: FlashCardSlide,
-                as: 'slides',
-              },
-              {
-                model: FlashCardRawData,
-                as: 'raw_data',
-              },
+              { model: FlashCardSlide, as: 'slides' },
+              { model: FlashCardRawData, as: 'raw_data' },
             ],
+            where: q ? this.sequelize.where(this.sequelize.fn('LOWER', this.sequelize.col('flashcards.title')), 'LIKE', `%${q}%`) : undefined,
           },
           {
             model: Invite,
@@ -322,6 +337,17 @@ export class WorkspaceService {
         ],
       });
 
+      // If found, paginate flashcards array manually
+      if (workspaceUsers) {
+        const ws: any = workspaceUsers as any;
+        const all = (ws.flashcards || []) as any[];
+        const start = (page - 1) * pageSize;
+        const items = all.slice(start, start + pageSize);
+        ws.flashcards = items;
+        ws.flashcards_total = all.length;
+        ws.flashcards_page = page;
+        ws.flashcards_pageSize = pageSize;
+      }
       return workspaceUsers;
     } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);

@@ -9,10 +9,12 @@ import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sideba
 import { SiteHeader } from '../../shared/site-header/site-header';
 import { notyf } from '../../../utils/notyf.utils';
 import { Api } from '../../../utils/api/api';
+import { FilterBar } from '../../components/filter-bar/filter-bar';
+import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal,SignedInSidebar,SiteHeader],
+  imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal,SignedInSidebar,SiteHeader,FilterBar,Pagination],
   providers:[WorkspaceService,Api],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
@@ -21,6 +23,10 @@ export class Dashboard implements OnInit {
   public isLoading: boolean = false;
   public errorMessage: string | null = null;
   public workspaces: JoinedWorkspace[] = [];
+  public filtered: JoinedWorkspace[] = [];
+  public query: string = '';
+  public page: number = 1;
+  public pageSize: number = 5;
   public isOpenWorkspace:boolean  = false;
   public isConfirmModalOpen: boolean = false;
   public confirmModalOpen: boolean = false;
@@ -38,11 +44,12 @@ export class Dashboard implements OnInit {
   private fetchWorkspaces(): void {
     this.isLoading = true;
     this.errorMessage = null;
-    this.workspaceService.getWorkspaces().subscribe({
+    this.workspaceService.getWorkspaces({ page: this.page, pageSize: this.pageSize, q: this.query }).subscribe({
       next: (data: WorkspaceResponseItem[]) => {
         const firstUser = Array.isArray(data) && data.length > 0 ? data[0] : null;
         this.workspaces = firstUser?.joined_workspaces ?? [];
-    
+        this.applyFilter();
+
       this.firstUser=firstUser
       this.credits=data[0]?.credits??0
       this.isLoading = false;
@@ -70,6 +77,33 @@ export class Dashboard implements OnInit {
     this.isConfirmModalOpen = false;
 
   }
+
+  public onFilterChange(q: string): void {
+    this.query = (q || '').toLowerCase();
+    this.page = 1;
+    this.applyFilter();
+    this.fetchWorkspaces();
+  }
+
+  private applyFilter(): void {
+    if (!this.query) {
+      this.filtered = [...this.workspaces];
+    } else {
+      this.filtered = this.workspaces.filter(w =>
+        (w.name || '').toLowerCase().includes(this.query) ||
+        String(w.id).includes(this.query)
+      );
+    }
+  }
+
+  public get paged(): JoinedWorkspace[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.filtered.slice(start, start + this.pageSize);
+  }
+
+  public onPageChange(p: number): void { this.page = p; this.fetchWorkspaces(); }
+  public onPageSizeChange(s: number): void { this.pageSize = s; this.page = 1; this.fetchWorkspaces(); }
+
   public editWorkspace(ws: JoinedWorkspace): void {
     this.editingWorkspace = ws;
     console.log("editingWorkspace",this.editingWorkspace)

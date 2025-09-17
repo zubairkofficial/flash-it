@@ -1,0 +1,15 @@
+<div class="pagination" [ngClass]="size">
+    <div class="left">
+        <label class="ps-label">Rows per page</label>
+        <select class="ps-select" [ngModel]="pageSize"  (change)="onPageSizeChange($event)">
+      <option *ngFor="let opt of pageSizeOptions" [value]="opt">{{ opt }}</option>
+    </select>
+    </div>
+    <div class="center">
+        <button class="btn btn-outline btn-sm nav" type="button" (click)="goto(page - 1)" [disabled]="page === 1">Prev</button>
+        <div class="pages">
+            <button class="btn btn-outline btn-sm pg" *ngFor="let p of pages" type="button" [class.active]="p === page" (click)="goto(p)">{{ p }}</button>
+        </div>
+        <button class="btn btn-outline btn-sm nav" type="button" (click)="goto(page + 1)" [disabled]="page === totalPages">Next</button>
+    </div>
+</div>

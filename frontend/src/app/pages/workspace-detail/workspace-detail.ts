@@ -7,11 +7,13 @@ import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { GenerateFlashcardSection } from '../../landing-page/generate-flashcard-section/generate-flashcard-section';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { SiteHeader } from '../../shared/site-header/site-header';
+import { FilterBar } from '../../components/filter-bar/filter-bar';
+import { Pagination } from '../../components/pagination/pagination';
 // import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal,GenerateFlashcardSection,SignedInSidebar,SiteHeader],
+  imports: [CommonModule,MatIconModule, ConfirmModal,GenerateFlashcardSection,SignedInSidebar,SiteHeader,FilterBar,Pagination],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
@@ -29,6 +31,10 @@ export class WorkspaceDetail implements OnInit {
   public confirmModalOpen: boolean = false;
   public toDelete: { workspace_id: number; user_id: number } | null = null;
   public credits=0;
+  public query: string = '';
+  public page: number = 1;
+  public pageSize: number = 5;
+  public filteredFlashcards: any[] = [];
   constructor(private route: ActivatedRoute, private router: Router, private workspaceService: WorkspaceService) {}
 
   public ngOnInit(): void {
@@ -44,15 +50,16 @@ export class WorkspaceDetail implements OnInit {
   private fetchWorkspace(id: number): void {
     console.log("id",id)
     this.isLoading = true;
-    this.workspaceService.getWorkspaceById(+id).subscribe({
+    this.workspaceService.getWorkspaceById(+id, { page: this.page, pageSize: this.pageSize, q: this.query }).subscribe({
       next: (data: any) => {
         this.isLoading=false
         this.workspace = data;
+        this.applyFilter();
         const user = localStorage.getItem("userData");
         const userData = user ? JSON.parse(user) : null;
         const workspaceAdminId = this.workspace?.admin?.id;
         const currentUserId = userData?.id;
-        
+
         if (workspaceAdminId && currentUserId) {
           this.isUserAdmin = workspaceAdminId === currentUserId;
         } else {
@@ -69,6 +76,41 @@ export class WorkspaceDetail implements OnInit {
 
   public openFlashcard(flashcardId: number): void {
     this.router.navigate(['/flashcard', flashcardId]);
+  }
+
+  public onFlashcardFilterChange(q: string): void {
+    this.query = (q || '').toLowerCase();
+    this.page = 1;
+    this.applyFilter();
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) this.fetchWorkspace(id);
+  }
+
+  private applyFilter(): void {
+    const list: any[] = this.workspace?.flashcards || [];
+    if (!this.query) {
+      this.filteredFlashcards = [...list];
+    } else {
+      this.filteredFlashcards = list.filter(fc =>
+        (fc?.raw_data?.title || 'flashcard').toLowerCase().includes(this.query)
+      );
+    }
+  }
+
+  public get pagedFlashcards(): any[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.filteredFlashcards.slice(start, start + this.pageSize);
+  }
+  public onPageChange(p: number): void {
+    this.page = p;
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) this.fetchWorkspace(id);
+  }
+  public onPageSizeChange(s: number): void {
+    this.pageSize = s;
+    this.page = 1;
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) this.fetchWorkspace(id);
   }
   public generateFlashcard(flashcardId: number): void {
     this.router.navigate(['/flashcard', flashcardId]);

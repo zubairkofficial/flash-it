@@ -34,6 +34,7 @@ export class GenerateFlashcardSection {
   @Input() workspaceId!: number;
   tempId: string | null = localStorage.getItem('tempId') || null;
   activeState = DATA_TYPE.FILE;
+  @Input() width: number =85;
   availableStates = Object.values(DATA_TYPE);
   activeLanguage = 'en';
   isLanguageDropDownOpen = false;

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards, Query } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { CreateWorkspaceDTO, UpdateWorkspaceDTO } from './dto/workspace.dto';
 import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
@@ -24,14 +24,14 @@ export class WorkspaceController {
 
   @Get('')
   @UseGuards(JwtAuthGuard)
-  async getWorkspace( @Req() req: any) {
-    return this.workspaceService.getWorkspace( req);
+  async getWorkspace(@Req() req: any, @Query() query: any) {
+    return this.workspaceService.getWorkspace(req, query);
   }
   
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
-  async getWorkspaceById( @Param('id') id:string, @Req() req: any) {
-    return this.workspaceService.getWorkspaceById(+id, req);
+  async getWorkspaceById(@Param('id') id: string, @Req() req: any, @Query() query: any) {
+    return this.workspaceService.getWorkspaceById(+id, req, query);
   }
   
   @Get('/invite/:workspace_id')

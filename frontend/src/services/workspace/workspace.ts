@@ -30,7 +30,7 @@ export interface PlanType {
             ],
   createdAt: string;
   updatedAt: string;
-  
+
 }
 
 export interface WorkspaceResponseItem {
@@ -53,20 +53,30 @@ export interface WorkspaceResponseItem {
 export class WorkspaceService {
   constructor(private api: Api) {}
 
-  public getWorkspaces(): Observable<WorkspaceResponseItem[]> {
+  public getWorkspaces(params?: { page?: number; pageSize?: number; q?: string }): Observable<WorkspaceResponseItem[]> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
     };
-    return this.api.get<WorkspaceResponseItem[]>('/workspace', headers);
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.pageSize) query.set('pageSize', String(params.pageSize));
+    if (params?.q) query.set('q', params.q);
+    const qs = query.toString();
+    return this.api.get<WorkspaceResponseItem[]>(`/workspace${qs ? '?' + qs : ''}`, headers);
   }
 
-  public getWorkspaceById(id: number): Observable<any> {
+  public getWorkspaceById(id: number, params?: { page?: number; pageSize?: number; q?: string }): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
     };
-    return this.api.get<any>(`/workspace/${id}`, headers);
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.pageSize) query.set('pageSize', String(params.pageSize));
+    if (params?.q) query.set('q', params.q);
+    const qs = query.toString();
+    return this.api.get<any>(`/workspace/${id}${qs ? '?' + qs : ''}`, headers);
   }
   public getInviteLinkByWorkspaceId(id: number): Observable<any> {
     const headers = {
