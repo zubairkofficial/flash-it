@@ -16,6 +16,7 @@ import { notyf } from '../../../utils/notyf.utils';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ALL_LANGUAGES } from '../../../utils/constants/languages';
 import { MatIconModule } from '@angular/material/icon';
+import { generatePdfFileFromText } from '../../../utils/convertInPdf';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -66,7 +67,7 @@ export class GenerateFlashcardSection {
       this.isBytesSelected=false;
       console.log('this.tempId', this.tempId);
 
-      if (this.tempId) {
+      if (this.tempId && this.router.url.includes('/uploaded-file')) {
         this.flashcardService
           .getFlashcardByTempId(this.tempId)
           .subscribe({
@@ -79,14 +80,15 @@ export class GenerateFlashcardSection {
               res.raw_data.forEach((item: any)=>
                {
                 const name = item.title;
-                const size = parseInt(item.file_size); // or Math.round(...) if needed
-                const dummyContent = new Uint8Array(size); // simulate content of that size
+                // const size = parseInt(item.file_size); // or Math.round(...) if needed
+                // const dummyContent = new Uint8Array(size); // simulate content of that size
               
-                const file = new File([dummyContent], name, {
-                  type: 'application/pdf',
-                });
-              
+                // const file = new File([dummyContent], name, {
+                //   type: 'application/pdf',
+                // });
+                const file = generatePdfFileFromText(item.text, name);
                 this.selectedFiles.push(file);
+                // this.selectedFiles.push(file);
               }              
             )}
               const dataTransfer = new DataTransfer();
@@ -114,7 +116,9 @@ export class GenerateFlashcardSection {
     if (this.textForm.value.text) {
       console.log('this.textForm.value.text', this.textForm.value);
 
-      const uploadText =this.tempId?this.flashcardService.generateFirstFlashCardByTempId({tempId: this.tempId}): this.workspaceId
+      const uploadText =
+      // this.tempId?this.flashcardService.generateFirstFlashCardByTempId({tempId: this.tempId}):
+       this.workspaceId
         ? this.flashcardService.uploadDataTextAuth(
             this.textForm.value.text,
             this.language,
@@ -152,7 +156,15 @@ export class GenerateFlashcardSection {
       });
     } else if (this.textForm.valid) {
       this.isLoading = true;
-      const uploadRes =this.tempId?this.flashcardService.generateFirstFlashCardByTempId({tempId: this.tempId}): this.workspaceId
+      const uploadRes =this.tempId?
+      // this.flashcardService.uploadData(this.filesSelected, this.language)
+// this.flashcardService.uploadAuthData(
+//             this.filesSelected,
+//             this.language,
+           
+//           )
+      this.flashcardService.generateFirstFlashCardByTempId( this.tempId,  this.filesSelected,this.language)
+      : this.workspaceId
         ? this.flashcardService.uploadAuthData(
             this.filesSelected,
             this.language,
