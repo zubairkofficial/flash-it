@@ -49,10 +49,10 @@
                             <app-filter-bar size="sm" placeholder="Filter flashcards" [value]="query" (valueChange)="onFlashcardFilterChange($event)"></app-filter-bar>
                         </div>
                         <div class="space-y-3" *ngIf="filteredFlashcards?.length; else emptyFlashcards">
-                            <div class="rounded-lg border border-gray-200 p-3" *ngFor="let fc of pagedFlashcards; let i = index">
+                            <div class="rounded-lg border border-gray-200 p-3" *ngFor="let fc of pagedFlashcards">
                                 <div class="flex items-center justify-between rounded-4xl show-sm">
                                     <div>
-                                        <div class="mb-2 font-bold">  {{ fc?.raw_data[i]?.title || 'Flashcard ' + (i + 1) }}</div>
+                                        <div class="mb-2 font-bold">{{ fc?.raw_data?.title || 'Flashcard' }}</div>
                                         <div class="flex flex-row justify-around  w-full">
                                             <div class="text-xs text-[#D9D9D9] font-semibold">Language: {{ fc.raw_data.language || "en" }}</div>
                                             <div class="text-xs text-[#D9D9D9] font-semibold px-3">Slides: {{ fc.slides?.length || 0 }}</div>

@@ -101,24 +101,6 @@ async generateFlashCardGeneric(
   }
 }
 
-async generateFlashCards(
-  input,
-  files,
-  id:string,
-  req: any,
- 
-) {
-
-  const workspace = await WorkSpace.findOne({
-    where: { admin_user_id: req.user.id },
-    attributes: ['id'],
-  });
-  if (!workspace) {
-    throw new HttpException('Workspace not found.', HttpStatus.NOT_FOUND);
-  }
-  input.workspaceId=workspace.id
-  return this.uploadRawData(files,input,req)
-  }
 async generateFirstFlashCard(
   id:string,
   req: any,

@@ -17,42 +17,15 @@ export class FlashcardService {
       ...this.api.authorizationHeader,
     });
   }
-  // generateFirstFlashCardByTempId(data: {
-  //   tempId: string;
-  //   files: FileList | null,
-  //   language:string
-    
-  // }): Observable<any> {
-  //   if (!data.files) {
-  //     throw new Error('No files selected');
-  //   }
-
-  //   const formData = new FormData();
-  //   for (let i = 0; i < data.files.length; i++) {
-  //     formData.append('files', data.files[i]);
-  //   }
-  //   formData.append('language',data.language)
-   
-  //   return this.api.put('/flashcard/generate/'+data.tempId,formData, {
-  //     ...this.api.contentTypeHeader,
-  //     ...this.api.authorizationHeader,
-  //   });
-  // }
-  generateFirstFlashCardByTempId(tempId:string,files: FileList | null,language:string,workspaceId?:number): Observable<any> {
-    if (!files) {
-      throw new Error('No files selected');
-    }
-
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
-    formData.append('language',language)
-    formData.append('workspaceId',workspaceId?.toString() || '')
-    return this.api.put('/flashcard/generate/'+tempId, formData, {
+  generateFirstFlashCardByTempId(data: {
+    tempId: string;
+  }): Observable<any> {
+    return this.api.put('/flashcard/generate/'+data.tempId,null, {
+      ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
     });
   }
+
   generateFirstFlashCard(data: {
     tempId: string|null;
   }): Observable<any> {

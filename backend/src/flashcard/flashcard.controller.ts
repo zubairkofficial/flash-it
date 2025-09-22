@@ -31,15 +31,11 @@ export class FlashcardController {
   
   @Put('generate/:id')
   @UseGuards(JwtAuthGuard)
- 
-  @UseInterceptors(FilesInterceptor('files'))
   async generateFirstFlashCard(
-    @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('id') id:string,
-    @Body() input:any,
     @Req() req: any,
   ) {
-    return this.flashCardService.generateFlashCards(input,files,id, req);
+    return this.flashCardService.generateFirstFlashCard(id, req, null);
   }
 
   @Post('upload-text')

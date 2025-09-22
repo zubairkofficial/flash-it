@@ -33,7 +33,6 @@
     "@tailwindcss/postcss": "^4.1.11",
     "@wlucha/ng-country-select": "^3.0.1",
     "flag-icons": "^7.5.0",
-    "jspdf": "^3.0.2",
     "notyf": "^3.10.0",
     "pdfjs-dist": "^5.4.149",
     "postcss": "^8.5.6",
