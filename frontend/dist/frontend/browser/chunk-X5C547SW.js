@@ -1,0 +1,1 @@
+import{Ta as m,Va as e,Wa as n,b as t,ja as r,p as i}from"./chunk-XQULBGYC.js";import"./chunk-FDERIQAA.js";var f=class o{static \u0275fac=function(p){return new(p||o)};static \u0275mod=i({type:o});static \u0275inj=t({imports:[r,n,e,m]})};export{f as AuthModule};
