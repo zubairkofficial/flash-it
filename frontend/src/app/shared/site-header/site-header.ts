@@ -9,17 +9,18 @@ import { UiService } from '../ui/ui.service';
   standalone: true,
   imports: [CommonModule, RouterLink, MatIconModule],
   templateUrl: './site-header.html',
-  styleUrl: './site-header.css'
+  styleUrl: './site-header.css',
 })
-export class SiteHeader implements OnInit { // 👈 Implement OnInit
+export class SiteHeader implements OnInit {
   @Input() credits: number | null = null;
-  userData: { name?: string } | null = null; // 👈 Type safety
+  userData: { name?: string } | null = null;
 
   constructor(public ui: UiService) {}
 
   ngOnInit(): void {
-    const user = localStorage.getItem("userData");
-    this.userData = user ? JSON.parse(user) : null;
+    const user = localStorage.getItem('userData');
+    const parsedUser = user ? JSON.parse(user) : null;
+    this.userData = parsedUser?.dataValues ?? parsedUser;
   }
 
   toggleMenu(): void {

@@ -1,30 +1,46 @@
-<header class="w-full md:w-4/5 md:ml-auto border-b border-gray-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 ">
-    <div class="w-full px-4 py-3 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <div class="text-primary md:hidden"> <mat-icon class="md:hidden" (click)="toggleMenu()">menu</mat-icon></div>
-          <ng-container *ngIf="credits !== null">
-            <span class="inline-flex items-center text-xs sm:text-sm font-semibold text-primary bg-primary/10 px-4 py-1  rounded-2xl">
-              <img src="/assets/current.svg" alt="not found" class="w-4 h-6 mr-1" />
-              Credits: {{ credits }}
-            </span>
-          </ng-container>
-          
-        </div>
-        <div class="flex items-center gap-2 sm:gap-3  pe-4">
-            
-            <button routerLink="/plans" class="btn btn-primary btn-sm inline-flex items-center text-xs sm:text-sm font-semibold text-white  px-4 py-1  rounded-2xl">Upgrade</button>
-            <div class="flex items-center gap-2 bg-gray-100 px-4 py-3 rounded-4xl shadow-xs">
-              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white shadow bg-[#4E61E51A]">
-                <img src="assets/profile.png" alt="Profile" class="object-cover w-full h-full" />
-              </div>
-              <div class="hidden sm:flex flex-col text-left px-2">
-                <span class="text-sm text-gray-800 font-bold">
-                  {{ userData?.name ?? 'Guest User' }}
-                </span>
-                    <span class="text-xs text-gray-500">User</span>
-              </div>
-            </div>
-
-        </div>
+<header
+  class="w-full md:w-4/5 md:ml-auto border-b border-gray-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70"
+>
+  <div class="w-full px-4 py-3 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2">
+      <div class="text-primary md:hidden">
+        <mat-icon class="md:hidden" (click)="toggleMenu()">menu</mat-icon>
+      </div>
+      <ng-container *ngIf="credits !== null">
+        <span
+          class="inline-flex items-center text-xs sm:text-sm font-semibold text-primary bg-primary/10 px-4 py-1 rounded-2xl"
+        >
+          <img src="/assets/current.svg" alt="not found" class="w-4 h-6 mr-1" />
+          Credits: {{ credits }}
+        </span>
+      </ng-container>
     </div>
+    <div class="flex items-center gap-2 sm:gap-3 pe-4">
+      <button
+        routerLink="/plans"
+        class="btn btn-primary btn-sm inline-flex items-center text-xs sm:text-sm font-semibold text-white px-4 py-1 rounded-2xl"
+      >
+        Upgrade
+      </button>
+      <div
+        class="flex items-center gap-2 bg-gray-100 px-4 py-3 rounded-4xl shadow-xs"
+      >
+        <div
+          class="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-white shadow bg-[#4E61E51A]"
+        >
+          <img
+            src="assets/profile.png"
+            alt="Profile"
+            class="object-cover w-full h-full"
+          />
+        </div>
+        <div class="hidden sm:flex flex-col text-left px-2">
+          <span class="text-sm text-gray-800 font-bold">
+            {{ userData?.name ?? "Guest User" }}
+          </span>
+          <span class="text-xs text-gray-500">User</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>

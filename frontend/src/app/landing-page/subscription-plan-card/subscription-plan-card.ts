@@ -11,7 +11,7 @@ import { PlanService } from '../../../services/plan/plan';
 @Component({
   selector: 'app-subscription-plan-card',
   imports: [ButtomOutlined],
-  providers: [Api, AuthService, FlashcardService,PlanService],
+  providers: [Api, AuthService, FlashcardService, PlanService],
   templateUrl: './subscription-plan-card.html',
   styleUrl: './subscription-plan-card.css',
 })
@@ -22,55 +22,60 @@ export class SubscriptionPlanCard {
 
   @Input() availablePlan!: {
     id: number;
-    subscriptionType:SUBSCRIPTION_TYPE,
+    subscriptionType: SUBSCRIPTION_TYPE;
     title: string;
     description: string;
     price: number;
     features: string[];
   };
 
-  constructor( private router: Router, private route: ActivatedRoute, private flashcardService: FlashcardService,private planService:PlanService) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private flashcardService: FlashcardService,
+    private planService: PlanService
+  ) {}
   async ngOnInit() {
     this.route.queryParamMap.subscribe((params) => {
       const tempId = params.get('temporary_flashcard_id');
-     this.temporary_flashcard_id=tempId
-      console.log("temId",tempId)
-    }
-    )}
+      this.temporary_flashcard_id = tempId;
+      console.log('temId', tempId);
+    });
+  }
 
   onClickPaymentPage(availablePlan: any) {
-   
-    if(availablePlan.subscriptionType==='free'){
-      this.isLoading=true
-      this.planService.creatPlan({tempId: this.temporary_flashcard_id,subscriptionType:availablePlan.subscriptionType}).subscribe({
+    if (availablePlan.subscriptionType === 'free') {
+      this.isLoading = true;
+      this.planService
+        .creatPlan({
+          tempId: this.temporary_flashcard_id,
+          subscriptionType: availablePlan.subscriptionType,
+        })
+        .subscribe({
           next: (res) => {
             this.isLoading = false;
-            localStorage.setItem('tempId',this.temporary_flashcard_id)
-            notyf.success('enjoy free plan')
-            this.router.navigate([`/uploaded-file`],
-              {
-                queryParams: {
-                  workspaceId: res.data.workspaceId
-                }
-              }
-
-            );
+            localStorage.setItem('tempId', this.temporary_flashcard_id);
+            notyf.success('enjoy free plan');
+            this.router.navigate([`/uploaded-file`], {
+              queryParams: {
+                workspaceId: res.data.workspaceId,
+              },
+            });
           },
           error: (err) => {
             this.isLoading = false;
             this.errorMessage = err?.error?.message || 'Payment failed.';
           },
         });
-      
-    }
-    else{
-      this.temporary_flashcard_id &&  localStorage.setItem('tempId',this.temporary_flashcard_id)
+    } else {
+      this.temporary_flashcard_id &&
+        localStorage.setItem('tempId', this.temporary_flashcard_id);
       this.router.navigate(['/payment/card'], {
-      queryParams: {
-        subscriptionType:availablePlan.subscriptionType,
-        tempId:this.temporary_flashcard_id
-      },
-    });}
-
+        queryParams: {
+          subscriptionType: availablePlan.subscriptionType,
+          tempId: this.temporary_flashcard_id,
+        },
+      });
+    }
   }
 }

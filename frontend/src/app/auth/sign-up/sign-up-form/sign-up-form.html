@@ -1,53 +1,93 @@
 <!-- Page Container -->
-<div class="flex w-full min-h-screen items-center justify-center bg-transparent px-4">
-    <!-- Sign-Up Card -->
-    <div class="w-full max-w-xl flex flex-col sm:mt-6 ">
-        <!-- Welcome Message -->
-        <div class="text-start">
-            <h1 class="font-nunito text-black font-bold leading-snug text-[clamp(16px,2vw,48px)]">
-                Hey, Welcome
-            </h1>
-            <p class=" text-start font-nunito font-normal text-base text-text-secondary leading-relaxed">
-                We are very happy to see you
-            </p>
-        </div>
+<div class="flex w-full items-center justify-center bg-transparent px-4 py-20">
+  <!-- Sign-Up Card -->
+  <div class="w-full max-w-2xl flex flex-col">
+    <!-- Welcome Message -->
+    <div class="text-start">
+      <h1
+        class="font-nunito text-black font-bold leading-snug text-[clamp(16px,2vw,48px)]"
+      >
+        Hey, Welcome
+      </h1>
+      <p
+        class="text-start font-nunito font-normal text-base text-text-secondary leading-relaxed"
+      >
+        We are very happy to see you
+      </p>
+    </div>
 
-        <!-- Sign-Up Form -->
-        <div class="w-full flex flex-col">
-            <form class="flex flex-col gap-1 w-full" [formGroup]="registerForm">
-                <app-input-with-label label="Username" type="text" placeholder="Enter your username" formControlName="name" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
+    <!-- Sign-Up Form -->
+    <div class="w-full flex flex-col">
+      <form class="flex flex-col gap-1 w-full" [formGroup]="registerForm">
+        <app-input-with-label
+          label="Username"
+          type="text"
+          placeholder="Enter your username"
+          formControlName="name"
+          styles="px-3 py-3 h-[45px] w-full"
+        ></app-input-with-label>
 
-                <app-input-with-label label="Email" type="email" placeholder="Enter your email" formControlName="email" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
+        <app-input-with-label
+          label="Email"
+          type="email"
+          placeholder="Enter your email"
+          formControlName="email"
+          styles="px-3 py-3 h-[45px] w-full"
+        ></app-input-with-label>
 
-                <app-input-with-label type="password" label="Password" placeholder="Enter your password" formControlName="password" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
+        <app-input-with-label
+          type="password"
+          label="Password"
+          placeholder="Enter your password"
+          formControlName="password"
+          styles="px-3 py-3 h-[45px] w-full"
+        ></app-input-with-label>
 
-                <app-input-with-label type="password" label="Confirm Password" placeholder="Enter password again" formControlName="confirmPassword" styles="px-3 py-3 h-[45px] w-full"></app-input-with-label>
+        <app-input-with-label
+          type="password"
+          label="Confirm Password"
+          placeholder="Enter password again"
+          formControlName="confirmPassword"
+          styles="px-3 py-3 h-[45px] w-full"
+        ></app-input-with-label>
 
+        <app-buttom-primary
+          (click)="submit()"
+          [isLoading]="isLoading"
+          type="submit"
+          text="Sign Up"
+          styles="w-full h-[45px] mt-2"
+        ></app-buttom-primary>
+      </form>
 
-                <app-buttom-primary (click)="submit()" [isLoading]="isLoading" type="submit" text="Sign Up" styles="w-full h-[45px]"></app-buttom-primary>
-            </form>
-
-            <!-- Divider -->
-            <!-- <div class="flex items-center justify-center gap-4">
+      <!-- Divider -->
+      <!-- <div class="flex items-center justify-center gap-4">
                 <div class="flex-grow h-[1px] bg-black opacity-30"></div>
                 <span class="text-text-secondary text-sm">Or</span>
                 <div class="flex-grow h-[1px] bg-black opacity-30"></div>
             </div> -->
 
-            <!-- Google Login -->
-            <!-- <app-buttom-logo-text (click)="submit()" text="Login With Google" styles="flex w-full h-[45px]"></app-buttom-logo-text> -->
+      <!-- Google Login -->
+      <!-- <app-buttom-logo-text (click)="submit()" text="Login With Google" styles="flex w-full h-[45px]"></app-buttom-logo-text> -->
 
-            <!-- Navigation to Login -->
-            <div class="text-center text-sm mt-2">
-                Already have an account?
-                <span class="text-primary font-semibold cursor-pointer" (click)="navigate('auth/login')">
+      <!-- Navigation to Login -->
+      <div class="text-center text-sm mt-2">
+        Already have an account?
+        <span
+          class="text-primary font-semibold cursor-pointer"
+          (click)="navigate('auth/login')"
+        >
           Sign in here
         </span>
-                <div class="mt-4">
-                    <p style="color: #AEAEAE;">Smarter study tools for individuals and teams.</p>
-                    <p style="color: #AEAEAE;">Upload a file or paste text we’ll do the rest.</p>
-                </div>
-            </div>
+        <div class="mt-4">
+          <p style="color: #aeaeae">
+            Smarter study tools for individuals and teams.
+          </p>
+          <p style="color: #aeaeae">
+            Upload a file or paste text we’ll do the rest.
+          </p>
         </div>
+      </div>
     </div>
+  </div>
 </div>
