@@ -51,6 +51,13 @@ export class FlashcardService {
           HttpStatus.BAD_REQUEST,
         );
       }
+
+      // Delete previous slides
+      await FlashCardSlide.destroy({
+        where: { flashcard_id: flashcardId },
+        transaction,
+      });
+
       // Get workspace info
       let workspaceId = flashCard.workspace_id;
       let userId = req.user.id;

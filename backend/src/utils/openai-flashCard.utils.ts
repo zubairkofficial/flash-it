@@ -11,120 +11,130 @@ export async function generateFlashcardSlides(
   planType: SUBSCRIPTION_TYPE,
 ) {
   try {
-    const model =
-      planType === SUBSCRIPTION_TYPE.FREE ? 'gpt-3.5-turbo' : 'gpt-4o';
+    const model = planType === SUBSCRIPTION_TYPE.FREE ? 'gpt-3.5-turbo' : 'gpt-4o';
     const maxTokens = MODEL_TOKEN_LIMITS[model] ?? 16000;
 
-    const prompt = `
-    You are an expert educational content designer specializing in creating structured flashcards from various types of content.
+    // 1. Get headings
+    const headingsPrompt = `Extract flashcard headings from the following text. Return a JSON array of strings, each string is a heading. Only return valid JSON.
+    Text:
+    """
+    ${text}
+    """
+    Output example:
+    ["Heading 1", "Heading 2", "Heading 3"]`;
 
-    # TASK
-    Generate flashcard slides in three distinct levels of detail (Concise, Standard, Detailed) based on the input text.
-
-    # REQUIREMENTS
-   1. All three types must cover the same topics with identical titles
-    2. Each category must contain exactly the same number of slides (10-50)
-    3. No duplicate slides within the same category
-    4. Content must be in ${language}
-    5. Structure must follow this exact JSON format:
-    
-    {
-      "concise": [
-        { "title": "Title 1", "text": "Very brief text (5-15 words)" },
-        { "title": "Title 2", "text": "Very brief text (5-15 words)" }
-    
-      ],
-      "standard": [
-        { "title": "Title 1", "text": "Clear explanation (50-80 words)" },
-        { "title": "Title 2", "text": "Clear explanation (50-80 words)" }
-      ],
-      "detailed": [
-        { "title": "Title 1", "text": "Comprehensive explanation with examples (100-200 words)" },
-        { "title": "Title 2", "text": "Comprehensive explanation with examples (100-200 words)" }
-      ]
-    }
-
-    # CONTENT GUIDELINES
-   - CONCISE: Very brief, just the essential point (to the point) in plain language
-   - STANDARD: Complete explanation covering the core concept (1 paragraph)
-   - DETAILED: In-depth explanation with examples, background, or real-world applications (3-4 paragraphs)
-
-    # LANGUAGE REQUIREMENT
-    - All titles and content must be in ${language}
-    - Do not include any text in other languages
-    
-    # ADDITIONAL CONSIDERATIONS
-    - Ensure content is suitable for team sharing
-    - Structure content to be easily editable by users
-    - Make content export-friendly for PDF, PPT, and JSON formats
-    - Create titles that would work well for search/filter functionality
-    
-    # INPUT TEXT:
-    """${text}"""
-    
-    # OUTPUT:
-    Return ONLY a valid JSON object in the specified format with no additional commentary.
-    `;
-
-    const estimatedPromptTokens = estimateTokens(prompt);
-    const safetyBuffer = 1000; // Leave room for the response
-    if (estimatedPromptTokens + safetyBuffer > maxTokens) {
-      throw new Error(
-        `Input is too long. Please shorten your text. Estimated: ${estimatedPromptTokens} tokens, Model limit: ${maxTokens}`,
-      );
-    }
-
-    const response = await openai.chat.completions.create({
-      model: planType === SUBSCRIPTION_TYPE.FREE ? 'gpt-3.5-turbo' : 'gpt-4o', // Consider upgrading to GPT-4 for better content structuring
+    const headingsResponse = await openai.chat.completions.create({
+      model,
       messages: [
-        {
-          role: 'system',
-          content:
-            'You are a helpful assistant that creates educational flashcards. Always respond with valid JSON only.',
-        },
-        { role: 'user', content: prompt },
+        { role: 'system', content: 'You are a helpful assistant. Only return valid JSON.' },
+        { role: 'user', content: headingsPrompt },
       ],
-      // max_tokens: 4000,
       temperature: 0.7,
     });
-
-    console.log('Flashcard generation response:', response);
-
-    // Validate and parse the response
-    let content = response.choices[0].message.content?.trim() ?? '';
-
-    // Remove code block formatting if present
-    if (content.startsWith('```')) {
-      content = content.replace(/^```(?:json)?\s*/, '').replace(/```$/, '');
+    let headingsContent = headingsResponse.choices[0].message.content?.trim() ?? '';
+    if (headingsContent.startsWith('```')) {
+      headingsContent = headingsContent.replace(/^```(?:json)?\s*/, '').replace(/```$/, '');
     }
-
-    let parsedResponse;
+    let headings;
     try {
-      parsedResponse = JSON.parse(content);
-    } catch (parseErr) {
-      console.error('JSON parsing failed. Raw response:', content);
-      throw new Error('Failed to parse JSON from OpenAI response.');
+      headings = JSON.parse(headingsContent);
+    } catch (err) {
+      throw new Error('Failed to parse headings JSON: ' + headingsContent);
     }
 
-    // Additional validation to ensure same number of slides
-    const conciseCount = parsedResponse.concise.length;
-    const standardCount = parsedResponse.standard.length;
-    const detailedCount = parsedResponse.detailed.length;
+    // 2. Generate concise flashcards
+    const concisePrompt = `For each heading below, generate a concise flashcard (5-15 words). Return an array of objects: [{ "title": heading, "text": conciseText }].
+    Headings: ${JSON.stringify(headings)}
+    Text:
+    """
+    ${text}
+    """
+    Output example:
+    [ { "title": "Heading 1", "text": "Very brief text (5-15 words)" }, ... ]`;
 
-    if (conciseCount !== standardCount || standardCount !== detailedCount) {
-      console.warn('Flashcard categories have different numbers of slides');
+    const conciseResponse = await openai.chat.completions.create({
+      model,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant. Only return valid JSON.' },
+        { role: 'user', content: concisePrompt },
+      ],
+      temperature: 0.7,
+    });
+    let conciseContent = conciseResponse.choices[0].message.content?.trim() ?? '';
+    if (conciseContent.startsWith('```')) {
+      conciseContent = conciseContent.replace(/^```(?:json)?\s*/, '').replace(/```$/, '');
+    }
+    let concise;
+    try {
+      concise = JSON.parse(conciseContent);
+    } catch (err) {
+      throw new Error('Failed to parse concise JSON: ' + conciseContent);
     }
 
-    // Validate that concise slides have empty text
-    // for (const slide of parsedResponse.concise) {
-    //   if (slide.text !== "") {
-    //     console.warn(`Concise slide "${slide.title}" has non-empty text: "${slide.text}"`);
-    //     // Force empty text for concise slides
-    //     slide.text = "";
-    //   }
-    // }
+    // 3. Generate standard flashcards
+    const standardPrompt = `For each heading below, generate a standard flashcard (50-80 words). Return an array of objects: [{ "title": heading, "text": standardText }].
+    Headings: ${JSON.stringify(headings)}
+    Text:
+    """
+    ${text}
+    """
+    Output example:
+    [ { "title": "Heading 1", "text": "Clear explanation (50-80 words)" }, ... ]`;
 
-    return parsedResponse;
+    const standardResponse = await openai.chat.completions.create({
+      model,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant. Only return valid JSON.' },
+        { role: 'user', content: standardPrompt },
+      ],
+      temperature: 0.7,
+    });
+    let standardContent = standardResponse.choices[0].message.content?.trim() ?? '';
+    if (standardContent.startsWith('```')) {
+      standardContent = standardContent.replace(/^```(?:json)?\s*/, '').replace(/```$/, '');
+    }
+    let standard;
+    try {
+      standard = JSON.parse(standardContent);
+    } catch (err) {
+      throw new Error('Failed to parse standard JSON: ' + standardContent);
+    }
+
+    // 4. Generate detailed flashcards
+    const detailedPrompt = `For each heading below, generate a detailed flashcard (100-200 words, with examples, background, or real-world applications). Return an array of objects: [{ "title": heading, "text": detailedText }].
+    Headings: ${JSON.stringify(headings)}
+    Text:
+    """
+    ${text}
+    """
+    Output example:
+    [ { "title": "Heading 1", "text": "Comprehensive explanation with examples (100-200 words)" }, ... ]`;
+
+    const detailedResponse = await openai.chat.completions.create({
+      model,
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant. Only return valid JSON.' },
+        { role: 'user', content: detailedPrompt },
+      ],
+      temperature: 0.7,
+    });
+    let detailedContent = detailedResponse.choices[0].message.content?.trim() ?? '';
+    if (detailedContent.startsWith('```')) {
+      detailedContent = detailedContent.replace(/^```(?:json)?\s*/, '').replace(/```$/, '');
+    }
+    let detailed;
+    try {
+      detailed = JSON.parse(detailedContent);
+    } catch (err) {
+      throw new Error('Failed to parse detailed JSON: ' + detailedContent);
+    }
+
+    // Return in the same format as before
+    return {
+      concise,
+      standard,
+      detailed,
+    };
   } catch (error) {
     console.error('Error generating flashcard slides:', error);
     throw new Error('Failed to generate flashcards: ' + error.message);
