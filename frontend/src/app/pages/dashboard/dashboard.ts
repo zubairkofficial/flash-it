@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WorkspaceService, WorkspaceResponseItem, JoinedWorkspace } from '../../../services/workspace/workspace';
+import {
+  WorkspaceService,
+  WorkspaceResponseItem,
+  JoinedWorkspace,
+} from '../../../services/workspace/workspace';
 import { Router } from '@angular/router';
 import { WorkSpaceModal } from '../../components/workspace-modal/workspace-modal';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,10 +18,19 @@ import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,WorkSpaceModal,MatIconModule,ConfirmModal,SignedInSidebar,SiteHeader,FilterBar,Pagination],
-  providers:[WorkspaceService,Api],
+  imports: [
+    CommonModule,
+    WorkSpaceModal,
+    MatIconModule,
+    ConfirmModal,
+    SignedInSidebar,
+    SiteHeader,
+    FilterBar,
+    Pagination,
+  ],
+  providers: [WorkspaceService, Api],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
   public isLoading: boolean = false;
@@ -27,38 +40,52 @@ export class Dashboard implements OnInit {
   public query: string = '';
   public page: number = 1;
   public pageSize: number = 5;
-  public isOpenWorkspace:boolean  = false;
+  public isOpenWorkspace: boolean = false;
   public isConfirmModalOpen: boolean = false;
   public confirmModalOpen: boolean = false;
   public workspaceId: number = 0;
   public credits: number = 0;
-  public firstUser:WorkspaceResponseItem |null = null;
+  public firstUser: WorkspaceResponseItem | null = null;
   public editingWorkspace: JoinedWorkspace | null = null;
-
-  constructor(private workspaceService: WorkspaceService, private router: Router) {}
+  public userData: { name?: string } | null = null;
+  constructor(
+    private workspaceService: WorkspaceService,
+    private router: Router
+  ) {}
 
   public ngOnInit(): void {
+    const user = localStorage.getItem('userData');
+    const parsedUser = user ? JSON.parse(user) : null;
+    this.userData = parsedUser?.dataValues ?? parsedUser;
     this.fetchWorkspaces();
   }
 
   private fetchWorkspaces(): void {
     this.isLoading = true;
     this.errorMessage = null;
-    this.workspaceService.getWorkspaces({ page: this.page, pageSize: this.pageSize, q: this.query }).subscribe({
-      next: (data: WorkspaceResponseItem[]) => {
-        const firstUser = Array.isArray(data) && data.length > 0 ? data[0] : null;
-        this.workspaces = firstUser?.joined_workspaces ?? [];
-        this.applyFilter();
+    this.workspaceService
+      .getWorkspaces({
+        page: this.page,
+        pageSize: this.pageSize,
+        q: this.query,
+      })
+      .subscribe({
+        next: (data: WorkspaceResponseItem[]) => {
+          const firstUser =
+            Array.isArray(data) && data.length > 0 ? data[0] : null;
+          this.workspaces = firstUser?.joined_workspaces ?? [];
+          this.applyFilter();
 
-      this.firstUser=firstUser
-      this.credits=data[0]?.credits??0
-      this.isLoading = false;
-      },
-      error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Failed to load workspaces.';
-        this.isLoading = false;
-      }
-    });
+          this.firstUser = firstUser;
+          this.credits = data[0]?.credits ?? 0;
+          this.isLoading = false;
+        },
+        error: (err: any) => {
+          this.errorMessage =
+            err?.error?.message || 'Failed to load workspaces.';
+          this.isLoading = false;
+        },
+      });
   }
 
   public openWorkspace(id: number): void {
@@ -72,10 +99,8 @@ export class Dashboard implements OnInit {
     this.isConfirmModalOpen = true;
   }
 
-
   public onCancelSave(): void {
     this.isConfirmModalOpen = false;
-
   }
 
   public onFilterChange(q: string): void {
@@ -89,9 +114,10 @@ export class Dashboard implements OnInit {
     if (!this.query) {
       this.filtered = [...this.workspaces];
     } else {
-      this.filtered = this.workspaces.filter(w =>
-        (w.name || '').toLowerCase().includes(this.query) ||
-        String(w.id).includes(this.query)
+      this.filtered = this.workspaces.filter(
+        (w) =>
+          (w.name || '').toLowerCase().includes(this.query) ||
+          String(w.id).includes(this.query)
       );
     }
   }
@@ -101,81 +127,91 @@ export class Dashboard implements OnInit {
     return this.filtered.slice(start, start + this.pageSize);
   }
 
-  public onPageChange(p: number): void { this.page = p; this.fetchWorkspaces(); }
-  public onPageSizeChange(s: number): void { this.pageSize = s; this.page = 1; this.fetchWorkspaces(); }
+  public onPageChange(p: number): void {
+    this.page = p;
+    this.fetchWorkspaces();
+  }
+  public onPageSizeChange(s: number): void {
+    this.pageSize = s;
+    this.page = 1;
+    this.fetchWorkspaces();
+  }
 
   public editWorkspace(ws: JoinedWorkspace): void {
     this.editingWorkspace = ws;
-    console.log("editingWorkspace",this.editingWorkspace)
+    console.log('editingWorkspace', this.editingWorkspace);
     this.isConfirmModalOpen = true;
   }
-  public deleteWorkspace(id:number): void {
-
-    this.workspaceId=id;
+  public deleteWorkspace(id: number): void {
+    this.workspaceId = id;
     this.confirmModalOpen = true;
-    console.log("editingWorkspace",id)
-
-
+    console.log('editingWorkspace', id);
   }
 
   public onConfirmDelete(): void {
-this.isLoading = true;
+    this.isLoading = true;
 
-this.confirmModalOpen=false
-this.workspaceService.deleteWorkspace(this.workspaceId).subscribe({
-  next: () => {
-    this.fetchWorkspaces();
-  },
-  error: (err: any) => {
-    this.errorMessage = err?.error?.message || 'Failed to delete workspace.';
-    this.isLoading = false;
-  }
-});
-
+    this.confirmModalOpen = false;
+    this.workspaceService.deleteWorkspace(this.workspaceId).subscribe({
+      next: () => {
+        this.fetchWorkspaces();
+      },
+      error: (err: any) => {
+        this.errorMessage =
+          err?.error?.message || 'Failed to delete workspace.';
+        this.isLoading = false;
+      },
+    });
   }
 
   public onCancelDelete(): void {
-    this.confirmModalOpen=false
-
+    this.confirmModalOpen = false;
   }
 
-  public onConfirmSave(data: { name: string; role: string,credits:number }): void {
-console.log("data.......",data)
+  public onConfirmSave(data: {
+    name: string;
+    role: string;
+    credits: number;
+  }): void {
+    console.log('data.......', data);
     this.isConfirmModalOpen = false;
     const name = (data.name || '').trim();
     const role = (data.role || '').trim();
-    const credits = (data.credits || 0);
+    const credits = data.credits || 0;
     if (!name || !role) return;
     this.isLoading = true;
     if (this.editingWorkspace) {
-      this.workspaceService.updateWorkspace(this.editingWorkspace.id, { name, role,credits }).subscribe({
-        next: () => {
-          this.fetchWorkspaces();
-          this.isLoading = false;
-          notyf.success("update successfully")
-        },
-        error: (err: any) => {
-          this.errorMessage = err?.error?.message || 'Failed to update workspace.';
-          this.isLoading = false;
-          notyf.error(err?.error?.message || 'Failed to update workspace.')
-        }
-      });
+      this.workspaceService
+        .updateWorkspace(this.editingWorkspace.id, { name, role, credits })
+        .subscribe({
+          next: () => {
+            this.fetchWorkspaces();
+            this.isLoading = false;
+            notyf.success('update successfully');
+          },
+          error: (err: any) => {
+            this.errorMessage =
+              err?.error?.message || 'Failed to update workspace.';
+            this.isLoading = false;
+            notyf.error(err?.error?.message || 'Failed to update workspace.');
+          },
+        });
     } else {
       this.workspaceService.createWorkspace(data).subscribe({
         next: () => {
-          notyf.success("create workspace successfully")
+          notyf.success('create workspace successfully');
           this.fetchWorkspaces();
           this.isLoading = false;
         },
         error: (err: any) => {
-          this.errorMessage = err?.error?.message || 'Failed to create workspace.';
+          this.errorMessage =
+            err?.error?.message || 'Failed to create workspace.';
           this.isLoading = false;
           this.fetchWorkspaces();
           this.isConfirmModalOpen = false;
-          notyf.error(err?.error?.message || 'Failed to create workspace.')
-        }
+          notyf.error(err?.error?.message || 'Failed to create workspace.');
+        },
       });
     }
   }
-
 }

@@ -1,16 +1,18 @@
-<div class="flex flex-col gap-2  justify-between  p-6 shadow-lg rounded-2xl bg-[#FFFFFF] h-[43rem] overflow-auto">
-    <h2 class="text-3xl font-semibold">
-        {{ availablePlan.title }}
-    </h2>
-    <p class="text-xs text-primary">
-        {{ availablePlan.description }}
-    </p>
-    <p class="text-2xl font-semibold">${{ availablePlan.price }}</p>
-    <hr class="text-[#D9DBE9]" />
-    <p class="text-xs text-black mb-[10px]">Features included:</p>
-    @for (feature of availablePlan.features; track $index) {
-    <div class="flex flex-row gap-2 mb-[10px] items-center">
-        <span class="flex items-center justify-center h-full text-white">
+<div
+  class="flex flex-col gap-2 justify-between p-6 shadow-lg rounded-2xl bg-[#FFFFFF] h-[43rem] overflow-auto"
+>
+  <h2 class="text-3xl font-semibold">
+    {{ availablePlan.title }}
+  </h2>
+  <p class="text-xs text-primary">
+    {{ availablePlan.description }}
+  </p>
+  <p class="text-2xl font-semibold">${{ availablePlan.price }}</p>
+  <hr class="text-[#D9DBE9]" />
+  <p class="text-xs text-black mb-[8px]">Features included:</p>
+  @for (feature of availablePlan.features; track $index) {
+  <div class="flex flex-row gap-2 mb-[10px] items-center">
+    <span class="flex items-center justify-center h-full text-white">
       <svg
         width="19"
         height="19"
@@ -24,8 +26,13 @@
         />
       </svg>
     </span>
-        <span class="text-[#6F6C8F] text-[12px]">{{ feature }}</span>
-    </div>
-    }
-    <app-buttom-outlined text="Get Started" [isLoading]="isLoading" class="mt-[20px]" (click)="onClickPaymentPage(availablePlan)" />
+    <span class="text-[#6F6C8F] text-[12px]">{{ feature }}</span>
+  </div>
+  }
+  <app-buttom-outlined
+    text="Get Started"
+    [isLoading]="isLoading"
+    class="mt-[20px]"
+    (click)="onClickPaymentPage(availablePlan)"
+  />
 </div>

@@ -1,6 +1,11 @@
-
 import { Component, OnInit } from '@angular/core';
-import { loadStripe, Stripe, StripeCardElement } from '@stripe/stripe-js';
+import {
+  loadStripe,
+  Stripe,
+  StripeCardNumberElement,
+  StripeCardExpiryElement,
+  StripeCardCvcElement,
+} from '@stripe/stripe-js';
 import { PaymentService } from '../../services/payment/payment';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,54 +16,73 @@ import { notyf } from '../../utils/notyf.utils';
 @Component({
   selector: 'app-payment-card',
   imports: [CommonModule, FormsModule],
+  standalone: true,
   templateUrl: './payment-card.html',
   styleUrl: './payment-card.css',
 })
 export class PaymentCard implements OnInit {
   public stripe!: Stripe | null;
-  public cardElement!: StripeCardElement;
+  public cardNumber!: StripeCardNumberElement;
+  public cardExpiry!: StripeCardExpiryElement;
+  public cardCvc!: StripeCardCvcElement;
+
   public cardHolderName: string = '';
-  public isLoading: boolean = false;
+  public isLoading = false;
   public errorMessage: string | null = null;
-  public result: any = null;
   public subscriptionType: any = null;
+  public selectedPlan: any = null;
   public amount: any = null;
   public tempId = '';
+  public flashcardId: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private paymentService: PaymentService,
-
     private router: Router
   ) {}
 
   async ngOnInit() {
     this.stripe = await loadStripe(
       'pk_test_51Riao5FYp7fvEyJ724EWSCy2EqzU2YENGevK2zhJFVm3vN1SVatdw9uu3l1EQQojpJZFieTsIU8PY3eYihZEa7VR00Ng5ogJpP'
-    ); // replace with your Stripe public key
+    );
+
     const elements = this.stripe?.elements();
     if (!elements) return;
+
+    // Read query params
     this.route.queryParamMap.subscribe((params) => {
       const type = params.get('subscriptionType');
-       this.tempId = params.get('tempId')??"";
-        if (type === 'free') {
+      this.tempId = params.get('temp_id') ?? '';
+      this.flashcardId = params.get('flashcard_id') ?? '';
+      if (type === 'free') {
         this.router.navigate(['dashboard']);
-
       }
       this.subscriptionType = type;
     });
 
+    // Match price plan
     const matchedPlan = new PricePlanSection().plans.find(
       (plan) => plan.subscriptionType === this.subscriptionType
     );
+    this.selectedPlan = matchedPlan;
     this.amount = matchedPlan?.price;
-    this.cardElement = elements.create('card');
-    this.cardElement.mount('#card-element');
+
+    // Create individual elements
+    this.cardNumber = elements.create('cardNumber');
+    this.cardNumber.mount('#card-number');
+
+    this.cardExpiry = elements.create('cardExpiry');
+    this.cardExpiry.mount('#card-expiry');
+
+    this.cardCvc = elements.create('cardCvc');
+    this.cardCvc.mount('#card-cvc');
   }
 
   async onSubmit() {
     this.isLoading = true;
     this.errorMessage = null;
-   const { token, error } = await this.stripe!.createToken(this.cardElement, {
+
+    const { token, error } = await this.stripe!.createToken(this.cardNumber, {
       name: this.cardHolderName,
     });
 
@@ -70,27 +94,38 @@ export class PaymentCard implements OnInit {
 
     console.log('Token received:', token);
 
-    // Send token.id to your backend
     this.paymentService
       .createCardPayment({
         token: token.id,
         subscriptionType: this.subscriptionType,
         price: this.amount,
-        tempId:this.tempId
+        tempId: this.tempId,
       })
       .subscribe({
         next: (res) => {
           this.isLoading = false;
-          console.log("res",res)
           notyf.success('Payment successful');
-          if(this.tempId) {this.router.navigate([`/uploaded-file`])}else{this.router.navigate(['dashboard'])}
-        
-          // this.router.navigate(['dashboard']);
+          if (this.tempId) {
+            console.log(
+              'moving to uploiad file payment card',
+              this.tempId,
+              this.flashcardId
+            );
+            this.router.navigate([`/uploaded-file`], {
+              queryParams: {
+                flashcard_id: this.flashcardId,
+                temp_id: this.tempId,
+                show: true,
+              },
+            });
+          } else {
+            this.router.navigate(['dashboard']);
+          }
         },
         error: (err) => {
           this.isLoading = false;
           this.errorMessage = err?.error?.message || 'Payment failed.';
-          notyf.error(`${this.errorMessage}`)
+          notyf.error(`${this.errorMessage}`);
         },
       });
   }

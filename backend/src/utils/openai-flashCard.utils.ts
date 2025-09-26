@@ -1,16 +1,18 @@
-
-
 import { OpenAI } from 'openai';
 import { SUBSCRIPTION_TYPE } from './subscription.enum';
 
 const openai = new OpenAI({
-  apiKey: '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',
+  apiKey: process.env.OPEN_AI_API,
 });
 
-export async function generateFlashcardSlides(text: string, language: string,planType:SUBSCRIPTION_TYPE) {
+export async function generateFlashcardSlides(
+  text: string,
+  language: string,
+  planType: SUBSCRIPTION_TYPE,
+) {
   try {
-
-    const model = planType === SUBSCRIPTION_TYPE.FREE ? 'gpt-3.5-turbo' : 'gpt-4o';
+    const model =
+      planType === SUBSCRIPTION_TYPE.FREE ? 'gpt-3.5-turbo' : 'gpt-4o';
     const maxTokens = MODEL_TOKEN_LIMITS[model] ?? 16000;
 
     const prompt = `
@@ -64,19 +66,21 @@ export async function generateFlashcardSlides(text: string, language: string,pla
     Return ONLY a valid JSON object in the specified format with no additional commentary.
     `;
 
-
     const estimatedPromptTokens = estimateTokens(prompt);
     const safetyBuffer = 1000; // Leave room for the response
     if (estimatedPromptTokens + safetyBuffer > maxTokens) {
-      throw new Error(`Input is too long. Please shorten your text. Estimated: ${estimatedPromptTokens} tokens, Model limit: ${maxTokens}`);
+      throw new Error(
+        `Input is too long. Please shorten your text. Estimated: ${estimatedPromptTokens} tokens, Model limit: ${maxTokens}`,
+      );
     }
 
     const response = await openai.chat.completions.create({
-      model: planType===SUBSCRIPTION_TYPE.FREE?'gpt-3.5-turbo':'gpt-4o', // Consider upgrading to GPT-4 for better content structuring
+      model: planType === SUBSCRIPTION_TYPE.FREE ? 'gpt-3.5-turbo' : 'gpt-4o', // Consider upgrading to GPT-4 for better content structuring
       messages: [
-        { 
-          role: 'system', 
-         content: 'You are a helpful assistant that creates educational flashcards. Always respond with valid JSON only.' 
+        {
+          role: 'system',
+          content:
+            'You are a helpful assistant that creates educational flashcards. Always respond with valid JSON only.',
         },
         { role: 'user', content: prompt },
       ],
@@ -84,7 +88,7 @@ export async function generateFlashcardSlides(text: string, language: string,pla
       temperature: 0.7,
     });
 
-    console.log("Flashcard generation response:", response);
+    console.log('Flashcard generation response:', response);
 
     // Validate and parse the response
     let content = response.choices[0].message.content?.trim() ?? '';
@@ -98,19 +102,19 @@ export async function generateFlashcardSlides(text: string, language: string,pla
     try {
       parsedResponse = JSON.parse(content);
     } catch (parseErr) {
-      console.error("JSON parsing failed. Raw response:", content);
+      console.error('JSON parsing failed. Raw response:', content);
       throw new Error('Failed to parse JSON from OpenAI response.');
     }
-    
+
     // Additional validation to ensure same number of slides
     const conciseCount = parsedResponse.concise.length;
     const standardCount = parsedResponse.standard.length;
     const detailedCount = parsedResponse.detailed.length;
-    
+
     if (conciseCount !== standardCount || standardCount !== detailedCount) {
       console.warn('Flashcard categories have different numbers of slides');
     }
-    
+
     // Validate that concise slides have empty text
     // for (const slide of parsedResponse.concise) {
     //   if (slide.text !== "") {
@@ -119,10 +123,10 @@ export async function generateFlashcardSlides(text: string, language: string,pla
     //     slide.text = "";
     //   }
     // }
-    
+
     return parsedResponse;
   } catch (error) {
-    console.error("Error generating flashcard slides:", error);
+    console.error('Error generating flashcard slides:', error);
     throw new Error('Failed to generate flashcards: ' + error.message);
   }
 }
@@ -132,7 +136,7 @@ export const extractJsonBlock = (jsonText: any): string | null => {
   if (typeof jsonText !== 'string' && typeof jsonText === 'object') {
     return JSON.stringify(jsonText);
   }
-  
+
   // If it's not a string, try to convert it
   if (typeof jsonText !== 'string') {
     try {
@@ -167,7 +171,6 @@ export const extractJsonBlock = (jsonText: any): string | null => {
     return null;
   }
 };
-
 
 const MODEL_TOKEN_LIMITS: Record<string, number> = {
   'gpt-3.5-turbo': 16_000,
