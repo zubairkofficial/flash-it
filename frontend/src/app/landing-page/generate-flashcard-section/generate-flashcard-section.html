@@ -1,0 +1,159 @@
+<div
+  class="flex flex-col w-screen min-h-[calc(100vh-100px)] overflow-auto items-center"
+>
+  <div
+    class="flex items-center justify-center w-full h-full py-6 md:py-8 lg:py-10"
+  >
+    <div
+      class="flex flex-col md:flex-row items-stretch md:items-center justify-center rounded-xl w-[95%] md:w-[90%] lg:w-[85%] h-auto md:h-[70%] shadow-lg bg-[#FFFFFF]"
+    >
+      <form
+        [formGroup]="textForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4 w-full md:w-[63%] h-auto md:min-h-[500px] rounded-xl p-4 sm:p-6 md:p-8 lg:p-10"
+      >
+        <div
+          class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between"
+        >
+          <div>
+            <app-button-toggle
+              [availableStates]="availableStates"
+              [(active)]="activeState"
+            ></app-button-toggle>
+          </div>
+          <app-button-primary-dropdown
+            [availableState]="popularLanguageCodes"
+            [(active)]="activeLanguage"
+            [(isOpen)]="isLanguageDropDownOpen"
+            text="Language"
+            (activeChange)="handleSelection($event)"
+          ></app-button-primary-dropdown>
+        </div>
+        <div
+          class="flex gap-1 flex-col w-full min-h-[180px] md:min-h-[240px] lg:min-h-[300px] items-center justify-center bg-[#F3F1ED] border-[#DFDFDF] rounded-xl cursor-pointer overflow-auto"
+        >
+          @if (activeState === 'Documents') {
+          <label
+            class="flex flex-col items-center justify-center cursor-pointer w-full h-full"
+          >
+            @if(selectedFiles.length<=0) {
+            <svg
+              height="49"
+              viewBox="0 0 71 49"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M56.38 21.02C64.0677 21.02 70.3 27.2523 70.3 34.94C70.3 42.6277 64.0677 48.86 56.38 48.86H38.98V32.9014L39.9993 33.9207C41.3582 35.2797 43.5618 35.2797 44.9207 33.9207C46.2797 32.5618 46.2797 30.3582 44.9207 28.9993L37.9607 22.0393C37.2839 21.3624 36.3975 21.0228 35.5101 21.02H35.5H35.4896C35.0215 21.0214 34.5754 21.115 34.1679 21.2841C33.7576 21.454 33.373 21.7056 33.0393 22.0393L26.0793 28.9993C24.7203 30.3582 24.7203 32.5618 26.0793 33.9207C27.4382 35.2797 29.6418 35.2797 31.0007 33.9207L32.02 32.9014V48.86H18.1C8.49027 48.86 0.700012 41.0697 0.700012 31.46C0.700012 22.6462 7.25341 15.3628 15.7534 14.2169C18.575 6.02532 26.3502 0.140015 35.5 0.140015C47.0317 0.140015 56.38 9.4883 56.38 21.02Z"
+                fill="#DED9CE"
+              />
+            </svg>
+            <small class="text-[#8D8D8D] mb-2"
+              >Drag & drop or click to upload PDF files.</small
+            >
+            <input
+              type="file"
+              accept="application/pdf"
+              class="hidden"
+              multiple
+              (change)="onFileSelected($event)"
+            />} @if(selectedFiles.length > 0){
+            <div class="mt-2 text-sm text-[#4A494A] w-full px-4">
+              <p class="font-medium mb-2">Selected files:</p>
+              <div
+                class="max-h-64 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-2"
+              >
+                @for (file of selectedFiles; track file.name; let i = $index) {
+                <div
+                  class="relative flex flex-col items-center justify-center bg-[#FFECE0] w-full h-40 rounded-xl p-3 shadow-sm transition hover:shadow-md"
+                >
+                  <button
+                    type="button"
+                    class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-white bg-[#F50D00] hover:bg-red-700 rounded-full text-sm"
+                    (click)="removeFile(i)"
+                    aria-label="Remove file"
+                  >
+                    ×
+                  </button>
+
+                  <!-- Centered file name -->
+                  <span
+                    class="truncate max-w-full text-center text-base font-medium px-2"
+                    >{{ file.name }}</span
+                  >
+                  <span class="text-xs text-[#6b7280] mt-1">{{
+                    !isBytesSelected
+                      ? formatBytes(file.size)
+                      : formatBytes(file.size)
+                  }}</span>
+                </div>
+                } @if (!showAddMoreFilesButton) {
+                <label
+                  class="relative flex flex-col items-center justify-center w-full h-40 rounded-xl p-3 border-2 border-dashed border-amber-600 text-primary bg-white/60 hover:bg-white transition shadow-sm hover:shadow-md cursor-pointer focus-within:ring-2 focus-within:ring-amber-500"
+                >
+                  <mat-icon class="text-3xl md:text-4xl">add</mat-icon>
+                  <span class="mt-1 text-sm md:text-base font-medium"
+                    >Add more files</span
+                  >
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    class="hidden"
+                    multiple
+                    (change)="onFileSelected($event)"
+                    aria-label="Select additional PDF files"
+                  />
+                </label>
+                } @if (showAddMoreFilesButton) {
+                <button
+                  type="button"
+                  class="w-full h-10 mt-4 rounded-xl bg-primary text-white font-bold shadow hover:bg-primary/90 transition flex items-center justify-center"
+                  [disabled]="isAddMoreFilesLoading"
+                  (click)="navigateToFlashcardDetail()"
+                >
+                  <span
+                    *ngIf="isAddMoreFilesLoading"
+                    class="loader mr-2"
+                  ></span>
+                  @if(isAddMoreFilesLoading){ Loading... }@else{ Add more files
+                  }
+                </button>
+                }
+              </div>
+            </div>
+            }
+          </label>
+          } @if (activeState === 'Text') {
+          <textarea
+            formControlName="text"
+            class="w-full h-[240px] md:h-[280px] lg:h-[320px] p-2 md:p-3 lg:p-4 outline-none border-none resize-none rounded-xl placeholder-black"
+            [placeholder]="'Enter your notes here'"
+          ></textarea>
+          }
+        </div>
+        <div class="mt-2">
+          <app-buttom-primary
+            type="submit"
+            text="Generate Flashcards"
+            [isLoading]="isLoading"
+          />
+        </div>
+      </form>
+      <div
+        id="image-section"
+        class="flex items-center justify-center w-full md:w-[37%] h-56 sm:h-64 md:h-full p-2 md:p-4 rounded-xl"
+      >
+        <img
+          src="assets/flash-card-books.png"
+          alt="hoha"
+          class="h-full md:h-full p-0 object-contain"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="flex h-auto lg:h-[25%] w-full items-center justify-center px-4">
+    <p class="text-2xl sm:text-3xl md:text-4xl text-[#4A494A] text-center">
+      Smart Flashcard is fast, focused and built for real learners
+    </p>
+  </div>
+</div>

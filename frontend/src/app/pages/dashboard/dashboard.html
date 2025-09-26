@@ -1,0 +1,208 @@
+<app-signed-in-sidebar></app-signed-in-sidebar>
+<div
+  class="w-full min-h-screen bg-background text-text-primary overflow-x-hidden"
+>
+  <app-site-header [credits]="credits"></app-site-header>
+
+  <div class="flex flex-col md:flex-row md:w-4/5 md:ml-auto">
+    <div class="flex-1 px-4 py-8 pb-8">
+      <div class="md:me-3">
+        <div
+          class="bg-primary text-white rounded-3xl border-2 border-amber-600 w-full p-4 sm:p-5 md:p-6 flex flex-col lg:flex-row gap-4 lg:gap-6"
+        >
+          <div
+            class="w-full lg:w-[75%] flex flex-col justify-center px-3 sm:px-5 py-2 sm:py-4 relative"
+          >
+            <!-- Image as background -->
+            <img
+              src="assets/group.png"
+              alt=""
+              class="absolute inset-0 w-full h-full object-cover z-[3] opacity-80"
+            />
+            <h1
+              class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal font-nunito z-10"
+            >
+              Welcome back, {{ userData?.name ?? "Guest User" }}
+            </h1>
+            <p class="text-sm md:text-base lg:text-lg mt-3 md:mt-4 z-10">
+              Here’s everything you need to continue learning effectively.
+            </p>
+          </div>
+
+          <div class="w-full lg:w-[25%] flex items-center justify-center">
+            <div
+              class="bg-white rounded-4xl border border-white flex items-center justify-center px-2 py-2 w-fit h-auto md:h-[3rem] lg:h-[3rem]"
+            >
+              <span
+                class="text-[#C3C3C3] font-semibold mr-2 text-xs sm:text-sm md:text-base lg:text-base border-r-2 px-3 font-nunito"
+                >Current Plan</span
+              >
+
+              <span
+                class="text-primary font-bold text-sm md:text-base lg:text-base font-nunito px-3 uppercase"
+                >{{ firstUser?.plan?.plan_type }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex items-start gap-2 sm:gap-3 flex-wrap justify-between sm:justify-end my-3"
+      >
+        <button
+          class="py-2 btn btn-primary btn-sm w-full sm:w-auto"
+          type="button"
+          (click)="handleWorkspace()"
+        >
+          New Workspace
+        </button>
+        <div></div>
+        <div></div>
+      </div>
+      <div
+        class="flex items-center justify-between mb-4 md:mb-6 gap-3 flex-wrap"
+      >
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold font-nunito">
+            Your Workspaces
+          </h2>
+          <p
+            class="text-xs sm:text-sm text-[#A7A7A7] font-nunito font-semibold"
+          >
+            Manage and jump back into your workspaces.
+          </p>
+        </div>
+        <div class="w-full md:w-64">
+          <app-filter-bar
+            size="sm"
+            placeholder="Filter workspaces"
+            [value]="query"
+            (valueChange)="onFilterChange($event)"
+          ></app-filter-bar>
+        </div>
+      </div>
+
+      <div class="text-sm text-text-secondary" *ngIf="isLoading">
+        Loading workspaces...
+      </div>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-3 sm:gap-4 me-3"
+        *ngIf="!isLoading && filtered.length > 0"
+      >
+        <div
+          class="relative rounded-xl border bg-[#FFFFFF] shadow-sm border-gray-200 p-4 hover:shadow-sm transition group"
+          *ngFor="let ws of paged"
+        >
+          <div
+            class="absolute top-3 right-3 hidden sm:flex gap-2 group-hover:flex"
+          >
+            <button
+              class="w-8 h-8 rounded-full border border-amber-600 bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition"
+              title="Edit"
+              type="button"
+              (click)="editWorkspace(ws)"
+            >
+              <mat-icon class="text-inherit">edit</mat-icon>
+            </button>
+            <button
+              class="w-8 h-8 rounded-full border border-amber-600 bg-white text-primary flex items-center justify-center hover:bg-red-600 hover:text-white transition"
+              title="Delete"
+              type="button"
+              (click)="deleteWorkspace(ws.id)"
+            >
+              <mat-icon class="text-inherit">delete</mat-icon>
+            </button>
+          </div>
+          <div class="flex items-center gap-3 mb-3 flex-wrap pr-14">
+            <div
+              class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold"
+            >
+              {{ ws.name.charAt(0) | uppercase }}
+            </div>
+            <div class="min-w-0">
+              <div
+                class="font-semibold truncate max-w-[160px] sm:max-w-[180px]"
+              >
+                {{ ws.name }}
+              </div>
+              <div class="text-xs text-text-secondary">Id #{{ ws.id }}</div>
+            </div>
+            <div class="flex-1"></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+              <div class="flex flex-col justify-center items-center">
+                <div class="text-text-secondary">Credit</div>
+                <div class="font-semibold">{{ ws.credit }}</div>
+              </div>
+              <div class="flex flex-col justify-center">
+                <div class="text-text-secondary">Role</div>
+                <div class="font-semibold uppercase">
+                  {{ ws?.WorkspaceUser?.role || "member" }}
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-sm mb-4"></div>
+          </div>
+          <div class="flex gap-2 flex-wrap justify-end">
+            <button
+              class="btn btn-primary btn-md rounded-md h-[1.7rem] w-full sm:w-auto text-sm"
+              type="button"
+              (click)="openWorkspace(ws.id)"
+            >
+              Open
+            </button>
+          </div>
+        </div>
+
+        <div class="col-span-full" *ngIf="filtered.length === 0">
+          <div
+            class="rounded-xl border border-dashed border-gray-300 p-8 text-center text-text-secondary"
+          >
+            No workspaces yet. Create your first one.
+          </div>
+        </div>
+        <div class="col-span-full mt-2 flex justify-center">
+          <app-pagination
+            size="sm"
+            [page]="page"
+            [pageSize]="pageSize"
+            [total]="filtered.length"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"
+          ></app-pagination>
+        </div>
+        <app-workspace-modal
+          [open]="isConfirmModalOpen"
+          [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'"
+          [message]="
+            editingWorkspace
+              ? 'Update Workspace Name.'
+              : 'Create New Workspace.'
+          "
+          [confirmText]="editingWorkspace ? 'Update' : 'Save'"
+          [cancelText]="'Cancel'"
+          [credits]="+(editingWorkspace?.credit ?? 0)"
+          [initialName]="editingWorkspace?.name || ''"
+          (confirmed)="onConfirmSave($event)"
+          (cancelled)="onCancelSave()"
+          [isLoading]="isLoading"
+        ></app-workspace-modal>
+
+        <app-confirm-modal
+          [open]="confirmModalOpen"
+          [title]="'Remove workspace'"
+          [message]="
+            'Are you sure you want to remove this workspace? This action cannot be undone.'
+          "
+          [confirmText]="'Remove'"
+          [cancelText]="'Cancel'"
+          (confirmed)="onConfirmDelete()"
+          (cancelled)="onCancelDelete()"
+        ></app-confirm-modal>
+      </div>
+    </div>
+  </div>
+</div>

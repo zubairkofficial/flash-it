@@ -1,0 +1,5 @@
+/* styles.css or global styles */
+.StripeElement::placeholder {
+  color: #000 !important; /* Force black */
+  opacity: 1; /* Ensure it doesn't look faded */
+}

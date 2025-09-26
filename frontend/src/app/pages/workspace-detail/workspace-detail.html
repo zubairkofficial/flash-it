@@ -1,0 +1,148 @@
+<app-signed-in-sidebar></app-signed-in-sidebar>
+<div class="w-full min-h-screen bg-background text-text-primary overflow-x-hidden">
+    <app-site-header [credits]="credits"></app-site-header>
+    <div class="flex flex-col md:flex-row md:w-4/5 md:ml-auto">
+       
+        <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
+            <div class="mb-4">
+                <a class="text-primary" href="javascript:history.back()"> <span class="font-lg me-2 font-bold">< </span> Back</a>
+                <h3 class="font-extrabold mt-3 text-lg">Details</h3>
+            </div>
+            <app-generate-flashcard-section [width]="74" [workspaceId]="workspace.id"></app-generate-flashcard-section>
+        </div>
+        <div class="p-3 border border-gray-200 m-3 min-h-96 rounded-2xl w-full">
+          <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
+          <!-- <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div> -->
+           
+          <div *ngIf="!generateFlashCard && !isLoading && !errorMessage && workspace" class="space-y-6 w-full px-4">
+                
+              <div class="flex items-center justify-between">
+                    <div class="mb-4">
+                        <a class="text-primary" href="javascript:history.back()"> <span class="font-lg me-2 font-bold">< </span> Back</a>
+                        <h3 class="font-extrabold mt-3 text-lg">Details</h3>
+                    </div>
+                    <div class="flex gap-2">
+                        <button *ngIf="isUserAdmin" class="btn btn-outline btn-sm px-5" type="button" [disabled]="!isUserAdmin" (click)="openInvitLink(workspace.id)">
+              Invite
+          </button>
+                        <button class="btn btn-primary btn-sm py-2" type="button" (click)="handleFlashCard()">Create Flashcards</button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                            {{ workspace.name?.charAt(0) | uppercase }}
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold">{{ workspace.name }}</h2>
+                            <div class="text-sm text-text-secondary">Id #{{ workspace.id }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="rounded-xl border border-gray-200 bg-white p-4 lg:col-span-2">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-extrabold">Flashcards</h3>
+                            <span class="text-xs text-text-secondary">{{ filteredFlashcards.length || 0 }} sets</span>
+                        </div>
+                        <div class="mb-3">
+                            <app-filter-bar size="sm" placeholder="Filter flashcards" [value]="query" (valueChange)="onFlashcardFilterChange($event)"></app-filter-bar>
+                        </div>
+                        <div class="space-y-3" *ngIf="filteredFlashcards?.length; else emptyFlashcards">
+                            <div class="rounded-lg border border-gray-200 p-3" *ngFor="let fc of pagedFlashcards">
+                                <div class="flex items-center justify-between rounded-4xl show-sm">
+                                    <div>
+                                        <div class="mb-2 font-bold">{{ fc?.raw_data?.title || 'Flashcard' }}</div>
+                                        <div class="flex flex-row justify-around  w-full">
+                                            <div class="text-xs text-[#D9D9D9] font-semibold">Language: {{ fc.raw_data.language || "en" }}</div>
+                                            <div class="text-xs text-[#D9D9D9] font-semibold px-3">Slides: {{ fc.slides?.length || 0 }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-row  justify-end">
+                                        <button class="btn btn-outline btn-sm mx-2" type="button" (click)="openFlashcard(fc.id)">Open</button>
+                                        <!-- <button class="btn btn-outline btn-sm" type="button" (click)="generateFlashcard(fc.id)">Generate</button> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-center">
+                            <app-pagination size="sm" [page]="page" [pageSize]="pageSize" [total]="filteredFlashcards.length" (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+                        </div>
+                        <!-- Invite Link Modal -->
+                        <div *ngIf="isInviteModalOpen" class="modal-backdrop" (click)="closeInviteModal()">
+
+                            <div class="modal-card" (click)="$event.stopPropagation()">
+                                <div class="modal-header">
+                                    <div class="modal-title">Invite Link</div>
+                                    <button class="close-btn" type="button" (click)="closeInviteModal()">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="url-box">
+                                        <div *ngIf="!InviteLink?.url; else showInput" class="loading-spinner">
+                                            Loading...
+                                        </div>
+                                        <ng-template #showInput>
+                                            <input class="url-input" [value]="InviteLink?.url" readonly />
+                                            <button class="copy-btn" type="button" (click)="copyInviteUrl()">
+                                      {{ isCopySuccess ? 'Copied!' : 'Copy' }}
+                                    </button>
+                                        </ng-template>
+                                    </div>
+                                    <a class="text-blue-600 underline" [href]="InviteLink?.url" target="_blank">Open invite link</a>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="ok-btn" type="button" (click)="closeInviteModal()">Close</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <ng-template #emptyFlashcards>
+                            <div class="rounded-lg border border-dashed border-gray-300 p-6 text-center text-text-secondary">
+                                No flashcards yet.
+                            </div>
+                        </ng-template>
+                    </div>
+
+                    <div class="rounded-xl border border-gray-200 bg-white p-4">
+                        <div class="flex flex-row justify-between font-nunito font-semibold">
+                            <h3 class="font-extrabold mb-3">Members</h3>
+                            <h4>{{workspace.members.length}} Members</h4>
+                        </div>
+                        <div class="space-y-2" *ngIf="workspace.members?.length; else emptyMembers">
+                            <div class="flex items-center justify-between" *ngFor="let m of workspace.members">
+                                <div class="flex items-center gap-2">
+
+                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-semibold">
+                                        {{ m.name?.charAt(0) | uppercase }}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold">{{ m.name }}</div>
+                                        <div class="text-xs text-[#D9D9D9]">{{ m.email }}</div>
+                                    </div>
+                                    <span class="text-xs  uppercase text-[#D9D9D9]">{{ m.WorkspaceUser?.role }}</span>
+
+                                </div>
+                                <div *ngIf="workspace.admin_user_id!==m.id && isUserAdmin" class="text-primary" (click)="onRequestDelete(m.WorkspaceUser.workspace_id,m.WorkspaceUser.user_id)">
+                                    <mat-icon>delete</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #emptyMembers>
+                            <div class="rounded-lg border border-dashed border-gray-300 p-4 text-center text-text-secondary">
+                                No members.
+                            </div>
+                        </ng-template>
+                        <!-- <div class="mt-4">
+                            <div class="text-sm text-text-secondary">Credit</div>
+                            <div class="font-semibold">{{ workspace.credit }}</div>
+                        </div> -->
+                    </div>
+                </div>
+
+                <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove member'" [message]="'Are you sure you want to remove this member from the workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()"
+                    (cancelled)="onCancelDelete()"></app-confirm-modal>
+            </div>
+        </div>
+    </div>
+</div>

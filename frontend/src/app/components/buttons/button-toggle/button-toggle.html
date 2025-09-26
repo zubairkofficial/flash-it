@@ -1,0 +1,16 @@
+<div
+  class="flex flex-row items-center justify-center gap-2 rounded-[30px] px-4 py-2 bg-[#F3F1ED] cursor-pointer"
+>
+  @for(state of availableStates; track $index ){ @if(active === state) {
+  <div class="flex items-center justify-center text-[#4A494A] text-xsm">
+    {{ state }}
+  </div>
+  }@else {
+  <div
+    (click)="onClick(state)"
+    class="flex items-center justify-center text-[#AAAAAA] text-xsm"
+  >
+    {{ state }}
+  </div>
+  } }
+</div>
