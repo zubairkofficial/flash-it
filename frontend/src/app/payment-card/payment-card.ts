@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  loadStripe,
-  Stripe,
-  StripeCardNumberElement,
-  StripeCardExpiryElement,
-  StripeCardCvcElement,
-} from '@stripe/stripe-js';
+import { loadStripe, Stripe, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement } from '@stripe/stripe-js';
 import { PaymentService } from '../../services/payment/payment';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -33,7 +27,6 @@ export class PaymentCard implements OnInit {
   public selectedPlan: any = null;
   public amount: any = null;
   public tempId = '';
-  public flashcardId: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -42,9 +35,7 @@ export class PaymentCard implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.stripe = await loadStripe(
-      'pk_test_51Riao5FYp7fvEyJ724EWSCy2EqzU2YENGevK2zhJFVm3vN1SVatdw9uu3l1EQQojpJZFieTsIU8PY3eYihZEa7VR00Ng5ogJpP'
-    );
+    this.stripe = await loadStripe('pk_test_51Riao5FYp7fvEyJ724EWSCy2EqzU2YENGevK2zhJFVm3vN1SVatdw9uu3l1EQQojpJZFieTsIU8PY3eYihZEa7VR00Ng5ogJpP');
 
     const elements = this.stripe?.elements();
     if (!elements) return;
@@ -52,8 +43,7 @@ export class PaymentCard implements OnInit {
     // Read query params
     this.route.queryParamMap.subscribe((params) => {
       const type = params.get('subscriptionType');
-      this.tempId = params.get('temp_id') ?? '';
-      this.flashcardId = params.get('flashcard_id') ?? '';
+      this.tempId = params.get('tempId') ?? '';
       if (type === 'free') {
         this.router.navigate(['dashboard']);
       }
@@ -106,18 +96,7 @@ export class PaymentCard implements OnInit {
           this.isLoading = false;
           notyf.success('Payment successful');
           if (this.tempId) {
-            console.log(
-              'moving to uploiad file payment card',
-              this.tempId,
-              this.flashcardId
-            );
-            this.router.navigate([`/uploaded-file`], {
-              queryParams: {
-                flashcard_id: this.flashcardId,
-                temp_id: this.tempId,
-                show: true,
-              },
-            });
+            this.router.navigate([`/uploaded-file`]);
           } else {
             this.router.navigate(['dashboard']);
           }
