@@ -15,6 +15,7 @@ import { ChangePassword } from './pages/change-password/change-password';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { GenerateFlashcardSection } from './landing-page/generate-flashcard-section/generate-flashcard-section';
 import { Settings } from './settings/settings';
+import { FlashcardDetailComponent } from './pages/flashcard-detail/flashcard-detail';
 
 const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
 export const authGuard: CanActivateFn = () => {
@@ -63,7 +64,7 @@ export const routes: Routes = [
     path: 'auth',
     component: Auth,
     loadChildren: () => import('./auth/auth-module').then((m) => m.AuthModule),
-    canActivate: [guestGuard],
+    // canActivate: [guestGuard],
   },
   {
     path: 'plans',
@@ -93,28 +94,31 @@ export const routes: Routes = [
     component: FlashcardViewer,
   },
   {
+    path: 'flashcard/:id/detail',
+    component: FlashcardDetailComponent,
+  },
+  {
     path: 'payment/card',
     component: PaymentCard,
     canActivate: [authGuard],
   },
   {
     path: 'profile',
-    component:Profile,
-    canActivate: [authGuard]
+    component: Profile,
+    canActivate: [authGuard],
     // loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
   },
   {
     path: 'change-password',
-    component:ChangePassword,
-    canActivate: [authGuard]
+    component: ChangePassword,
+    canActivate: [authGuard],
     // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
   },
   {
     path: 'settings',
-    component:Settings,
-    canActivate: [authGuard]
+    component: Settings,
+    canActivate: [authGuard],
     // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
   },
-  { path: '**', component: NotFoundComponent, },
-
+  { path: '**', component: NotFoundComponent },
 ];

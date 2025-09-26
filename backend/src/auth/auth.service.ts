@@ -5,7 +5,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ChangePasswordDTO, LoginDTO, RegisterDTO, UpdatePlanDTO, UpdateProfileDTO } from './dto/auth.dto';
+import {
+  ChangePasswordDTO,
+  LoginDTO,
+  RegisterDTO,
+  UpdatePlanDTO,
+  UpdateProfileDTO,
+} from './dto/auth.dto';
 import { Sequelize } from 'sequelize-typescript';
 import User from 'src/models/user.model';
 import FlashCard from 'src/models/flashcard.model';
@@ -28,7 +34,7 @@ export class AuthService {
   ) {}
 
   async register(registerDTO: RegisterDTO) {
-    const { name, email,  temporary_flashcard_id } = registerDTO;
+    const { name, email, temporary_flashcard_id } = registerDTO;
     const transaction = await this.sequelize.transaction();
     try {
       const userExist = await User.findOne({
@@ -53,7 +59,6 @@ export class AuthService {
         },
       });
 
-  
       const newUser = await User.create(
         {
           name,
@@ -76,28 +81,30 @@ export class AuthService {
           transaction,
         },
       );
- 
-    const workspaceUser= await WorkspaceUser.create({
-     workspace_id:defaultWorkspace.id,
-     user_id:newUser.id,
-     role:WORKSPACE_USER_ROLE.ADMIN},
-       {
+
+      const workspaceUser = await WorkspaceUser.create(
+        {
+          workspace_id: defaultWorkspace.id,
+          user_id: newUser.id,
+          role: WORKSPACE_USER_ROLE.ADMIN,
+        },
+        {
           transaction,
         },
- )
+      );
 
- await WorkspaceUserPermission.create({
-  permissions:WORKSPACE_USER_PERMISSION.RE,
-  workspace_user_id:workspaceUser.id
- }, {
-  transaction,
-},)
+      await WorkspaceUserPermission.create(
+        {
+          permissions: WORKSPACE_USER_PERMISSION.RE,
+          workspace_user_id: workspaceUser.id,
+        },
+        {
+          transaction,
+        },
+      );
 
       if (temporary_flashcard_id && defaultWorkspace) {
-
-              // @fix find flashcard against temp_id if it exist
-
-
+        // @fix find flashcard against temp_id if it exist
         // await this.flashCardService.generateFlashCard(
         //   {
         //     temporary_flashcard_id,
@@ -110,20 +117,22 @@ export class AuthService {
         //   },
         //   transaction,
         // );
-
       }
 
       const { password, ...safeUser } = newUser;
-      
-      const token = generateToken({ id: safeUser.dataValues.id, email: safeUser.dataValues.email });
-     
+
+      const token = generateToken({
+        id: safeUser.dataValues.id,
+        email: safeUser.dataValues.email,
+      });
+
       await transaction.commit();
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
           message: 'SignUP successfull',
-          token: token, 
+          token: token,
           user: safeUser,
           workspace_id: defaultWorkspace.id,
         },
@@ -196,9 +205,12 @@ export class AuthService {
       }
 
       const { password, ...sendUserData } = existingUser;
-     
-      const token = generateToken({ id: sendUserData.dataValues.id, email: sendUserData.dataValues.email });
-      
+
+      const token = generateToken({
+        id: sendUserData.dataValues.id,
+        email: sendUserData.dataValues.email,
+      });
+
       await transaction.commit();
       return {
         status: HttpStatus.OK,
@@ -206,7 +218,7 @@ export class AuthService {
         data: {
           message: 'Login Successfull successfull',
           user: sendUserData,
-          token: token, 
+          token: token,
         },
       };
     } catch (error: any) {
@@ -218,8 +230,8 @@ export class AuthService {
     }
   }
 
-  async getUserById(id:number) {
-   try {
+  async getUserById(id: number) {
+    try {
       const existingUser = await User.findOne({
         where: {
           id: {
@@ -232,11 +244,8 @@ export class AuthService {
         throw new NotFoundException('user not exist');
       }
 
-   return existingUser
-
-   
+      return existingUser;
     } catch (error: any) {
-      
       throw new HttpException(
         'Error: ' + error.message,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -306,21 +315,26 @@ export class AuthService {
         },
       };
     } catch (error: any) {
-      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error: ' + error.message,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
-  
-  async getProfile( req: any) {
+
+  async getProfile(req: any) {
     try {
       const existingUser = await User.findByPk(req.user.id);
       if (!existingUser) {
         throw new HttpException('no user logged IN', HttpStatus.NOT_FOUND);
       }
 
-    return existingUser
-     
+      return existingUser;
     } catch (error: any) {
-      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error: ' + error.message,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -348,7 +362,10 @@ export class AuthService {
         },
       };
     } catch (error: any) {
-      throw new HttpException('Error: ' + error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error: ' + error.message,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
