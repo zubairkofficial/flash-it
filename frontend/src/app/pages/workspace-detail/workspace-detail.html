@@ -1,11 +1,36 @@
 
-        <div *ngIf="generateFlashCard" class="w-full  flex items-center justify-center ">
-            <!-- <div class="mb-4">
-                <a class="text-primary" href="javascript:history.back()"> <span class="font-lg me-2 font-bold">< </span> Back</a>
-                <h3 class="font-extrabold mt-3 text-lg">Details</h3>
-            </div> -->
-            <app-generate-flashcard-section [width]="74" [workspaceId]="workspace.id"></app-generate-flashcard-section>
+       
+    <div *ngIf="generateFlashCard" class="w-full flex flex-col sm:flex-row sm:items-start sm:justify-start">
+      <div class="w-full p-0 m-0">
+        <!-- <div class="w-full sm:w-auto">
+          <a class="text-primary inline-flex items-center text-sm sm:text-base" href="javascript:history.back()">
+            <span class="font-lg me-2 font-bold">&lt;</span> Back
+          </a>
+          <h3 class="font-extrabold mt-3 text-lg sm:text-xl">Details</h3>
+        </div> -->
+      <app-generate-flashcard-section
+      [width]="74"
+      [workspaceId]="workspace.id">
+    </app-generate-flashcard-section>
+    </div>  
+      <!-- Flashcard Section -->
+      <!-- <div class="w-full   overflow-x-auto">
+        <div class="w-full sm:w-auto">
+          <a class="text-primary inline-flex items-center text-sm sm:text-base" href="javascript:history.back()">
+            <span class="font-lg me-2 font-bold">&lt;</span> Back
+          </a>
+          <h3 class="font-extrabold mt-3 text-lg sm:text-xl">Details</h3>
         </div>
+       
+      </div> -->
+    
+    </div>
+    
+      
+    <div *ngIf="!generateFlashCard" class="w-full pt-13 px-4">
+  
+        <div class="flex-1 px-4">
+          <div class="md:me-3">
         <div class="p-3 border border-gray-200 m-3 min-h-96 rounded-2xl w-full">
           <div *ngIf="isLoading" class="text-sm text-text-secondary">Loading workspace...</div>
           <!-- <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">{{ errorMessage }}</div> -->
@@ -139,5 +164,8 @@
                 <app-confirm-modal [open]="confirmModalOpen" [title]="'Remove member'" [message]="'Are you sure you want to remove this member from the workspace? This action cannot be undone.'" [confirmText]="'Remove'" [cancelText]="'Cancel'" (confirmed)="onConfirmDelete()"
                     (cancelled)="onCancelDelete()"></app-confirm-modal>
             </div>
+        </div>
+        </div>
+        </div>
         </div>
    
