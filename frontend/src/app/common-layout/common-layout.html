@@ -1,0 +1,11 @@
+<app-signed-in-sidebar></app-signed-in-sidebar>
+<div
+  class="w-full min-h-screen bg-background text-text-primary overflow-x-hidden"
+>
+<app-site-header [credits]="credits"></app-site-header>
+ <div class="flex flex-col md:flex-row md:w-4/5 md:ml-auto">
+    <div class="flex-1 px-4 py-8 pb-8">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

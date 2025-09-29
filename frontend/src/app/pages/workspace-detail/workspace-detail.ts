@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../../services/workspace/workspace';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { GenerateFlashcardSection } from '../../landing-page/generate-flashcard-section/generate-flashcard-section';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
@@ -13,7 +13,7 @@ import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal,GenerateFlashcardSection,SignedInSidebar,SiteHeader,FilterBar,Pagination],
+  imports: [CommonModule,MatIconModule, ConfirmModal,GenerateFlashcardSection,SignedInSidebar,SiteHeader,FilterBar,Pagination,MatIcon],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
@@ -156,6 +156,9 @@ export class WorkspaceDetail implements OnInit {
   public onCancelDelete(): void {
     this.confirmModalOpen = false;
     this.toDelete = null;
+  }
+  public openRawDataPage(flashcardId: number): void {
+    this.router.navigate([`/flashcard/${flashcardId}/detail`]);
   }
 
   public onConfirmDelete(): void {

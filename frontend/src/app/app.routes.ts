@@ -16,6 +16,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { GenerateFlashcardSection } from './landing-page/generate-flashcard-section/generate-flashcard-section';
 import { Settings } from './settings/settings';
 import { FlashcardDetailComponent } from './pages/flashcard-detail/flashcard-detail';
+import { CommonLayoutComponent } from './common-layout/common-layout';
 
 const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
 export const authGuard: CanActivateFn = () => {
@@ -72,8 +73,11 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: Dashboard,
+    component: CommonLayoutComponent,
     canActivate: [authGuard],
+      children: [
+      { path: '', component: Dashboard },
+      ]
   },
   {
     path: 'uploaded-file',
@@ -82,8 +86,11 @@ export const routes: Routes = [
   },
   {
     path: 'workspace/:id',
-    component: WorkspaceDetail,
+     component: CommonLayoutComponent,
     canActivate: [authGuard],
+     children: [
+      { path: '', component: WorkspaceDetail },
+      ]
   },
   {
     path: 'workspace/invited/:id',
@@ -106,19 +113,20 @@ export const routes: Routes = [
     path: 'profile',
     component: Profile,
     canActivate: [authGuard],
-    // loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
-  },
+   },
   {
     path: 'change-password',
     component: ChangePassword,
     canActivate: [authGuard],
-    // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
-  },
+   },
   {
     path: 'settings',
-    component: Settings,
+    component: CommonLayoutComponent,
     canActivate: [authGuard],
-    // loadComponent: () => import('./pages/change-password/change-password').then(m => m.ChangePassword)
-  },
+     children: [
+      { path: '', component: Settings },
+      ]
+    },
+
   { path: '**', component: NotFoundComponent },
 ];

@@ -38,9 +38,11 @@ export class SubscriptionPlanCard {
   ) {}
   async ngOnInit() {
     this.route.queryParamMap.subscribe((params) => {
-      const tempId = params.get('temporary_flashcard_id');
+      const tempId = params.get('temp_id');
+      const flashcardId = params.get('flashcard_id');
       this.temporary_flashcard_id = tempId;
-      console.log('temId', tempId);
+      this.flashcard_id = flashcardId;
+      console.log('temId', tempId, 'flashcardId', flashcardId);
     });
   }
 
@@ -57,9 +59,13 @@ export class SubscriptionPlanCard {
             this.isLoading = false;
             localStorage.setItem('tempId', this.temporary_flashcard_id);
             notyf.success('enjoy free plan');
+            console.log('moving to upload files free', this.flashcard_id);
             this.router.navigate([`/uploaded-file`], {
               queryParams: {
                 workspaceId: res.data.workspaceId,
+                flashcard_id: this.flashcard_id,
+                temp_id: this.temporary_flashcard_id,
+                show: true,
               },
             });
           },
@@ -71,10 +77,14 @@ export class SubscriptionPlanCard {
     } else {
       this.temporary_flashcard_id &&
         localStorage.setItem('tempId', this.temporary_flashcard_id);
+      console.log('moving to payment', this.flashcard_id);
+
       this.router.navigate(['/payment/card'], {
         queryParams: {
           subscriptionType: availablePlan.subscriptionType,
-          tempId: this.temporary_flashcard_id,
+          temp_id: this.temporary_flashcard_id,
+          flashcard_id: this.flashcard_id,
+          show: true,
         },
       });
     }
