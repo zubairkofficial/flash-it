@@ -15,6 +15,7 @@ import { notyf } from '../../../utils/notyf.utils';
 import { Api } from '../../../utils/api/api';
 import { FilterBar } from '../../components/filter-bar/filter-bar';
 import { Pagination } from '../../components/pagination/pagination';
+import { ButtomPrimary } from "../../components/buttons/buttom-primary/buttom-primary";
 
 @Component({
   selector: 'app-dashboard',
@@ -27,7 +28,8 @@ import { Pagination } from '../../components/pagination/pagination';
     SiteHeader,
     FilterBar,
     Pagination,
-  ],
+    ButtomPrimary
+],
   providers: [WorkspaceService, Api],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',

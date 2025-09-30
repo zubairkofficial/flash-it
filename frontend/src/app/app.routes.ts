@@ -42,91 +42,36 @@ export const routes: Routes = [
   //       import('./admin/admin-module').then((m) => m.AdminModule),
   //   },
   {
-    path: '',
-    component: SignedOutLayout,
-    children: [
-      {
-        path: '',
-        component: LandingPage,
-      },
-    ],
-  },
-  // {
-  //   path: '',
-  //   component: FlashCardLayout,
-  //   children: [
-  //     {
-  //       path: '/flash-card',
-  //       component: LandingPage,
-  //     },
-  //   ],
-  // },
-  {
     path: 'auth',
     component: Auth,
     loadChildren: () => import('./auth/auth-module').then((m) => m.AuthModule),
-    // canActivate: [guestGuard],
   },
   {
-    path: 'plans',
-    component: PricePlanSection,
+    path: '',
+    component: SignedOutLayout,
+    children: [
+      { path: '', component: LandingPage },
+      { path: 'plans', component: PricePlanSection },
+    ],
   },
   {
-    path: 'dashboard',
+    path: '',
     component: CommonLayoutComponent,
     canActivate: [authGuard],
-      children: [
-      { path: '', component: Dashboard },
-      ]
+    children: [
+      { path: 'dashboard', component: Dashboard },
+      { path: 'uploaded-file', component: GenerateFlashcardSection },
+      { path: 'workspace/:id', component: WorkspaceDetail },
+      { path: 'workspace/invited/:id', component: WorkspaceInvite },
+      { path: 'flashcard/:id', component: FlashcardViewer },
+      { path: 'flashcard/:id/detail', component: FlashcardDetailComponent },
+
+      { path: 'profile', component: Profile },
+      { path: 'change-password', component: ChangePassword },
+      { path: 'settings', component: Settings },
+    ],
   },
-  {
-    path: 'uploaded-file',
-    component: GenerateFlashcardSection,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'workspace/:id',
-     component: CommonLayoutComponent,
-    canActivate: [authGuard],
-     children: [
-      { path: '', component: WorkspaceDetail },
-      ]
-  },
-  {
-    path: 'workspace/invited/:id',
-    component: WorkspaceInvite,
-  },
-  {
-    path: 'flashcard/:id',
-    component: FlashcardViewer,
-  },
-  {
-    path: 'flashcard/:id/detail',
-    component: FlashcardDetailComponent,
-  },
-  {
-    path: 'payment/card',
-    component: PaymentCard,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'profile',
-    component: Profile,
-    canActivate: [authGuard],
-   },
-  {
-    path: 'change-password',
-    component: ChangePassword,
-    canActivate: [authGuard],
-   },
-  {
-    path: 'settings',
-    component: CommonLayoutComponent,
-    canActivate: [authGuard],
-     children: [
-      { path: '', component: Settings },
-      ]
-    },
+  { path: 'payment/card', component: PaymentCard },
 
   { path: '**', component: NotFoundComponent },
 ];

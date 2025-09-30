@@ -1,23 +1,24 @@
 <!-- Desktop sidebar -->
-<aside class="hidden md:flex md:w-[20%] h-screen fixed top-0 left-0 bg-white border-r border-gray-200 p-4 flex-col justify-between">
-
- 
+<aside
+  class="hidden md:flex w-[80vw] md:w-[20vw] h-screen fixed top-0 left-0 bg-white border-r border-gray-200 p-4 flex-col justify-between"
+>
   <div>
- 
     <div class="flex justify-center pb-6">
       <a routerLink="/dashboard" class="items-center">
-        <img src="assets/flash-card.png" alt="logo" class="h-[36px] md:h-[44px]" />
+        <img
+          src="assets/flash-card.png"
+          alt="logo"
+          class="h-[36px] md:h-[44px]"
+        />
       </a>
     </div>
 
-   
     <nav class="flex flex-col gap-2 text-sm text-black w-full mt-6">
       <a
         routerLink="/dashboard"
         routerLinkActive="bg-primary/90 text-white"
         [routerLinkActiveOptions]="{ exact: true }"
         class="flex items-center gap-3 px-4 py-2 rounded-4xl transition-colors duration-200 hover:bg-primary/90 hover:text-white w-full"
-    
       >
         <mat-icon>dashboard</mat-icon>
         <span class="font-medium">Dashboard</span>
@@ -35,7 +36,6 @@
     </nav>
   </div>
 
- 
   <div class="pt-6 border-t border-gray-200">
     <button
       type="button"
@@ -46,62 +46,68 @@
       Logout
     </button>
   </div>
-  
 </aside>
-
-
 
 <!-- Mobile floating menu button -->
 <!-- <button class="fixed bottom-4 right-4 md:hidden z-50 btn btn-primary btn-sm rounded-full px-4 py-2" type="button" (click)="ui.openMenu()">Menu</button> -->
 
 <!-- Mobile slide-in drawer -->
-<div class="fixed inset-0 bg-black/40 z-40 md:hidden" *ngIf="ui.isMenuOpen" (click)="ui.closeMenu()" aria-hidden="true"></div>
-<aside class="fixed left-0 top-0 bottom-0 w-[260px] bg-white z-50 p-4 border-r border-primary md:hidden transition-transform duration-300 ease-in-out transform shadow-lg overflow-y-auto" [class.translate-x-0]="ui.isMenuOpen" [class.-translate-x-full]="!ui.isMenuOpen"
-    role="dialog" aria-modal="true" aria-label="Navigation menu">
-    <div class="flex items-center justify-between mb-4">
-        <!-- <div class="flex items-center gap-3">
+<div
+  class="fixed inset-0 bg-black/40 z-40 md:hidden"
+  *ngIf="ui.isMenuOpen"
+  (click)="ui.closeMenu()"
+  aria-hidden="true"
+></div>
+<aside
+  class="fixed left-0 top-0 bottom-0 w-[260px] bg-white z-50 p-4 border-r border-primary md:hidden transition-transform duration-300 ease-in-out transform shadow-lg overflow-y-auto"
+  [class.translate-x-0]="ui.isMenuOpen"
+  [class.-translate-x-full]="!ui.isMenuOpen"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Navigation menu"
+>
+  <div class="flex items-center justify-between mb-4">
+    <!-- <div class="flex items-center gap-3">
             <img src="assets/flash-card-books.png" alt="hoha" class="h-[40px] p-0" />
             <span class="font-nunito font-bold text-lg">Flash-It</span>
         </div> -->
-        <!-- <button class="btn btn-outline btn-sm" type="button" (click)="ui.closeMenu()"> -->
-        <div class="text-primary">
-            <mat-icon (click)="ui.closeMenu()">close</mat-icon>
-        </div>
-        <!-- </button> -->
+    <!-- <button class="btn btn-outline btn-sm" type="button" (click)="ui.closeMenu()"> -->
+    <div class="text-primary">
+      <mat-icon (click)="ui.closeMenu()">close</mat-icon>
     </div>
-    <nav class="flex flex-col gap-1 text-sm">
-      <a
+    <!-- </button> -->
+  </div>
+  <nav class="flex flex-col gap-1 text-sm">
+    <a
       routerLink="/dashboard"
       routerLinkActive="bg-primary/90 text-white"
       [routerLinkActiveOptions]="{ exact: true }"
       class="flex items-center gap-3 px-4 py-2 rounded-4xl transition-colors duration-200 hover:bg-primary/90 hover:text-white w-full"
-  
     >
       <mat-icon>dashboard</mat-icon>
       <span class="font-medium">Dashboard</span>
     </a>
-        <!-- <a routerLink="/plans" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Plans</a> -->
-        <a
-        routerLink="/settings"
-        routerLinkActive="bg-primary/90 text-white"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="flex items-center gap-3 px-4 py-2 rounded-4xl transition-colors duration-200 hover:bg-primary/90 hover:text-white w-full"
-      >
-        <mat-icon>settings</mat-icon>
-        <span class="font-medium">Settings</span>
-      </a>
-        <!-- <a routerLink="/profile" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Profile</a>
+    <!-- <a routerLink="/plans" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Plans</a> -->
+    <a
+      routerLink="/settings"
+      routerLinkActive="bg-primary/90 text-white"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="flex items-center gap-3 px-4 py-2 rounded-4xl transition-colors duration-200 hover:bg-primary/90 hover:text-white w-full"
+    >
+      <mat-icon>settings</mat-icon>
+      <span class="font-medium">Settings</span>
+    </a>
+    <!-- <a routerLink="/profile" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Profile</a>
         <a routerLink="/change-password" (click)="ui.closeMenu()" class="px-3 py-2 rounded hover:bg-primary/90 hover:text-white transition" routerLinkActive="bg-primary/90 text-white" [routerLinkActiveOptions]="{exact: true}">Change Password</a> -->
-        <div class="pt-6 border-t border-gray-200">
-          <button
-            type="button"
-            (click)="logout()"
-            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-white hover:bg-red-500 transition-colors duration-200 rounded-4xl w-full"
-          >
-            <mat-icon>logout</mat-icon>
-            Logout
-          </button>
-        </div>
-        
-    </nav>
+    <div class="pt-6 border-t border-gray-200">
+      <button
+        type="button"
+        (click)="logout()"
+        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-white hover:bg-red-500 transition-colors duration-200 rounded-4xl w-full"
+      >
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
+  </nav>
 </aside>
