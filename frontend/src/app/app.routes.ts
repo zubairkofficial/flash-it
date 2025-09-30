@@ -51,7 +51,7 @@ export const routes: Routes = [
     component: SignedOutLayout,
     children: [
       { path: '', component: LandingPage },
-      { path: 'plans', component: PricePlanSection },
+      { path: 'plans-register', component: PricePlanSection },
     ],
   },
   {
@@ -65,7 +65,7 @@ export const routes: Routes = [
       { path: 'workspace/invited/:id', component: WorkspaceInvite },
       { path: 'flashcard/:id', component: FlashcardViewer },
       { path: 'flashcard/:id/detail', component: FlashcardDetailComponent },
-
+      { path: 'plans', component: PricePlanSection },
       { path: 'profile', component: Profile },
       { path: 'change-password', component: ChangePassword },
       { path: 'settings', component: Settings },

@@ -71,7 +71,7 @@ export class SignUpForm {
 
           if (registerData.temporary_flashcard_id) {
             console.log('moving to plans', this.flashcard_id);
-            this.router.navigate(['plans'], {
+            this.router.navigate(['plans-register'], {
               queryParams: {
                 temp_id: registerData.temporary_flashcard_id,
                 flashcard_id: this.flashcard_id,
