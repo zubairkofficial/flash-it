@@ -1,10 +1,6 @@
 <div
-  class="relative flex flex-col w-full gap-8 sm:gap-10 bg-[#FDFDFD] px-4 sm:px-6 lg:px-8"
+  class="flex flex-col w-full h-auto gap-8 sm:gap-10 bg-[#FDFDFD] px-4 sm:px-6 lg:px-8"
 >
-  <div class="absolute left-18 top-2 pt-4">
-    <img src="assets/flash-card.png" alt="Flash Card" width="120" height="58" />
-  </div>
-
   <div class="flex w-full justify-center lg:h-[25%]">
     <p
       class="text-2xl sm:text-3xl md:text-4xl text-[#072720] font-semibold mt-4"
@@ -14,12 +10,12 @@
   </div>
 
   <div
-    class="flex flex-row flex-wrap items-stretch justify-center gap-6 sm:gap-8 lg:gap-10 w-full min-h-[50vh] pb-4"
+    class="flex flex-row flex-wrap items-stretch justify-center gap-6 sm:gap-8 lg:gap-10 w-full min-h-[50vh] h-auto"
   >
     @for (plan of plans; track $index) {
     <div class="w-full sm:w-[48%] lg:w-[30%] flex">
       <app-subscription-plan-card
-        class="w-full"
+        class="w-full h-full"
         [availablePlan]="plan"
       ></app-subscription-plan-card>
     </div>

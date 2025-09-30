@@ -1,6 +1,15 @@
-<nav class="flex flex-row items-center justify-around h-[100px] w-full bg-[#FBFBFB]">
-    <div id="logo" class="">
-        <svg width="123" height="36" viewBox="0 0 123 36" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<nav
+  class="flex flex-row items-center justify-around h-[75px] w-full bg-[#FBFBFB]"
+>
+  <div id="logo" class="">
+    <svg
+      width="123"
+      height="36"
+      viewBox="0 0 123 36"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
       <rect width="123" height="36" fill="url(#pattern0_101_1515)" />
       <defs>
         <pattern
@@ -23,13 +32,20 @@
         />
       </defs>
     </svg>
-    </div>
-    <div id="text">
-        <span class="text-md text-[#4A494A] font-semibold weight-700">AI Flashcard Generator</span
+  </div>
+  <div class="hidden lg:flex" id="text">
+    <span class="text-xlg text-[#4A494A] font-semibold weight-700"
+      >AI Flashcard Generator</span
     >
   </div>
   <div id="buttons" class="flex flex-row gap-2 items-center justify-evenly">
-    <app-buttom-outlined text="Log In" (click)="navigate('auth/login')"></app-buttom-outlined>
-    <app-buttom-primary text="Sign up" (click)="navigate('auth/register')"></app-buttom-primary>
+    <app-buttom-outlined
+      text="Log In"
+      (click)="navigate('auth/login')"
+    ></app-buttom-outlined>
+    <app-buttom-primary
+      text="Sign up"
+      (click)="navigate('auth/register')"
+    ></app-buttom-primary>
   </div>
 </nav>

@@ -1,27 +1,28 @@
 <div
-  class="flex flex-col w-full min-h-[calc(100vh-100px)] overflow-hidden items-center pt-20"
+  class="flex flex-col w-full lg:min-h-[calc(100vh-100px)] overflow-hidden items-center"
 >
-
   <div
     class="flex items-center justify-center w-full h-full py-6 md:py-8 lg:py-10"
   >
     <div
       class="flex flex-col md:flex-row items-stretch md:items-center justify-center rounded-xl w-[95%] md:w-[90%] lg:w-[85%] h-auto md:h-[70%] shadow-lg bg-[#FFFFFF]"
     >
-
       <form
         [formGroup]="textForm"
         (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-4 w-full md:w-[63%] h-auto md:min-h-[500px] rounded-xl p-4 sm:p-6 md:p-8 lg:p-10"
+        class="flex flex-col justify-around md:justify-start gap-4 w-full md:w-[63%] h-auto min-h-[380px] md:min-h-[500px] rounded-xl p-4 sm:p-6 md:p-8 lg:p-10"
       >
-      <div *ngIf="isWorkspaceRoute"  class="w-full sm:w-auto">
-        <a class="text-primary inline-flex items-center text-sm sm:text-base" href="javascript:history.back()">
-          <span class="font-lg me-2 font-bold">&lt;</span> Back
-        </a>
-        <h3 class="font-extrabold mt-3 text-lg sm:text-xl">Details</h3>
-      </div>
+        <div *ngIf="isWorkspaceRoute" class="w-full sm:w-auto">
+          <a
+            class="text-primary inline-flex items-center text-sm sm:text-base"
+            href="javascript:history.back()"
+          >
+            <span class="font-lg me-2 font-bold">&lt;</span> Back
+          </a>
+          <h3 class="font-extrabold mt-3 text-lg sm:text-xl">Details</h3>
+        </div>
         <div
-          class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between"
+          class="flex flex-row sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between"
         >
           <div>
             <app-button-toggle
@@ -33,7 +34,7 @@
             [availableState]="popularLanguageCodes"
             [(active)]="activeLanguage"
             [(isOpen)]="isLanguageDropDownOpen"
-            text="Language"
+            text="Lang"
             (activeChange)="handleSelection($event)"
           ></app-button-primary-dropdown>
         </div>
@@ -149,7 +150,7 @@
       </form>
       <div
         id="image-section"
-        class="flex items-center justify-center w-full md:w-[37%] h-56 sm:h-64 md:h-full p-2 md:p-4 rounded-xl"
+        class="hidden md:flex items-center justify-center w-full md:w-[37%] h-56 sm:h-64 md:h-full p-2 md:p-4 rounded-xl"
       >
         <img
           src="assets/flash-card-books.png"
@@ -158,10 +159,5 @@
         />
       </div>
     </div>
-  </div>
-  <div class="flex h-auto lg:h-[25%] w-full items-center justify-center px-4">
-    <p class="text-2xl sm:text-3xl md:text-4xl text-[#4A494A] text-center">
-      Smart Flashcard is fast, focused and built for real learners
-    </p>
   </div>
 </div>
