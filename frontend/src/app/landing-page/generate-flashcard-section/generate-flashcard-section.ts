@@ -16,10 +16,12 @@ import { notyf } from '../../../utils/notyf.utils';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ALL_LANGUAGES } from '../../../utils/constants/languages';
 import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-generate-flashcard-section',
   imports: [
+    CommonModule,
     ButtonToggle,
     ButtonPrimaryDropdown,
     ButtomPrimary,
@@ -58,7 +60,8 @@ export class GenerateFlashcardSection {
   }
   showAddMoreFilesButton = false;
   isAddMoreFilesLoading = false;
-  @Input() width: number = 85;
+  @Input() width: number = 0;
+  isWorkspaceRoute: boolean = false;
   availableStates = Object.values(DATA_TYPE);
   activeLanguage = 'en';
   isLanguageDropDownOpen = false;
@@ -87,6 +90,14 @@ export class GenerateFlashcardSection {
   public ngOnInit(): void {
     if (document.referrer && document.referrer.includes('/plans')) {
     }
+    const match = this.router.url.match(/^\/workspace\/(\d+)/);
+    console.log("match",match)
+  if (match) {
+    const workspaceId = match[1]; // e.g. "299"
+    this.isWorkspaceRoute = true;
+    console.log('Workspace ID:', workspaceId);
+  }
+
     this.route.queryParamMap.subscribe((params) => {
       this.tempId = params.get('temp_id');
       const showButton = params.get('show');

@@ -14,6 +14,63 @@ class globals {
     return this.URL;
   }
 
+  // Responsive utility functions
+  public isMobile(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  public isTablet(): boolean {
+    return window.innerWidth >= 768 && window.innerWidth < 1024;
+  }
+
+  public isDesktop(): boolean {
+    return window.innerWidth >= 1024;
+  }
+
+  public getScreenSize(): 'mobile' | 'tablet' | 'desktop' {
+    if (this.isMobile()) return 'mobile';
+    if (this.isTablet()) return 'tablet';
+    return 'desktop';
+  }
+
+  // Utility to handle responsive breakpoints
+  public getResponsiveValue<T>(mobile: T, tablet?: T, desktop?: T): T {
+    const screenSize = this.getScreenSize();
+
+    switch (screenSize) {
+      case 'mobile':
+        return mobile;
+      case 'tablet':
+        return tablet || mobile;
+      case 'desktop':
+        return desktop || tablet || mobile;
+      default:
+        return mobile;
+    }
+  }
+
+  // Format number with proper spacing for large numbers
+  public formatNumber(num: number): string {
+    return new Intl.NumberFormat().format(num);
+  }
+
+  // Truncate text with ellipsis
+  public truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  // Generate avatar initials from name
+  public getAvatarInitials(name: string): string {
+    if (!name) return '?';
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
+
 }
 
 @Injectable({
