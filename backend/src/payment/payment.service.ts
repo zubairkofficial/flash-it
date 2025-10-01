@@ -60,13 +60,13 @@ export class PaymentService {
       const theSubscriptionPlan = await SubscriptionPlan.findOne({
         where: { plan_type: input.subscriptionType },
       });
-      console.log('theSubscriptionPlan', theSubscriptionPlan);
+      console.log('theSubscriptionPlan', theSubscriptionPlan.id, theSubscriptionPlan.dataValues.id);
       const theUser = await User.findOne({
         where: {
           id: req.user.id,
         },
       });
-      console.log('theUser', theUser);
+      console.log('theUser', theUser.id);
       theUser.credits = theUser.credits + 1000;
       theUser.plan_id = +theSubscriptionPlan.id;
       // const workSpace = await WorkSpace.findOne({
