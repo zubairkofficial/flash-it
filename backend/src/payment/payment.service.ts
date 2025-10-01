@@ -65,11 +65,11 @@ export class PaymentService {
       // const plainSubs = theSubscriptionPlan.get({ plain: true });
       // console.log('theSubscriptionPlan', plainSubs);
       // console.log('theSubscriptionPlan', plainSubs.id);
-
-      console.log(
-        'theSubscriptionPlan',
-        theSubscriptionPlan.id || theSubscriptionPlan.dataValues.id,
-      );
+      console.log('theSubscriptionPlan', theSubscriptionPlan);
+      // console.log(
+      //   'theSubscriptionPlan',
+      //   theSubscriptionPlan.id || theSubscriptionPlan.dataValues.id,
+      // );
       const theUser = await User.findOne({
         where: {
           id: req.user.id,
