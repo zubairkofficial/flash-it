@@ -7,7 +7,7 @@ module.exports = {
     const exists = await queryInterface.rawSelect(
       'subscription-plans',
       { where: { plan_type: 'free' } },
-      ['id']
+      ['id'],
     );
 
     if (!exists) {
@@ -16,11 +16,23 @@ module.exports = {
           plan_type: 'free',
           price: 0, // DECIMAL(10,2) is fine with number 0
           // ARRAY(TEXT) in Postgres accepts a JS array directly:
-          features: [
-            'Basic access',
-            'Limited usage',
-            'Community support'
-          ],
+          features: ['Basic access', 'Limited usage', 'Community support'],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          plan_type: 'pro',
+          price: 5, // DECIMAL(10,2) is fine with number 0
+          // ARRAY(TEXT) in Postgres accepts a JS array directly:
+          features: ['Basic access', 'Limited usage', 'Community support'],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          plan_type: 'team',
+          price: 15, // DECIMAL(10,2) is fine with number 0
+          // ARRAY(TEXT) in Postgres accepts a JS array directly:
+          features: ['Basic access', 'Limited usage', 'Community support'],
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -29,6 +41,8 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete('subscription-plans', { plan_type: 'FREE' });
+    await queryInterface.bulkDelete('subscription-plans', {
+      plan_type: 'FREE',
+    });
   },
 };
