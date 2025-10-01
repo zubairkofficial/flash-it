@@ -52,13 +52,11 @@ export class FlashcardService {
         );
       }
 
-
       // Delete previous slides
       await FlashCardSlide.destroy({
         where: { flashcard_id: flashcardId },
         transaction,
       });
-
 
       // Get workspace info
       let workspaceId = flashCard.workspace_id;
@@ -305,6 +303,10 @@ export class FlashcardService {
         if (!workspace) {
           throw new HttpException('Workspace not found.', HttpStatus.NOT_FOUND);
         }
+
+        workspace.update({
+          credit: workspace.credit - 5,
+        });
         finalWorkspaceId = workspace.id;
       }
 

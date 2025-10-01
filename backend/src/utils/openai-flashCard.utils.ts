@@ -2,7 +2,7 @@ import { OpenAI } from 'openai';
 import { SUBSCRIPTION_TYPE } from './subscription.enum';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function generateFlashcardSlides(

@@ -9,15 +9,17 @@ import FlashCardRawData from 'src/models/flashcard-raw-data.model';
 
 @Injectable()
 export class FlashcardSlidesService {
- async generateFlashCard(flashCardId: number) {
-  const getFlashCardTitles = await FlashCardRawData.findAll({
-  where: { flashcard_id: flashCardId },
-  attributes: ['title'], // 👈 Select only the 'title' column
-});
-  const getFlashCard=await FlashCardSlide.findAll({where:{flashcard_id:flashCardId}})
+  async generateFlashCard(flashCardId: number) {
+    const getFlashCardTitles = await FlashCardRawData.findAll({
+      where: { flashcard_id: flashCardId },
+      attributes: ['title'], // 👈 Select only the 'title' column
+    });
+    const getFlashCard = await FlashCardSlide.findAll({
+      where: { flashcard_id: flashCardId },
+    });
     const browser = await puppeteer.launch();
     // const browser = await puppeteer.launch({
- 
+
     //   args: [
     //     '--no-sandbox',
     //     '--disable-setuid-sandbox',
@@ -28,30 +30,26 @@ export class FlashcardSlidesService {
     // });
     const page = await browser.newPage();
     const html = this.generateSlideHtml(getFlashCard);
-   
 
-  try {
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    try {
+      await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '20mm',
-        bottom: '20mm',
-        left: '15mm',
-        right: '15mm'
-      }
-    });
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          bottom: '20mm',
+          left: '15mm',
+          right: '15mm',
+        },
+      });
 
-   
-    return {pdfBuffer,getFlashCardTitles};
-
-  } finally {
-    await page.close();
-    await browser.close();
-  }
-   
+      return { pdfBuffer, getFlashCardTitles };
+    } finally {
+      await page.close();
+      await browser.close();
+    }
   }
 
   private generateSlideHtml(slides: any[]): string {
@@ -162,20 +160,20 @@ export class FlashcardSlidesService {
         }
       </style>
     `;
-  
+
     let lastSlideType = '';
     let body = '';
-  
+
     slides.forEach((slide) => {
       const currentType = slide.slide_type;
-  
+
       if (currentType !== lastSlideType) {
         body += `
           <div class="slide-type-heading">${currentType}</div>
         `;
         lastSlideType = currentType;
       }
-  
+
       body += `
         <div class="slide">
           <div class="title">${slide.title || '(No title)'}</div>
@@ -183,7 +181,7 @@ export class FlashcardSlidesService {
         </div>
       `;
     });
-  
+
     return `
       <html>
         <head>
@@ -196,9 +194,7 @@ export class FlashcardSlidesService {
       </html>
     `;
   }
-  
-  
-  
+
   findAll() {
     return `This action returns all flashcardSlides`;
   }
@@ -206,8 +202,6 @@ export class FlashcardSlidesService {
   findOne(id: number) {
     return `This action returns a #${id} flashcardSlide`;
   }
-
-
 
   remove(id: number) {
     return `This action removes a #${id} flashcardSlide`;
