@@ -57,6 +57,9 @@ export class PaymentService {
         'usd',
         input.token,
       );
+
+      const allPlans = await SubscriptionPlan.findAll();
+      console.log('allPlans', allPlans);
       const theSubscriptionPlan = await SubscriptionPlan.findOne({
         where: { plan_type: input.subscriptionType },
         plain: true,
