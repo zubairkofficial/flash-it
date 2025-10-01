@@ -331,8 +331,10 @@ export class AuthService {
       if (!existingUser) {
         throw new HttpException('no user logged IN', HttpStatus.NOT_FOUND);
       }
+      const plainUser = existingUser.get({ plain: true });
+      const { password, ...safeUser } = plainUser;
 
-      return existingUser;
+      return safeUser;
     } catch (error: any) {
       throw new HttpException(
         'Error: ' + error.message,

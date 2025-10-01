@@ -8,6 +8,12 @@ import { PlanService } from 'src/plan/plan.service';
 
 @Module({
   controllers: [PaymentController],
-  providers: [PaymentService,AuthService,FlashcardService,PdfService,PlanService],
+  providers: [
+    PaymentService,
+    AuthService,
+    FlashcardService,
+    PdfService,
+    PlanService,
+  ],
 })
 export class PaymentModule {}

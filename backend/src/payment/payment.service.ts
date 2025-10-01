@@ -57,34 +57,55 @@ export class PaymentService {
         'usd',
         input.token,
       );
-      // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
-      const user = await User.findByPk(+req.user.id);
-      user.credits = user.credits + 1000;
+      const theSubscriptionPlan = await SubscriptionPlan.findOne({
+        where: { plan_type: input.subscriptionType },
+      });
+      const theUser = await User.findOne({
+        where: {
+          id: req.user.id,
+        },
+      });
+      theUser.credits = theUser.credits + 1000;
+      theUser.plan_id = +theSubscriptionPlan.id;
       // const workSpace = await WorkSpace.findOne({
       //   where: { admin_user_id: req.user.id },
       // });
 
-      if (input.tempId) {
-        const payload = {
-          tempId: input.tempId,
-          subscriptionType: input.subscriptionType,
-        };
-        await this.planSrvice.createPlan(payload, req);
-        // await this.flashCardService.generateFlashCard(
-        //       {
-        //         temporary_flashcard_id: input.tempId,
-        //         workspace_id: workSpace.id,
-        //       },
-        //       {
-        //         user: {
-        //           id: req.user.id,
-        //         },
-        //       },
-        //       null
+      // if (input.tempId) {
+      //   const payload = {
+      //     tempId: input.tempId,
+      //     subscriptionType: input.subscriptionType,
+      //   };
+      //   await this.planSrvice.createPlan(payload, req);
+      //   // await this.flashCardService.generateFlashCard(
+      //   //       {
+      //   //         temporary_flashcard_id: input.tempId,
+      //   //         workspace_id: workSpace.id,
+      //   //       },
+      //   //       {
+      //   //         user: {
+      //   //           id: req.user.id,
+      //   //         },
+      //   //       },
+      //   //       null
 
-        //     );
-      }
-      await user.save();
+      //   //     );
+      // }
+      await theUser.save();
+
+      const afterUpdate = await User.findOne({
+        where: {
+          id: req.user.id,
+        },
+        plain: true,
+      });
+
+      console.log(
+        'asdfsadsadsadfsadf',
+        afterUpdate,
+        'asdfsadf',
+        theSubscriptionPlan,
+      );
       return paymentIntent;
     } catch (error) {
       console.error('Error in cardPaymentCreate:', error);

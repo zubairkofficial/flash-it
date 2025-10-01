@@ -37,7 +37,7 @@
         </div>
 
         <div class="viewer">
-          <div class="flex flex-col relative">
+          <div class="flex flex-col">
             <div
               class="viewer-card"
               (touchstart)="onTouchStart($event)"
@@ -58,17 +58,16 @@
                 <mat-icon>chevron_right</mat-icon>
               </button>
 
-              <ng-container *ngIf="filteredSlides.length; else empty">
-                <div class="card-inner">
-                  <div class="title">
-                    {{ filteredSlides[currentIndex]?.title || "Untitled" }}
+                <ng-container *ngIf="filteredSlides.length; else empty">
+                  <div class="card-inner flex">
+                    <div class="title">
+                      {{ filteredSlides[currentIndex]?.title || "Untitled" }}
+                    </div>
+                    <div class="content">
+                      {{ filteredSlides[currentIndex]?.text }}
+                    </div>
                   </div>
-                  <div class="content">
-                    {{ filteredSlides[currentIndex]?.text }}
-                  </div>
-                </div>
-              </ng-container>
-
+                </ng-container>
               <ng-template #empty>
                 <div class="empty">No slides in this tab.</div>
               </ng-template>

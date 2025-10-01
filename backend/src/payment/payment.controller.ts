@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CardPaymentDto, CreatePaymentDto } from './dto/payment.dto';
 import { JwtAuthGuard } from 'src/guards/jwtAuth.guard';
@@ -9,9 +19,7 @@ export class PaymentController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  cardPaymentCreate(@Body() input,@Req() req:any) {
-    return this.paymentService.cardPaymentCreate(input,req);
+  cardPaymentCreate(@Body() input: CardPaymentDto, @Req() req: any) {
+    return this.paymentService.cardPaymentCreate(input, req);
   }
-
- 
 }

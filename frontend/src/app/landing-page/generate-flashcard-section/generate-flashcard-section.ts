@@ -178,6 +178,7 @@ export class GenerateFlashcardSection {
 
     uploadRes.subscribe({
       next: (res) => {
+        console.log('res after upload', res);
         if (res && res.data.temporary_flashcard_id) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
@@ -187,10 +188,10 @@ export class GenerateFlashcardSection {
               flashcard_id: res.data.flashcard_id,
             },
           });
-        } else if (res && !res.data.temporary_flashcard_id) {
+        } else if (res && res.data.temporary_flashcard_id === null) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
-          this.router.navigate([`/flashcard/${res.data.flash_card.id}`]);
+          this.router.navigate([`/flashcard/${res.data.flashcard_id}`]);
         } else {
           this.isLoading = false;
           notyf.error('No temporary_flashcard_id returned.');
