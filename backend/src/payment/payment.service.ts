@@ -61,9 +61,14 @@ export class PaymentService {
         where: { plan_type: input.subscriptionType },
       });
 
-      console.log('theSubscriptionPlan', theSubscriptionPlan.dataValues.id);
+      const plainSubs = theSubscriptionPlan.get({ plain: true });
+      console.log('theSubscriptionPlan', plainSubs);
+      console.log('theSubscriptionPlan', plainSubs.id);
 
-      console.log('theSubscriptionPlan', theSubscriptionPlan.id);
+      console.log(
+        'theSubscriptionPlan',
+        theSubscriptionPlan.id || theSubscriptionPlan.dataValues.id,
+      );
       const theUser = await User.findOne({
         where: {
           id: req.user.id,
@@ -71,7 +76,7 @@ export class PaymentService {
       });
       console.log('theUser', theUser.id);
       theUser.credits = theUser.credits + 1000;
-      theUser.plan_id = +theSubscriptionPlan.id;
+      theUser.plan_id = plainSubs.id;
       // const workSpace = await WorkSpace.findOne({
       //   where: { admin_user_id: req.user.id },
       // });
