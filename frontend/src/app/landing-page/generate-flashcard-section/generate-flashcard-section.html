@@ -13,12 +13,6 @@
         class="flex flex-col justify-around md:justify-start gap-4 w-full md:w-[63%] h-auto min-h-[380px] md:min-h-[500px] rounded-xl p-4 sm:p-6 md:p-8 lg:p-10"
       >
         <div *ngIf="isWorkspaceRoute" class="w-full sm:w-auto">
-          <!-- <a
-            class="text-primary inline-flex items-center text-sm sm:text-base"
-            href="javascript:history.back()"
-          >
-            <span class="font-lg me-2 font-bold">&lt;</span> Back
-          </a> -->
           <h3 class="font-extrabold mt-3 text-lg sm:text-xl">Details</h3>
         </div>
         <div
@@ -66,6 +60,7 @@
               class="hidden"
               multiple
               (change)="onFileSelected($event)"
+              [disabled]="showAddMoreFilesButton || isLoading"
             />} @if(selectedFiles.length > 0){
             <div class="mt-2 text-sm text-[#4A494A] w-full px-4">
               <p class="font-medium mb-2">Selected files:</p>
@@ -81,6 +76,7 @@
                     class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-white bg-[#F50D00] hover:bg-red-700 rounded-full text-sm"
                     (click)="removeFile(i)"
                     aria-label="Remove file"
+                    [disabled]="showAddMoreFilesButton || isLoading"
                   >
                     ×
                   </button>
@@ -111,23 +107,58 @@
                     multiple
                     (change)="onFileSelected($event)"
                     aria-label="Select additional PDF files"
-                    [disabled]="showAddMoreFilesButton"
+                    [disabled]="showAddMoreFilesButton || isLoading"
                   />
                 </label>
                 } @if (showAddMoreFilesButton) {
-                <button
-                  type="button"
-                  class="w-full h-10 mt-4 rounded-xl bg-primary text-white font-bold shadow hover:bg-primary/90 transition flex items-center justify-center"
-                  [disabled]="isAddMoreFilesLoading"
-                  (click)="navigateToFlashcardDetail()"
+
+                <div
+                  class="flex flex-col items-center justify-around w-full h-40 rounded-xl p-3 py-8 border-2 border-dashed border-amber-600 text-primary bg-white/60 hover:bg-white transition shadow-sm hover:shadow-md cursor-default focus-within:ring-2 focus-within:ring-amber-500"
                 >
-                  <span
-                    *ngIf="isAddMoreFilesLoading"
-                    class="loader mr-2"
-                  ></span>
-                  @if(isAddMoreFilesLoading){ Loading... }@else{ Add more files
-                  }
-                </button>
+                  <div class="flex w-full items-center justify-center">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12.0937 22.1354V14.3229L9.4895 16.9271"
+                        stroke="#F36B24"
+                        stroke-width="1.95312"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M12.0938 14.3229L14.6979 16.9271"
+                        stroke="#F36B24"
+                        stroke-width="1.95312"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M29.0209 13.0208V19.5313C29.0209 26.0417 26.4167 28.6458 19.9063 28.6458H12.0938C5.58341 28.6458 2.97925 26.0417 2.97925 19.5313V11.7188C2.97925 5.20834 5.58341 2.60417 12.0938 2.60417H18.6042"
+                        stroke="#F36B24"
+                        stroke-width="1.95312"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M29.0209 13.0208H23.8126C19.9063 13.0208 18.6042 11.7188 18.6042 7.8125V2.60417L29.0209 13.0208Z"
+                        stroke="#F36B24"
+                        stroke-width="1.95312"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div class="flex w-full items-center justify-center">
+                    <button class="btn btn-primary cursor-pointer">
+                      <small>More Files</small>
+                    </button>
+                  </div>
+                </div>
                 }
               </div>
             </div>

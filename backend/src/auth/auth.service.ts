@@ -43,6 +43,7 @@ export class AuthService {
             [Op.eq]: email,
           },
         },
+        plain: true,
         transaction,
       });
       console.log('asdfsadfasdfasdfsadfsad=======================', userExist);
@@ -119,11 +120,12 @@ export class AuthService {
         // );
       }
 
-      const { password, ...safeUser } = newUser;
+      const plainUser = newUser.get({ plain: true });
+      const { password, ...safeUser } = plainUser;
 
       const token = generateToken({
-        id: safeUser.dataValues.id,
-        email: safeUser.dataValues.email,
+        id: safeUser.id,
+        email: safeUser.email,
       });
 
       await transaction.commit();
@@ -158,16 +160,17 @@ export class AuthService {
             [Op.eq]: email,
           },
         },
+        plain: true,
       });
 
       if (!existingUser) {
-        throw new UnauthorizedException('Invalid Credentials');
+        throw new UnauthorizedException('Invalid Credentials asdsfd');
       }
 
       const isValid = await existingUser.validatePassword(loginDTO.password);
 
       if (!isValid) {
-        throw new UnauthorizedException('Invalid Credentials');
+        throw new UnauthorizedException('Invalid Credentials 1');
       }
 
       if (temporary_flashcard_id) {
@@ -203,12 +206,12 @@ export class AuthService {
           );
         }
       }
-
-      const { password, ...sendUserData } = existingUser;
-
+      const plainUser = existingUser.get({ plain: true });
+      const { password, ...sendUserData } = plainUser;
+      console.log('plainUser plainUser plainUser ----------', plainUser);
       const token = generateToken({
-        id: sendUserData.dataValues.id,
-        email: sendUserData.dataValues.email,
+        id: sendUserData.id,
+        email: sendUserData.email,
       });
 
       await transaction.commit();

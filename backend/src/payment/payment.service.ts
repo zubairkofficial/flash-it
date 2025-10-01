@@ -12,7 +12,11 @@ import { PlanService } from 'src/plan/plan.service';
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
-  constructor(private planSrvice: PlanService, private flashCardService: FlashcardService,  private sequelize: Sequelize,) {}
+  constructor(
+    private planSrvice: PlanService,
+    private flashCardService: FlashcardService,
+    private sequelize: Sequelize,
+  ) {}
   private async initializeStripe(): Promise<void> {
     if (!this.stripe) {
       const stripeApiKey = process.env.STRIPE_KEY; // Fetch API key from DB
@@ -40,51 +44,52 @@ export class PaymentService {
     }
   }
 
-  async cardPaymentCreate(
-    input: CardPaymentDto,
-    req: any,
-  ) {
-    await this.initializeStripe();
-    // const transaction = await this.sequelize.transaction();
- 
-    // const user = await this.authService.getUserById(req.user.id);
+  async cardPaymentCreate(input: CardPaymentDto, req: any) {
+    console.log('PaymentService.cardPaymentCreate called with input:', input);
+    try {
+      await this.initializeStripe();
+      // const transaction = await this.sequelize.transaction();
 
-    const paymentIntent = await this.createPaymentIntent(
-      input.price * 100,
-      'usd',
-      input.token,
-    );
-    // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
-    const user=await User.findByPk(+req.user.id)
-    user.credits=+user.credits+1000
-    // const workSpace = await WorkSpace.findOne({
-    //   where: { admin_user_id: req.user.id },
-    // });
-   
-if(input.tempId)
+      // const user = await this.authService.getUserById(req.user.id);
 
-  {
-    const payload={
-      tempId:input.tempId,
-      subscriptionType:input.subscriptionType
+      const paymentIntent = await this.createPaymentIntent(
+        input.price * 100,
+        'usd',
+        input.token,
+      );
+      // const subscriptionPlan=await SubscriptionPlan.findOne({where:{plan_type:input.subscriptionType}})
+      const user = await User.findByPk(+req.user.id);
+      user.credits = user.credits + 1000;
+      // const workSpace = await WorkSpace.findOne({
+      //   where: { admin_user_id: req.user.id },
+      // });
+
+      if (input.tempId) {
+        const payload = {
+          tempId: input.tempId,
+          subscriptionType: input.subscriptionType,
+        };
+        await this.planSrvice.createPlan(payload, req);
+        // await this.flashCardService.generateFlashCard(
+        //       {
+        //         temporary_flashcard_id: input.tempId,
+        //         workspace_id: workSpace.id,
+        //       },
+        //       {
+        //         user: {
+        //           id: req.user.id,
+        //         },
+        //       },
+        //       null
+
+        //     );
+      }
+      await user.save();
+      return paymentIntent;
+    } catch (error) {
+      console.error('Error in cardPaymentCreate:', error);
+      throw new Error('Payment failed: ' + error.message);
     }
-    await this.planSrvice.createPlan(payload,req)
-    // await this.flashCardService.generateFlashCard(
-    //       {
-    //         temporary_flashcard_id: input.tempId,
-    //         workspace_id: workSpace.id,
-    //       },
-    //       {
-    //         user: {
-    //           id: req.user.id,
-    //         },
-    //       },
-    //       null
-         
-    //     );
-}
-    await user.save();
-    return paymentIntent;
   }
 
   async createPaymentIntent(

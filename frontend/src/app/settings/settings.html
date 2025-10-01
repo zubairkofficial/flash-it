@@ -1,12 +1,15 @@
-     <div class="mx-auto px-4 py-8 w-full">
-            <h1 class="text-2xl md:text-3xl font-bold mb-6 font-nunito">Settings</h1>
-            <div class="grid grid-cols-1 gap-6 lg:gap-8 md:grid-cols-2">
-                <div class="rounded-2xl bg-outline shadow-md p-4 md:p-6">
-                    <app-profile></app-profile>
-                </div>
-                <div class="rounded-2xl bg-outline shadow-md p-4 md:p-6">
-                    <app-change-password></app-change-password>
-                </div>
-            </div>
-        </div>
-   
+<div
+  class="flex items-center justify-center w-screen md:w-[80vw] min-h-screen p-6"
+>
+  <div class="flex flex-col w-[90%] h-full">
+    <h1 class="text-2xl md:text-3xl font-bold mb-6 font-nunito">Settings</h1>
+    <div class="flex flex-col w-full gap-10 h-full">
+      <div class="flex w-full min-h-[50%]">
+        <app-profile class="flex w-full"></app-profile>
+      </div>
+      <div class="flex w-full">
+        <app-change-password class="flex w-full"></app-change-password>
+      </div>
+    </div>
+  </div>
+</div>

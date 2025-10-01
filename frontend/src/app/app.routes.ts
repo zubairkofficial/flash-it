@@ -17,6 +17,9 @@ import { GenerateFlashcardSection } from './landing-page/generate-flashcard-sect
 import { Settings } from './settings/settings';
 import { FlashcardDetailComponent } from './pages/flashcard-detail/flashcard-detail';
 import { CommonLayoutComponent } from './common-layout/common-layout';
+import { TempFlashCardGeneratePage } from './pages/temp-flash-card-generate-page/temp-flash-card-generate-page';
+import { FlashcardCreate } from './pages/flashcard-create/flashcard-create';
+import { Plans } from './pages/plans/plans';
 
 const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
 export const authGuard: CanActivateFn = () => {
@@ -60,12 +63,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: Dashboard },
-      { path: 'uploaded-file', component: GenerateFlashcardSection },
+      { path: 'uploaded-file', component: TempFlashCardGeneratePage },
       { path: 'workspace/:id', component: WorkspaceDetail },
+      { path: 'workspace/:id/flashcard/create', component: FlashcardCreate },
       { path: 'workspace/invited/:id', component: WorkspaceInvite },
       { path: 'flashcard/:id', component: FlashcardViewer },
       { path: 'flashcard/:id/detail', component: FlashcardDetailComponent },
-      { path: 'plans', component: PricePlanSection },
+      { path: 'plans', component: Plans },
       { path: 'profile', component: Profile },
       { path: 'change-password', component: ChangePassword },
       { path: 'settings', component: Settings },

@@ -13,7 +13,17 @@ import { Pagination } from '../../components/pagination/pagination';
 
 @Component({
   selector: 'app-workspace-detail',
-  imports: [CommonModule,MatIconModule, ConfirmModal,GenerateFlashcardSection,SignedInSidebar,SiteHeader,FilterBar,Pagination,MatIcon],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    ConfirmModal,
+    GenerateFlashcardSection,
+    SignedInSidebar,
+    SiteHeader,
+    FilterBar,
+    Pagination,
+    MatIcon,
+  ],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',
@@ -26,16 +36,19 @@ export class WorkspaceDetail implements OnInit {
   public deleteMessage: any = null;
   public isInviteModalOpen: boolean = false;
   public isCopySuccess: boolean = false;
-  public generateFlashCard: boolean = false;
   public isUserAdmin: boolean = false; // Add this property
   public confirmModalOpen: boolean = false;
   public toDelete: { workspace_id: number; user_id: number } | null = null;
-  public credits=0;
+  public credits = 0;
   public query: string = '';
   public page: number = 1;
   public pageSize: number = 5;
   public filteredFlashcards: any[] = [];
-  constructor(private route: ActivatedRoute, private router: Router, private workspaceService: WorkspaceService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private workspaceService: WorkspaceService
+  ) {}
 
   public ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -44,34 +57,41 @@ export class WorkspaceDetail implements OnInit {
       return;
     }
     this.fetchWorkspace(id);
-
   }
 
   private fetchWorkspace(id: number): void {
-    console.log("id",id)
+    console.log('id', id);
     this.isLoading = true;
-    this.workspaceService.getWorkspaceById(+id, { page: this.page, pageSize: this.pageSize, q: this.query }).subscribe({
-      next: (data: any) => {
-        this.isLoading=false
-        this.workspace = data;
-        this.applyFilter();
-        const user = localStorage.getItem("userData");
-        const userData = user ? JSON.parse(user) : null;
-        const workspaceAdminId = this.workspace?.admin?.id;
-        const currentUserId = userData?.id;
+    this.workspaceService
+      .getWorkspaceById(+id, {
+        page: this.page,
+        pageSize: this.pageSize,
+        q: this.query,
+      })
+      .subscribe({
+        next: (data: any) => {
+          console.log('workspace data', data);
+          this.isLoading = false;
+          this.workspace = data;
+          this.applyFilter();
+          const user = localStorage.getItem('userData');
+          const userData = user ? JSON.parse(user) : null;
+          const workspaceAdminId = data?.admin?.id;
+          const currentUserId = userData?.id;
 
-        if (workspaceAdminId && currentUserId) {
-          this.isUserAdmin = workspaceAdminId === currentUserId;
-        } else {
-          this.isUserAdmin = false;
-        }
-        this.isLoading = false;
-      },
-      error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Failed to load workspace.';
-        this.isLoading = false;
-      },
-    });
+          if (workspaceAdminId && currentUserId) {
+            this.isUserAdmin = workspaceAdminId === currentUserId;
+          } else {
+            this.isUserAdmin = false;
+          }
+          this.isLoading = false;
+        },
+        error: (err: any) => {
+          this.errorMessage =
+            err?.error?.message || 'Failed to load workspace.';
+          this.isLoading = false;
+        },
+      });
   }
 
   public openFlashcard(flashcardId: number): void {
@@ -91,7 +111,7 @@ export class WorkspaceDetail implements OnInit {
     if (!this.query) {
       this.filteredFlashcards = [...list];
     } else {
-      this.filteredFlashcards = list.filter(fc =>
+      this.filteredFlashcards = list.filter((fc) =>
         (fc?.raw_data?.title || 'flashcard').toLowerCase().includes(this.query)
       );
     }
@@ -128,7 +148,7 @@ export class WorkspaceDetail implements OnInit {
         this.errorMessage = err?.error?.message || 'Failed to load workspace.';
         this.isLoading = false;
       },
-    })
+    });
   }
 
   public closeInviteModal(): void {
@@ -136,8 +156,7 @@ export class WorkspaceDetail implements OnInit {
     this.isCopySuccess = false;
   }
   public handleFlashCard(): void {
-    this.generateFlashCard = true;
-
+    this.router.navigate([`/workspace/${this.workspace.id}/flashcard/create`]);
   }
 
   public copyInviteUrl(): void {
@@ -173,12 +192,11 @@ export class WorkspaceDetail implements OnInit {
         this.fetchWorkspace(workspace_id);
       },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Failed to delete workspace member.';
+        this.errorMessage =
+          err?.error?.message || 'Failed to delete workspace member.';
         this.isLoading = false;
         this.confirmModalOpen = false;
       },
     });
   }
 }
-
-

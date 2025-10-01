@@ -91,12 +91,12 @@ export class GenerateFlashcardSection {
     if (document.referrer && document.referrer.includes('/plans')) {
     }
     const match = this.router.url.match(/^\/workspace\/(\d+)/);
-    console.log("match",match)
-  if (match) {
-    const workspaceId = match[1]; // e.g. "299"
-    this.isWorkspaceRoute = true;
-    console.log('Workspace ID:', workspaceId);
-  }
+    console.log('match', match);
+    if (match) {
+      const workspaceId = match[1]; // e.g. "299"
+      this.isWorkspaceRoute = true;
+      console.log('Workspace ID:', workspaceId);
+    }
 
     this.route.queryParamMap.subscribe((params) => {
       this.tempId = params.get('temp_id');
@@ -190,7 +190,7 @@ export class GenerateFlashcardSection {
         } else if (res && !res.data.temporary_flashcard_id) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
-          this.router.navigate(['dashboard']);
+          this.router.navigate([`/flashcard/${res.data.flash_card.id}`]);
         } else {
           this.isLoading = false;
           notyf.error('No temporary_flashcard_id returned.');

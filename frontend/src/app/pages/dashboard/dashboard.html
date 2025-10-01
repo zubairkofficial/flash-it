@@ -65,12 +65,15 @@
         ></app-filter-bar>
       </div>
       <div>
-        <app-buttom-primary text="New Workspace"></app-buttom-primary>
+        <app-buttom-primary
+          text="New Workspace"
+          (click)="handleWorkspace()"
+        ></app-buttom-primary>
       </div>
     </div>
   </div>
 
-  <div class="flex w-[95%] px-2" >
+  <div class="flex flex-col w-[95%] px-2">
     <div class="text-sm text-text-secondary" *ngIf="isLoading">
       Loading workspaces...
     </div>
@@ -151,42 +154,42 @@
           No workspaces yet. Create your first one.
         </div>
       </div>
-      <div class="col-span-full mt-2 flex justify-center">
-        <app-pagination
-          size="sm"
-          [page]="page"
-          [pageSize]="pageSize"
-          [total]="filtered.length"
-          (pageChange)="onPageChange($event)"
-          (pageSizeChange)="onPageSizeChange($event)"
-        ></app-pagination>
-      </div>
-      <app-workspace-modal
-        [open]="isConfirmModalOpen"
-        [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'"
-        [message]="
-          editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'
-        "
-        [confirmText]="editingWorkspace ? 'Update' : 'Save'"
-        [cancelText]="'Cancel'"
-        [credits]="+(editingWorkspace?.credit ?? 0)"
-        [initialName]="editingWorkspace?.name || ''"
-        (confirmed)="onConfirmSave($event)"
-        (cancelled)="onCancelSave()"
-        [isLoading]="isLoading"
-      ></app-workspace-modal>
-
-      <app-confirm-modal
-        [open]="confirmModalOpen"
-        [title]="'Remove workspace'"
-        [message]="
-          'Are you sure you want to remove this workspace? This action cannot be undone.'
-        "
-        [confirmText]="'Remove'"
-        [cancelText]="'Cancel'"
-        (confirmed)="onConfirmDelete()"
-        (cancelled)="onCancelDelete()"
-      ></app-confirm-modal>
     </div>
+    <div class="col-span-full mt-2 flex justify-end">
+      <app-pagination
+        size="sm"
+        [page]="page"
+        [pageSize]="pageSize"
+        [total]="filtered.length"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+      ></app-pagination>
+    </div>
+    <app-workspace-modal
+      [open]="isConfirmModalOpen"
+      [title]="editingWorkspace ? 'Update Workspace' : 'Save Workspace'"
+      [message]="
+        editingWorkspace ? 'Update Workspace Name.' : 'Create New Workspace.'
+      "
+      [confirmText]="editingWorkspace ? 'Update' : 'Save'"
+      [cancelText]="'Cancel'"
+      [credits]="+(editingWorkspace?.credit ?? 0)"
+      [initialName]="editingWorkspace?.name || ''"
+      (confirmed)="onConfirmSave($event)"
+      (cancelled)="onCancelSave()"
+      [isLoading]="isLoading"
+    ></app-workspace-modal>
+
+    <app-confirm-modal
+      [open]="confirmModalOpen"
+      [title]="'Remove workspace'"
+      [message]="
+        'Are you sure you want to remove this workspace? This action cannot be undone.'
+      "
+      [confirmText]="'Remove'"
+      [cancelText]="'Cancel'"
+      (confirmed)="onConfirmDelete()"
+      (cancelled)="onCancelDelete()"
+    ></app-confirm-modal>
   </div>
 </div>
