@@ -184,6 +184,8 @@ export class GenerateFlashcardSection {
         if (res && res.data.temporary_flashcard_id) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
+          this.profileStore.refetch();
+
           this.router.navigate(['/auth/register'], {
             queryParams: {
               temp_id: res.data.temporary_flashcard_id,
