@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center w-screen md:w-[80vw]">
+<div class="flex items-center justify-center w-screen">
   <div class="w-full min-h-screen bg-background">
     <div class="mx-auto max-w-4xl px-4 py-6">
       <div *ngIf="isLoading" class="text-sm text-primary">Loading...</div>
@@ -58,7 +58,7 @@
                 <mat-icon>chevron_right</mat-icon>
               </button>
 
-              <div class="z-5" >
+              <div class="z-5">
                 <div class="card-inner flex">
                   <div class="title">
                     {{ filteredSlides[currentIndex]?.title || "Untitled" }}
@@ -79,7 +79,9 @@
                   class="relative bg-primary rounded-full w-full h-full"
                 ></div>
               </div>
-              <div class="z-3 absolute right-0 bottom-0 pr-6 pb-6 text-white font-nunito text-2xl font-bold">
+              <div
+                class="z-3 absolute right-0 bottom-0 pr-6 pb-6 text-white font-nunito text-2xl font-bold"
+              >
                 {{ currentIndex + 1 }}.
               </div>
             </div>

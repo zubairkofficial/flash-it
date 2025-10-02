@@ -164,13 +164,13 @@ export class AuthService {
       });
 
       if (!existingUser) {
-        throw new UnauthorizedException('Invalid Credentials asdsfd');
+        throw new UnauthorizedException('No User Exist');
       }
 
       const isValid = await existingUser.validatePassword(loginDTO.password);
 
       if (!isValid) {
-        throw new UnauthorizedException('Invalid Credentials 1');
+        throw new UnauthorizedException('Password is incorrect');
       }
 
       if (temporary_flashcard_id) {

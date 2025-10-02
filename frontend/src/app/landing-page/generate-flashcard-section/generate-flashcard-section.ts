@@ -192,7 +192,7 @@ export class GenerateFlashcardSection {
               flashcard_id: res.data.flashcard_id,
             },
           });
-        } else if (res && res.data.flash_card) {
+        } else if (res && (res.data.flash_card || res.data.flashcard_id)) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
           this.profileStore.refetch();

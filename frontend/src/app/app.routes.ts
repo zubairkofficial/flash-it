@@ -20,6 +20,7 @@ import { CommonLayoutComponent } from './common-layout/common-layout';
 import { TempFlashCardGeneratePage } from './pages/temp-flash-card-generate-page/temp-flash-card-generate-page';
 import { FlashcardCreate } from './pages/flashcard-create/flashcard-create';
 import { Plans } from './pages/plans/plans';
+import { FlashcardShowLayout } from './flashcard-show-layout/flashcard-show-layout';
 
 const isAuthenticated = (): boolean => !!localStorage.getItem('authToken');
 export const authGuard: CanActivateFn = () => {
@@ -75,6 +76,13 @@ export const routes: Routes = [
       { path: 'settings', component: Settings },
     ],
   },
+  {
+    path: '',
+    component: FlashcardShowLayout,
+    canActivate: [authGuard],
+    children: [{ path: 'flashcard/:id', component: FlashcardViewer }],
+  },
+
   { path: 'payment/card', component: PaymentCard },
 
   { path: '**', component: NotFoundComponent },

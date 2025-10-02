@@ -17,7 +17,9 @@ export class FlashcardSlidesService {
     const getFlashCard = await FlashCardSlide.findAll({
       where: { flashcard_id: flashCardId },
     });
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     // const browser = await puppeteer.launch({
 
     //   args: [
