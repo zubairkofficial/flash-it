@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { globalInstance } from '../../../utils/global.utils';
@@ -17,7 +17,7 @@ type Slide = {
   selector: 'app-flashcard-viewer',
   standalone: true,
   imports: [CommonModule, MatIconModule],
-  providers:[Api,FlashcardService],
+  providers: [Api, FlashcardService],
   templateUrl: './flashcard-viewer.html',
   styleUrl: './flashcard-viewer.css',
 })
@@ -29,9 +29,17 @@ export class FlashcardViewer implements OnInit {
   public currentIndex: number = 0;
   private touchStartX: number | null = null;
   private touchEndX: number | null = null;
-  public tabs: Array<'concise' | 'standard' | 'detailed'> = ['concise', 'standard', 'detailed'];
+  public tabs: Array<'concise' | 'standard' | 'detailed'> = [
+    'concise',
+    'standard',
+    'detailed',
+  ];
 
-  constructor(private route: ActivatedRoute, private flashcardService: FlashcardService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private flashcardService: FlashcardService,
+    private router: Router
+  ) {}
 
   public ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -98,11 +106,13 @@ export class FlashcardViewer implements OnInit {
     this.touchStartX = event.changedTouches[0].clientX;
   }
   public handleFlashCardDownload(flashCardSlide: any): void {
-    console.log("flashCardSlideId",flashCardSlide)
-    const downloadUrl =  `${globalInstance.getInstance().getURL()}/flashcard-slides/${flashCardSlide[0].flashcard_id}`;
+    console.log('flashCardSlideId', flashCardSlide);
+    const downloadUrl = `${globalInstance
+      .getInstance()
+      .getURL()}/flashcard-slides/${flashCardSlide[0].flashcard_id}`;
 
     window.open(downloadUrl, '_blank');
-    }
+  }
 
   public onTouchEnd(event: TouchEvent): void {
     this.touchEndX = event.changedTouches[0].clientX;
@@ -117,22 +127,8 @@ export class FlashcardViewer implements OnInit {
     this.touchStartX = null;
     this.touchEndX = null;
   }
+
+  goBack() {
+    this.router.navigate(['workspace', this.flashcard.workspace_id]);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -68,7 +68,6 @@ export const routes: Routes = [
       { path: 'workspace/:id', component: WorkspaceDetail },
       { path: 'workspace/:id/flashcard/create', component: FlashcardCreate },
       { path: 'workspace/invited/:id', component: WorkspaceInvite },
-      { path: 'flashcard/:id', component: FlashcardViewer },
       { path: 'flashcard/:id/detail', component: FlashcardDetailComponent },
       { path: 'plans', component: Plans },
       { path: 'profile', component: Profile },

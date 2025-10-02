@@ -1,9 +1,33 @@
-<div class="flex items-center justify-center w-screen">
+<div class="flex items-center justify-center w-screen md:w-[80vw]">
   <div class="w-full min-h-screen bg-background">
     <div class="mx-auto max-w-4xl px-4 py-6">
       <div *ngIf="isLoading" class="text-sm text-primary">Loading...</div>
       <div *ngIf="!isLoading && errorMessage" class="text-sm text-red-600">
         {{ errorMessage }}
+      </div>
+
+      <div class="flex flex-col items-start justify-center mb-4">
+        <button
+          type="button"
+          class="cursor-pointer mr-2 flex items-center text-primary hover:text-primary-dark"
+          (click)="goBack()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span class="ml-1">Back</span>
+        </button>
       </div>
 
       <div *ngIf="!isLoading && !errorMessage && flashcard" class="space-y-4">
@@ -58,32 +82,19 @@
                 <mat-icon>chevron_right</mat-icon>
               </button>
 
-              <div class="z-5">
-                <div class="card-inner flex">
-                  <div class="title">
-                    {{ filteredSlides[currentIndex]?.title || "Untitled" }}
+                <ng-container *ngIf="filteredSlides.length; else empty">
+                  <div class="card-inner flex">
+                    <div class="title">
+                      {{ filteredSlides[currentIndex]?.title || "Untitled" }}
+                    </div>
+                    <div class="content">
+                      {{ filteredSlides[currentIndex]?.text }}
+                    </div>
                   </div>
-                  <div class="content">
-                    {{ filteredSlides[currentIndex]?.text }}
-                  </div>
-                </div>
-              </div>
+                </ng-container>
               <ng-template #empty>
                 <div class="empty">No slides in this tab.</div>
               </ng-template>
-
-              <div
-                class="z-2 absolute right-[-10%] bottom-[-35%] flex items-center justify-center w-[35%] aspect-square"
-              >
-                <div
-                  class="relative bg-primary rounded-full w-full h-full"
-                ></div>
-              </div>
-              <div
-                class="z-3 absolute right-0 bottom-0 pr-6 pb-6 text-white font-nunito text-2xl font-bold"
-              >
-                {{ currentIndex + 1 }}.
-              </div>
             </div>
 
             <!-- Move dots BELOW the card -->
