@@ -181,11 +181,7 @@ export class GenerateFlashcardSection {
     uploadRes.subscribe({
       next: (res) => {
         console.log('res after upload', res);
-        if (
-          res &&
-          (res.data.flash_card.temporary_flashcard_id ||
-            res.data.temporary_flashcard_id)
-        ) {
+        if (res && res.data.temporary_flashcard_id) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
           this.router.navigate(['/auth/register'], {
@@ -194,17 +190,11 @@ export class GenerateFlashcardSection {
               flashcard_id: res.data.flashcard_id,
             },
           });
-        } else if (
-          res &&
-          (res.data.temporary_flashcard_id === null ||
-            res.data.flash_card.temporary_flashcard_id === null)
-        ) {
+        } else if (res && res.data.flash_card) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
           this.profileStore.refetch();
-          this.router.navigate([
-            `/flashcard/${res.data.flashcard_id || res.data.flash_card.id}`,
-          ]);
+          this.router.navigate([`/flashcard/${res.data.flash_card.id}`]);
         } else {
           this.isLoading = false;
           notyf.error('No temporary_flashcard_id returned.');
