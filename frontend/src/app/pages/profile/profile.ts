@@ -7,11 +7,13 @@ import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-pr
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { notyf } from '../../../utils/notyf.utils';
 import { SiteHeader } from '../../shared/site-header/site-header';
+import { Api } from '../../../utils/api/api';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, InputWithLabel, ButtomPrimary,SignedInSidebar,SiteHeader],
+  providers: [Api, AuthService],
   templateUrl: './profile.html',
   styleUrl: './profile.css'
 })

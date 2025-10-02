@@ -9,11 +9,19 @@ import { Observable } from 'rxjs';
 export class PaymentService {
   constructor(private api: Api) {}
 
-  createCardPayment(token: { token: string;subscriptionType: any,price:number,tempId:string }): Observable<any> {
-    return this.api.post('/payment/', {...token}, {
-      ...this.api.contentTypeHeader,
-      ...this.api.authorizationHeader
-    });
+  createCardPayment(token: {
+    token: string;
+    subscriptionType: any;
+    price: number;
+    tempId: string;
+  }): Observable<any> {
+    return this.api.post(
+      '/payment/',
+      { ...token },
+      {
+        ...this.api.contentTypeHeader,
+        ...this.api.authorizationHeader,
+      }
+    );
   }
-
 }

@@ -12,10 +12,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PricePlanSection } from '../landing-page/price-plan-section/price-plan-section';
 import { notyf } from '../../utils/notyf.utils';
+import { Api } from '../../utils/api/api';
 
 @Component({
   selector: 'app-payment-card',
   imports: [CommonModule, FormsModule],
+  providers: [Api, PaymentService],
   standalone: true,
   templateUrl: './payment-card.html',
   styleUrl: './payment-card.css',

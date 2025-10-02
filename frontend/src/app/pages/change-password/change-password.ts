@@ -1,20 +1,33 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth';
 import { InputWithLabel } from '../../components/inputs/input-with-label/input-with-label';
 import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { notyf } from '../../../utils/notyf.utils';
 import { SiteHeader } from '../../shared/site-header/site-header';
+import { Api } from '../../../utils/api/api';
 
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputWithLabel, ButtomPrimary,SignedInSidebar,SiteHeader],
-  providers:[AuthService],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    InputWithLabel,
+    ButtomPrimary,
+    SignedInSidebar,
+    SiteHeader,
+  ],
+  providers: [Api, AuthService],
   templateUrl: './change-password.html',
-  styleUrl: './change-password.css'
+  styleUrl: './change-password.css',
 })
 export class ChangePassword {
   form: FormGroup;
@@ -35,27 +48,14 @@ export class ChangePassword {
         notyf.success(data.message);
       },
       error: (err) => {
-        console.log("err",err)
+        console.log('err', err);
         // Handle different types of errors (you can customize based on backend error structure)
-        const errorMessage = err?.error?.message || err?.message ||  'Something went wrong. Please try again.';
+        const errorMessage =
+          err?.error?.message ||
+          err?.message ||
+          'Something went wrong. Please try again.';
         notyf.error(errorMessage);
-      }
+      },
     });
-    
-    
-    
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

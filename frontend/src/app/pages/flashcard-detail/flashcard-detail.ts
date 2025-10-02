@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { SiteHeader } from '../../shared/site-header/site-header';
+import { Api } from '../../../utils/api/api';
 
 @Component({
   selector: 'app-flashcard-detail',
   templateUrl: './flashcard-detail.html',
   imports: [CommonModule, FormsModule, SignedInSidebar, SiteHeader],
+  providers: [Api, FlashcardService, WorkspaceService],
 })
 export class FlashcardDetailComponent implements OnInit {
   credits: number = 0;

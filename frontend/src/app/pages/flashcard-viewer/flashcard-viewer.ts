@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { FlashcardService } from '../../../services/flashcard/flashcard';
 import { globalInstance } from '../../../utils/global.utils';
+import { Api } from '../../../utils/api/api';
 
 type Slide = {
   id: number;
@@ -16,6 +17,7 @@ type Slide = {
   selector: 'app-flashcard-viewer',
   standalone: true,
   imports: [CommonModule, MatIconModule],
+  providers:[Api,FlashcardService],
   templateUrl: './flashcard-viewer.html',
   styleUrl: './flashcard-viewer.css',
 })

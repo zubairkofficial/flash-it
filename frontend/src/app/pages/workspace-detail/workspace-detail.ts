@@ -9,6 +9,7 @@ import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sideba
 import { SiteHeader } from '../../shared/site-header/site-header';
 import { FilterBar } from '../../components/filter-bar/filter-bar';
 import { Pagination } from '../../components/pagination/pagination';
+import { Api } from '../../../utils/api/api';
 // import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -24,6 +25,7 @@ import { Pagination } from '../../components/pagination/pagination';
     Pagination,
     MatIcon,
   ],
+  providers: [Api, WorkspaceService],
   standalone: true,
   templateUrl: './workspace-detail.html',
   styleUrl: './workspace-detail.css',

@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../services/workspace/workspace';
+import { Api } from '../../utils/api/api';
 
 @Component({
   selector: 'app-workspace-invite',
   imports: [CommonModule],
+  providers: [Api, WorkspaceService],
   templateUrl: './workspace-invite.html',
-  styleUrl: './workspace-invite.css'
+  styleUrl: './workspace-invite.css',
 })
 export class WorkspaceInvite implements OnInit {
   public isLoading: boolean = false;
@@ -15,7 +17,11 @@ export class WorkspaceInvite implements OnInit {
   public inviteId: string | null = null;
   public result: any = null;
 
-  constructor(private route: ActivatedRoute, private router: Router, private workspaceService: WorkspaceService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private workspaceService: WorkspaceService
+  ) {}
 
   public ngOnInit(): void {
     this.inviteId = this.route.snapshot.paramMap.get('id');
@@ -40,7 +46,7 @@ export class WorkspaceInvite implements OnInit {
     });
   }
 
-  public redirectHome():void{
+  public redirectHome(): void {
     this.router.navigate(['/dashboard']);
   }
 }
