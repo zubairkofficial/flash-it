@@ -17,6 +17,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ALL_LANGUAGES } from '../../../utils/constants/languages';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { ProfileStoreService } from '../../services/profile-store.service';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -80,7 +81,8 @@ export class GenerateFlashcardSection {
     private flashcardService: FlashcardService,
 
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private profileStore: ProfileStoreService
   ) {
     this.textForm = this.fb.group({
       text: ['', [Validators.min(100)]],
@@ -191,6 +193,7 @@ export class GenerateFlashcardSection {
         } else if (res && res.data.temporary_flashcard_id === null) {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
+          this.profileStore.refetch();
           this.router.navigate([`/flashcard/${res.data.flashcard_id}`]);
         } else {
           this.isLoading = false;

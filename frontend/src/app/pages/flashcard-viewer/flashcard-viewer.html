@@ -58,19 +58,30 @@
                 <mat-icon>chevron_right</mat-icon>
               </button>
 
-                <ng-container *ngIf="filteredSlides.length; else empty">
-                  <div class="card-inner flex">
-                    <div class="title">
-                      {{ filteredSlides[currentIndex]?.title || "Untitled" }}
-                    </div>
-                    <div class="content">
-                      {{ filteredSlides[currentIndex]?.text }}
-                    </div>
+              <div class="z-5" >
+                <div class="card-inner flex">
+                  <div class="title">
+                    {{ filteredSlides[currentIndex]?.title || "Untitled" }}
                   </div>
-                </ng-container>
+                  <div class="content">
+                    {{ filteredSlides[currentIndex]?.text }}
+                  </div>
+                </div>
+              </div>
               <ng-template #empty>
                 <div class="empty">No slides in this tab.</div>
               </ng-template>
+
+              <div
+                class="z-2 absolute right-[-10%] bottom-[-35%] flex items-center justify-center w-[35%] aspect-square"
+              >
+                <div
+                  class="relative bg-primary rounded-full w-full h-full"
+                ></div>
+              </div>
+              <div class="z-3 absolute right-0 bottom-0 pr-6 pb-6 text-white font-nunito text-2xl font-bold">
+                {{ currentIndex + 1 }}.
+              </div>
             </div>
 
             <!-- Move dots BELOW the card -->

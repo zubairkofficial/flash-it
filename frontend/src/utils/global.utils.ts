@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
 class globals {
-  private NODE_ENV: string = 'production';
+  private NODE_ENV: string = 'development';
 
   // private DEV_URL: string = 'http://localhost:3001';
   private DEV_URL: string = 'http://192.168.18.29:3001';
   
-  private PROD_URL: string = 'http://13.60.198.16/backend';
+  private PROD_URL: string = 'http://16.171.67.50/backend';
   private URL: string =
     this.NODE_ENV === 'development' ? this.DEV_URL : this.PROD_URL;
 

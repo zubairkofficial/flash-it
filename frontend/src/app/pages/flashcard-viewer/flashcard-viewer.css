@@ -10,6 +10,9 @@
 /* Card styling */
 
 .viewer-card {
+    display: flex;
+    align-items: start;
+    justify-content: center;
     position: relative;
     border-radius: 16px;
     background: linear-gradient(135deg, #ea580c 0%, #f97316 60%, #fb923c 100%);

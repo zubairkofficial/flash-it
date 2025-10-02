@@ -16,6 +16,7 @@ import { Api } from '../../../utils/api/api';
 import { FilterBar } from '../../components/filter-bar/filter-bar';
 import { Pagination } from '../../components/pagination/pagination';
 import { ButtomPrimary } from "../../components/buttons/buttom-primary/buttom-primary";
+import { ProfileStoreService } from '../../services/profile-store.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,7 +53,8 @@ export class Dashboard implements OnInit {
   public userData: { name?: string } | null = null;
   constructor(
     private workspaceService: WorkspaceService,
-    private router: Router
+    private router: Router,
+    private profileStore: ProfileStoreService
   ) {}
 
   public ngOnInit(): void {
@@ -190,6 +192,7 @@ export class Dashboard implements OnInit {
             this.fetchWorkspaces();
             this.isLoading = false;
             notyf.success('update successfully');
+            this.profileStore.refetch();
           },
           error: (err: any) => {
             this.errorMessage =
@@ -204,6 +207,7 @@ export class Dashboard implements OnInit {
           notyf.success('create workspace successfully');
           this.fetchWorkspaces();
           this.isLoading = false;
+          this.profileStore.refetch();
         },
         error: (err: any) => {
           this.errorMessage =
