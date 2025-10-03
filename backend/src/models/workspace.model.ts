@@ -60,9 +60,9 @@ export default class WorkSpace extends Model {
   @BelongsToMany(() => User, () => WorkspaceUser)
   declare members: User[];
 
-  @HasMany(() => FlashCard)
+  @HasMany(() => FlashCard, { onDelete: 'CASCADE' })
   declare flashcards: FlashCard[];
 
-  @HasMany(() => Invite)
+  @HasMany(() => Invite, { onDelete: 'CASCADE' })
   declare invites: Invite[];
 }

@@ -66,6 +66,7 @@ export class AuthService {
           email,
           password: registerDTO.password,
           plan_id: plan.id,
+          credits: plan.credits,
         },
         {
           transaction,
@@ -96,7 +97,7 @@ export class AuthService {
 
       await WorkspaceUserPermission.create(
         {
-          permissions: WORKSPACE_USER_PERMISSION.RE,
+          permissions: WORKSPACE_USER_PERMISSION.CRUDE,
           workspace_user_id: workspaceUser.id,
         },
         {
@@ -279,6 +280,7 @@ export class AuthService {
 
       await existingUser.update({
         plan_id: existingPlan.id,
+        credits: existingUser.credits + existingPlan.credits,
       });
 
       return {

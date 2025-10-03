@@ -173,7 +173,6 @@
       "
       [confirmText]="editingWorkspace ? 'Update' : 'Save'"
       [cancelText]="'Cancel'"
-      [credits]="+(editingWorkspace?.credit ?? 0)"
       [initialName]="editingWorkspace?.name || ''"
       (confirmed)="onConfirmSave($event)"
       (cancelled)="onCancelSave()"

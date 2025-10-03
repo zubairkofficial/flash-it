@@ -17,6 +17,9 @@ import { Api } from '../../../utils/api/api';
   providers: [Api, FlashcardService, WorkspaceService],
 })
 export class FlashcardDetailComponent implements OnInit {
+  public goBack(): void {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
   credits: number = 0;
   availableDataTypes = Object.values(DATA_TYPE);
   selectedDataType: DATA_TYPE = DATA_TYPE.FILE;

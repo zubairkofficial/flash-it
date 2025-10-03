@@ -16,6 +16,7 @@ module.exports = {
           plan_type: 'free',
           price: 0, // DECIMAL(10,2) is fine with number 0
           // ARRAY(TEXT) in Postgres accepts a JS array directly:
+          credits: 25,
           features: ['Basic access', 'Limited usage', 'Community support'],
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -24,6 +25,7 @@ module.exports = {
           plan_type: 'pro',
           price: 5, // DECIMAL(10,2) is fine with number 0
           // ARRAY(TEXT) in Postgres accepts a JS array directly:
+          credits: 1000,
           features: ['Basic access', 'Limited usage', 'Community support'],
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -32,6 +34,7 @@ module.exports = {
           plan_type: 'team',
           price: 15, // DECIMAL(10,2) is fine with number 0
           // ARRAY(TEXT) in Postgres accepts a JS array directly:
+          credits: 2000,
           features: ['Basic access', 'Limited usage', 'Community support'],
           createdAt: new Date(),
           updatedAt: new Date(),

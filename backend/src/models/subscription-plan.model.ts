@@ -44,6 +44,13 @@ export class SubscriptionPlan extends Model {
   })
   declare features: string[];
 
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  declare credits: number;
+
   // @HasMany(() => WorkSpace)
   // declare workspaces: WorkSpace[];
 

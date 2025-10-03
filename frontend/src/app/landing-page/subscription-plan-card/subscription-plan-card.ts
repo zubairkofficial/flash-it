@@ -18,6 +18,7 @@ import { PlanService } from '../../../services/plan/plan';
 export class SubscriptionPlanCard {
   public temporary_flashcard_id: any = null;
   public flashcard_id: any = null;
+  public workspaceId: any = null;
   public isLoading: boolean = false;
   public errorMessage: string | null = null;
 
@@ -42,6 +43,7 @@ export class SubscriptionPlanCard {
       const flashcardId = params.get('flashcard_id');
       this.temporary_flashcard_id = tempId;
       this.flashcard_id = flashcardId;
+      this.workspaceId = Number(params.get('workspace_id'));
       console.log('temId', tempId, 'flashcardId', flashcardId);
     });
   }
@@ -62,7 +64,7 @@ export class SubscriptionPlanCard {
             console.log('moving to upload files free', this.flashcard_id);
             this.router.navigate([`/uploaded-file`], {
               queryParams: {
-                workspaceId: res.data.workspaceId,
+                workspace_id: this.workspaceId,
                 flashcard_id: this.flashcard_id,
                 temp_id: this.temporary_flashcard_id,
                 show: true,
@@ -81,6 +83,7 @@ export class SubscriptionPlanCard {
 
       this.router.navigate(['/payment/card'], {
         queryParams: {
+          workspace_id: this.workspaceId,
           subscriptionType: availablePlan.subscriptionType,
           temp_id: this.temporary_flashcard_id,
           flashcard_id: this.flashcard_id,

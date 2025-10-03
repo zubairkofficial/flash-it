@@ -16,11 +16,9 @@ import { SubscriptionPlan } from 'src/models/subscription-plan.model';
 
 @Injectable()
 export class WorkspaceService {
-  constructor(
-    private sequelize: Sequelize
-  ) {}
+  constructor(private sequelize: Sequelize) {}
   async createWorkspace(createWorkspaceDTO: CreateWorkspaceDTO, req: any) {
-    const { name,credits,role } = createWorkspaceDTO;
+    const { name, credits } = createWorkspaceDTO;
     const transaction = await this.sequelize.transaction();
     try {
       const existingUser = await User.findByPk(req.user.id);
@@ -29,18 +27,17 @@ export class WorkspaceService {
         throw new HttpException('no user logged IN', HttpStatus.BAD_REQUEST);
       }
 
-
-      if(createWorkspaceDTO.credits)
-        {
-          if(existingUser.credits>createWorkspaceDTO.credits){
-            existingUser.credits=existingUser.credits-createWorkspaceDTO.credits
-          }else{
-            throw new HttpException('Recharge your account', HttpStatus.BAD_REQUEST);
-  
-          }
-
-
+      if (createWorkspaceDTO.credits) {
+        if (existingUser.credits > createWorkspaceDTO.credits) {
+          existingUser.credits =
+            existingUser.credits - createWorkspaceDTO.credits;
+        } else {
+          throw new HttpException(
+            'Recharge your account',
+            HttpStatus.BAD_REQUEST,
+          );
         }
+      }
       const workspace = await WorkSpace.create(
         {
           name,
@@ -51,10 +48,9 @@ export class WorkspaceService {
       );
       const workspaceUser = await WorkspaceUser.create(
         {
-         role: WORKSPACE_USER_ROLE.ADMIN,
-         user_id: existingUser.id,
-         workspace_id: workspace.id,
-        
+          role: WORKSPACE_USER_ROLE.ADMIN,
+          user_id: existingUser.id,
+          workspace_id: workspace.id,
         },
         { transaction },
       );
@@ -85,85 +81,70 @@ export class WorkspaceService {
   async updateWorkspace(
     id: string,
     updateWorkspaceDTO: UpdateWorkspaceDTO,
-    req: any
+    req: any,
   ) {
     const transaction = await this.sequelize.transaction();
-  
+
     try {
       const userId = req.user.id;
-  
+
       // Fetch user
       const existingUser = await User.findByPk(userId, { transaction });
       if (!existingUser) {
         throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
       }
-  
-   
+
       const workspace = await WorkSpace.findByPk(id, { transaction });
       if (!workspace) {
         throw new HttpException('Workspace not found', HttpStatus.NOT_FOUND);
       }
-  
-     
+
       if (workspace.admin_user_id !== userId) {
         throw new HttpException(
           'Only the workspace admin can update the workspace',
-          HttpStatus.FORBIDDEN
+          HttpStatus.FORBIDDEN,
         );
       }
-      
-  
-      if(updateWorkspaceDTO.credits)
-        {
-          if(existingUser.credits>updateWorkspaceDTO.credits){
-            existingUser.credits=existingUser.credits-updateWorkspaceDTO.credits
-          }else{
-            throw new HttpException('Recharge your account', HttpStatus.BAD_REQUEST);
-  
-          }
 
-          workspace.credit=updateWorkspaceDTO.credits
+      if (updateWorkspaceDTO.credits) {
+        const creditsToAdd = Number(updateWorkspaceDTO.credits);
 
+        // Validate input
+        if (!creditsToAdd || isNaN(creditsToAdd) || creditsToAdd <= 0) {
+          throw new HttpException(
+            'Invalid credit amount',
+            HttpStatus.BAD_REQUEST,
+          );
         }
-      // Update workspace name
-      if (updateWorkspaceDTO.name) {
-        workspace.name = updateWorkspaceDTO.name;
+
+        const currentWorkspaceCredit = Number(workspace.credit);
+        const currentUserCredit = Number(existingUser.credits);
+
+        // Check if user has enough credits to transfer
+        if (currentUserCredit < creditsToAdd) {
+          throw new HttpException(
+            'Insufficient user credits. Please recharge your account.',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        // Deduct from user and add to workspace
+        existingUser.credits = currentUserCredit - creditsToAdd;
+        workspace.credit = currentWorkspaceCredit + creditsToAdd;
+
+        // Save both
         await workspace.save({ transaction });
         await existingUser.save({ transaction });
       }
-  
-      // Update user role in workspace
-      if (updateWorkspaceDTO.role) {
-        const workspaceUser =   await WorkspaceUser.findOne({
-          where: { workspace_id: +id, user_id: userId },
-          transaction,
-        });
-  
-        if (!workspaceUser) {
-          throw new HttpException(
-            'Workspace user not found',
-            HttpStatus.NOT_FOUND
-          );
-        }
-  
-        const workspacePermission = await WorkspaceUserPermission.findOne({
-          where: { workspace_user_id: workspaceUser.id },
-          transaction,
-        });
-  
-        if (!workspacePermission) {
-          throw new HttpException(
-            'Workspace permission not found',
-            HttpStatus.NOT_FOUND
-          );
-        }
-  
-        workspacePermission.permissions = updateWorkspaceDTO.role;
-        await workspacePermission.save({ transaction });
+
+      if (updateWorkspaceDTO.name) {
+        // Only update name if credits is not present
+        workspace.name = updateWorkspaceDTO.name;
+        await workspace.save({ transaction });
       }
-  
+
       await transaction.commit();
-  
+
       return {
         status: HttpStatus.OK,
         success: true,
@@ -178,14 +159,13 @@ export class WorkspaceService {
         error instanceof HttpException
           ? error.getStatus()
           : HttpStatus.INTERNAL_SERVER_ERROR;
-  
+
       throw new HttpException(
         error.message || 'An error occurred while updating the workspace',
-        status
+        status,
       );
     }
   }
-  
 
   // async updateWorkspace(id: string, updateWorkspaceDTO: UpdateWorkspaceDTO, req: any) {
   //   try {
@@ -246,24 +226,35 @@ export class WorkspaceService {
 
       const q = (query?.q || '').toString().toLowerCase();
       const page = Math.max(1, parseInt(query?.page ?? '1', 10));
-      const pageSize = Math.max(1, Math.min(100, parseInt(query?.pageSize ?? '50', 10)));
+      const pageSize = Math.max(
+        1,
+        Math.min(100, parseInt(query?.pageSize ?? '50', 10)),
+      );
 
       const workspaceUsers = await User.findAll({
         where: { id: req.user.id },
         include: [
-           {
+          {
             model: SubscriptionPlan,
             as: 'plan', // If you want to include the workspace relation
             required: true, // Ensure the user is related to a workspace
-          
           },
           {
             model: WorkSpace,
             as: 'joined_workspaces',
             required: true,
-            where: q ? this.sequelize.where(this.sequelize.fn('LOWER', this.sequelize.col('joined_workspaces.name')), 'LIKE', `%${q}%`) : undefined,
+            where: q
+              ? this.sequelize.where(
+                  this.sequelize.fn(
+                    'LOWER',
+                    this.sequelize.col('joined_workspaces.name'),
+                  ),
+                  'LIKE',
+                  `%${q}%`,
+                )
+              : undefined,
           },
-            
+
           // {
           //   model: WorkspaceUserPermission,
           //   as: 'workspace_user_permissions', // If you want to include the permissions relation
@@ -304,7 +295,10 @@ export class WorkspaceService {
 
       const q = (query?.q || '').toString().toLowerCase();
       const page = Math.max(1, parseInt(query?.page ?? '1', 10));
-      const pageSize = Math.max(1, Math.min(100, parseInt(query?.pageSize ?? '50', 10)));
+      const pageSize = Math.max(
+        1,
+        Math.min(100, parseInt(query?.pageSize ?? '50', 10)),
+      );
 
       const workspaceUsers = await WorkSpace.findOne({
         where: { id },
@@ -327,7 +321,16 @@ export class WorkspaceService {
               { model: FlashCardSlide, as: 'slides' },
               { model: FlashCardRawData, as: 'raw_data' },
             ],
-            where: q ? this.sequelize.where(this.sequelize.fn('LOWER', this.sequelize.col('flashcards.title')), 'LIKE', `%${q}%`) : undefined,
+            where: q
+              ? this.sequelize.where(
+                  this.sequelize.fn(
+                    'LOWER',
+                    this.sequelize.col('flashcards.title'),
+                  ),
+                  'LIKE',
+                  `%${q}%`,
+                )
+              : undefined,
           },
           {
             model: Invite,
@@ -356,36 +359,58 @@ export class WorkspaceService {
 
   async invitedWorkspaceById(id: number, req: any) {
     try {
-      let invite;
-      // Find the user
-      const existingUser = await User.findByPk(req.user.id);
+      const workSpace = await WorkSpace.findOne({
+        where: {
+          admin_user_id: req.user.id,
+          id: id,
+        },
+      });
 
-      if (!existingUser) {
-        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
-      }
-
-      // Find the workspace
-      const workSpace = await WorkSpace.findByPk(id);
       if (!workSpace) {
         throw new HttpException('No workspace found', HttpStatus.BAD_REQUEST);
       }
-      const existInvite = await Invite.findOne({
+
+      // Find all invites for this admin and workspace
+      let invites = await Invite.findAll({
         where: {
-          admin_id: existingUser.id,
+          admin_id: req.user.id,
           workspace_id: workSpace.id,
         },
       });
-      if (!existInvite) {
-        // Create the invite using the user and workspace IDs
-        invite = await Invite.create({
-          admin_id: existingUser.id,
-          workspace_id: workSpace.id,
-        });
-      }
-      // Generate the base URL with the invite ID
-      const baseUrl = `${process.env.BASE_URL_FRONTEND}/workspace/invited/${existInvite?.id ?? invite?.id}`;
 
-      return { url: baseUrl };
+      // Check for missing permissions
+      const permissionsNeeded = [
+        WORKSPACE_USER_PERMISSION.RE,
+        WORKSPACE_USER_PERMISSION.CRUDE,
+      ];
+      const existingPermissions = invites.map((i) => i.permission);
+      const missingPermissions = permissionsNeeded.filter(
+        (p) => !existingPermissions.includes(p),
+      );
+
+      // Create missing invites
+      if (missingPermissions.length > 0) {
+        const newInvites = await Invite.bulkCreate(
+          missingPermissions.map((permission) => ({
+            admin_id: req.user.id,
+            workspace_id: workSpace.id,
+            permission,
+          })),
+        );
+        invites = invites.concat(newInvites);
+      }
+
+      // Generate URLs for both invites
+      const urls = invites.map((invite) => ({
+        url: `${process.env.BASE_URL_FRONTEND}/workspace/invited/${invite.id}`,
+        permission: invite.permission,
+        tag:
+          invite.permission === WORKSPACE_USER_PERMISSION.RE
+            ? 'RE = read-export (can read and export)'
+            : 'CRUDE = create-read-update-delete-export (full access)',
+      }));
+
+      return { invites: urls };
     } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);
     }
@@ -426,11 +451,32 @@ export class WorkspaceService {
         );
       }
 
-      return WorkspaceUser.create({
-        role: WORKSPACE_USER_ROLE.MEMBER,
-        user_id: existingUser.id,
-        workspace_id: invite.workspace_id,
-      });
+      // Create WorkspaceUser and WorkspaceUserPermission with invite permission
+      const transaction = await this.sequelize.transaction();
+      try {
+        const workspaceUser = await WorkspaceUser.create(
+          {
+            role: WORKSPACE_USER_ROLE.MEMBER,
+            user_id: existingUser.id,
+            workspace_id: invite.workspace_id,
+          },
+          { transaction },
+        );
+
+        await WorkspaceUserPermission.create(
+          {
+            permissions: invite.permission,
+            workspace_user_id: workspaceUser.id,
+          },
+          { transaction },
+        );
+
+        await transaction.commit();
+        return workspaceUser;
+      } catch (err) {
+        await transaction.rollback();
+        throw err;
+      }
     } catch (error) {
       throw new HttpException('Error: ' + error.message, error.status);
     }
@@ -470,52 +516,22 @@ export class WorkspaceService {
   async deleteWorkspace(id: string, req: any) {
     const transaction = await this.sequelize.transaction();
     try {
-      const existingUser = await User.findByPk(req.user.id);
-
-      if (!existingUser) {
-        throw new HttpException('No user exists', HttpStatus.BAD_REQUEST);
-      }
-
-      const workspace = await WorkSpace.findByPk(id);
+      const workspace = await WorkSpace.findOne({
+        where: {
+          id: Number(id),
+          admin_user_id: req.user.id,
+        },
+      });
       if (!workspace) {
         throw new HttpException('Workspace not found', HttpStatus.NOT_FOUND);
       }
 
-      // Check if user is part of the workspace
-      const workspaceUser = await WorkspaceUser.findOne({
-        where: { workspace_id: id, user_id: existingUser.id },
-        include: [{
-          model: WorkspaceUserPermission,
-          as: 'workspace_user_permissions'
-        }]
-      });
-
-      if (!workspaceUser) {
-        throw new HttpException('User is not part of this workspace', HttpStatus.FORBIDDEN);
+      const remainingCredits: number = Number(workspace.credit);
+      if (remainingCredits > 0) {
+        const user = await User.findByPk(req.user.id);
+        user.credits += remainingCredits;
+        await user.save({ transaction });
       }
-
-      // Check permissions - only CRUDE permission allows deletion
-      if (workspaceUser.dataValues.role!==WORKSPACE_USER_ROLE.ADMIN 
-        // || workspaceUser.workspace_user_permissions?.permissions !== WORKSPACE_USER_PERMISSION.CRUDE
-      ) {
-        throw new HttpException('Insufficient permissions to delete workspace', HttpStatus.FORBIDDEN);
-      }
-
-      // Check if user is admin of the workspace
-      if (workspace.admin_user_id !== existingUser.id) {
-        throw new HttpException('Only workspace admin can delete workspace', HttpStatus.FORBIDDEN);
-      }
-
-      // Delete all related data
-      await WorkspaceUserPermission.destroy({
-        where: { workspace_user_id: workspaceUser.id },
-        transaction
-      });
-
-      await WorkspaceUser.destroy({
-        where: { workspace_id: id },
-        transaction
-      });
 
       await workspace.destroy({ transaction });
 
@@ -529,6 +545,7 @@ export class WorkspaceService {
         },
       };
     } catch (error) {
+      console.log('error', error);
       await transaction.rollback();
       throw new HttpException('Error: ' + error.message, error.status);
     }
@@ -544,14 +561,19 @@ export class WorkspaceService {
 
       const workspaceUser = await WorkspaceUser.findOne({
         where: { workspace_id: workspaceId, user_id: existingUser.id },
-        include: [{
-          model: WorkspaceUserPermission,
-          as: 'workspace_user_permissions'
-        }]
+        include: [
+          {
+            model: WorkspaceUserPermission,
+            as: 'workspace_user_permissions',
+          },
+        ],
       });
 
       if (!workspaceUser) {
-        throw new HttpException('User is not part of this workspace', HttpStatus.FORBIDDEN);
+        throw new HttpException(
+          'User is not part of this workspace',
+          HttpStatus.FORBIDDEN,
+        );
       }
 
       return {
@@ -560,8 +582,13 @@ export class WorkspaceService {
         data: {
           role: workspaceUser.role,
           permissions: workspaceUser.workspace_user_permissions?.permissions,
-          canUpdate: workspaceUser.workspace_user_permissions?.permissions === WORKSPACE_USER_PERMISSION.CRUDE,
-          canDelete: workspaceUser.workspace_user_permissions?.permissions === WORKSPACE_USER_PERMISSION.CRUDE && workspaceUser.workspace?.admin_user_id === existingUser.id,
+          canUpdate:
+            workspaceUser.workspace_user_permissions?.permissions ===
+            WORKSPACE_USER_PERMISSION.CRUDE,
+          canDelete:
+            workspaceUser.workspace_user_permissions?.permissions ===
+              WORKSPACE_USER_PERMISSION.CRUDE &&
+            workspaceUser.workspace?.admin_user_id === existingUser.id,
         },
       };
     } catch (error) {

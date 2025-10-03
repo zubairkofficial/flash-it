@@ -15,7 +15,7 @@ import { notyf } from '../../../utils/notyf.utils';
 import { Api } from '../../../utils/api/api';
 import { FilterBar } from '../../components/filter-bar/filter-bar';
 import { Pagination } from '../../components/pagination/pagination';
-import { ButtomPrimary } from "../../components/buttons/buttom-primary/buttom-primary";
+import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
 import { ProfileStoreService } from '../../services/profile-store.service';
 
 @Component({
@@ -29,8 +29,8 @@ import { ProfileStoreService } from '../../services/profile-store.service';
     SiteHeader,
     FilterBar,
     Pagination,
-    ButtomPrimary
-],
+    ButtomPrimary,
+  ],
   providers: [WorkspaceService, Api],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
@@ -172,21 +172,25 @@ export class Dashboard implements OnInit {
     this.confirmModalOpen = false;
   }
 
-  public onConfirmSave(data: {
-    name: string;
-    role: string;
-    credits: number;
-  }): void {
+  public onConfirmSave(data: { name: string; credits: number }): void {
     console.log('data.......', data);
     this.isConfirmModalOpen = false;
     const name = (data.name || '').trim();
-    const role = (data.role || '').trim();
-    const credits = data.credits || 0;
-    if (!name || !role) return;
+    const credits = typeof data.credits === 'number' ? data.credits : 0;
+    if (!name) return;
+    if (credits < 0) {
+      notyf.error('Credits cannot be negative.');
+      return;
+    }
     this.isLoading = true;
     if (this.editingWorkspace) {
+      // Only send credits if changed, greater than current, and not 0
+      const updatePayload: any = { name };
+      if (credits > 0) {
+        updatePayload.credits = credits;
+      }
       this.workspaceService
-        .updateWorkspace(this.editingWorkspace.id, { name, role, credits })
+        .updateWorkspace(this.editingWorkspace.id, updatePayload)
         .subscribe({
           next: () => {
             this.fetchWorkspaces();

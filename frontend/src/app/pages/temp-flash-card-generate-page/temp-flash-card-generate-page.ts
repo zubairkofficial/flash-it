@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GenerateFlashcardSection } from "../../landing-page/generate-flashcard-section/generate-flashcard-section";
+import { GenerateFlashcardSection } from "../../generate-flashcard-section/generate-flashcard-section";
 
 @Component({
   selector: 'app-temp-flash-card-generate-page',

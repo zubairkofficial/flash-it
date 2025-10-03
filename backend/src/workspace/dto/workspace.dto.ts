@@ -6,10 +6,6 @@ export class CreateWorkspaceDTO {
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(WORKSPACE_USER_PERMISSION)
-  @IsNotEmpty()
-  role: WORKSPACE_USER_PERMISSION;
-
   @IsNumber()
   credits:number
 }
@@ -23,7 +19,5 @@ export class UpdateWorkspaceDTO {
   @IsNumber()
   credits:number
 
-  @IsEnum(WORKSPACE_USER_PERMISSION)
-  @IsNotEmpty()
-  role: WORKSPACE_USER_PERMISSION;
+
 }

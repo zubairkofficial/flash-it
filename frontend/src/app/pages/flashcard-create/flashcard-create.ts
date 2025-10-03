@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GenerateFlashcardSection } from '../../landing-page/generate-flashcard-section/generate-flashcard-section';
+import { GenerateFlashcardSection } from '../../generate-flashcard-section/generate-flashcard-section';
 import { notyf } from '../../../utils/notyf.utils';
 
 @Component({

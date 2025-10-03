@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkspaceService } from '../../../services/workspace/workspace';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
-import { GenerateFlashcardSection } from '../../landing-page/generate-flashcard-section/generate-flashcard-section';
+import { GenerateFlashcardSection } from '../../generate-flashcard-section/generate-flashcard-section';
 import { SignedInSidebar } from '../../shared/signed-in-sidebar/signed-in-sidebar';
 import { SiteHeader } from '../../shared/site-header/site-header';
 import { FilterBar } from '../../components/filter-bar/filter-bar';
@@ -31,10 +31,13 @@ import { Api } from '../../../utils/api/api';
   styleUrl: './workspace-detail.css',
 })
 export class WorkspaceDetail implements OnInit {
+  public goBack(): void {
+    this.router.navigate(['/dashboard'], { relativeTo: this.route });
+  }
   public isLoading: boolean = false;
   public errorMessage: string | null = null;
   public workspace: any = null;
-  public InviteLink: any = null;
+  public InviteLinks: any[] = [];
   public deleteMessage: any = null;
   public isInviteModalOpen: boolean = false;
   public isCopySuccess: boolean = false;
@@ -141,8 +144,9 @@ export class WorkspaceDetail implements OnInit {
   public openInvitLink(id: number): void {
     this.isLoading = true;
     this.workspaceService.getInviteLinkByWorkspaceId(id).subscribe({
-      next: (data: any) => {
-        this.InviteLink = data;
+      next: (data) => {
+        console.log('invite link data', data);
+        this.InviteLinks = data.invites || [];
         this.isLoading = false;
         this.isInviteModalOpen = true;
       },
@@ -161,8 +165,8 @@ export class WorkspaceDetail implements OnInit {
     this.router.navigate([`/workspace/${this.workspace.id}/flashcard/create`]);
   }
 
-  public copyInviteUrl(): void {
-    const url = this.InviteLink?.url;
+  public copyInviteUrl(link: { url: string }): void {
+    const url = link?.url;
     if (!url) return;
     navigator.clipboard.writeText(url).then(() => {
       this.isCopySuccess = true;

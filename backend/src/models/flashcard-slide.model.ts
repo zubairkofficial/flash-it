@@ -45,9 +45,10 @@ export default class FlashCardSlide extends Model {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    onDelete: 'CASCADE',
   })
   declare flashcard_id: number;
 
-  @BelongsTo(() => FlashCard)
+  @BelongsTo(() => FlashCard, { onDelete: 'CASCADE' })
   declare flashcard: FlashCard;
 }

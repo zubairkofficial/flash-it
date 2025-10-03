@@ -52,9 +52,9 @@ export default class FlashCard extends Model {
   @BelongsTo(() => WorkSpace)
   declare workspace: WorkSpace;
 
-  @HasMany(() => FlashCardRawData) //@fix convert ot has many
+  @HasMany(() => FlashCardRawData, { onDelete: 'CASCADE' })
   declare raw_data: FlashCardRawData[];
 
-  @HasMany(() => FlashCardSlide)
+  @HasMany(() => FlashCardSlide, { onDelete: 'CASCADE' })
   declare slides: FlashCardSlide[];
 }

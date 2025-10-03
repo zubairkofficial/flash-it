@@ -1,35 +1,61 @@
 <div *ngIf="open" class="cm-backdrop" (click)="onBackdropClick()">
-    <div class="cm-card" (click)="$event.stopPropagation()">
-        <div class="cm-header">
-            <h2 class="cm-title">{{title}}</h2>
-            <button class="cm-close" type="button" (click)="onCancel()">×</button>
-        </div>
+  <div class="cm-card" (click)="$event.stopPropagation()">
+    <div class="cm-header">
+      <h2 class="cm-title">{{ title }}</h2>
+      <button class="cm-close" type="button" (click)="onCancel()">×</button>
+    </div>
 
-        <div class="cm-body">
-            <form (submit)="onConfirm(); $event.preventDefault()">
-                <div class="form-group">
-                    <label for="name" class="form-label">Workspace Name</label>
-                    <input id="name" name="name" type="text" [(ngModel)]="workspaceName" required class="form-input" placeholder="Enter workspace name" />
-                    <label for="role ">Workspace Role</label>
-                    <select [(ngModel)]="workspaceRole " name="workspaceRole " class="form-input w-full ">
+    <div class="cm-body">
+      <form (submit)="onConfirm(); $event.preventDefault()">
+        <div class="form-group">
+          <label for="name" class="form-label">Workspace Name</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            [(ngModel)]="workspaceName"
+            required
+            class="form-input"
+            placeholder="Enter workspace name"
+          />
+          <!-- <label for="role ">Workspace Role</label> -->
+          <!-- <select [(ngModel)]="workspaceRole " name="workspaceRole " class="form-input w-full ">
                       <option *ngFor="let perm of permissionOptions " [value]="perm.value ">
                         {{ perm.label }}
                       </option>
-                    </select>
-                    <label for="name" class="form-label">Workspace Credits</label>
-                    <input id="credits" name="credits" type="number" [(ngModel)]="workspaceCredits" required class="form-input" placeholder="Enter workspace credits" />
-
-                </div>
-            </form>
+                    </select> -->
+          <label for="name" class="form-label"
+            >Workspace Credits (addition)</label
+          >
+          <input
+            id="credits"
+            name="credits"
+            type="number"
+            [(ngModel)]="workspaceCredits"
+            required
+            class="form-input"
+            placeholder="Enter workspace credits"
+          />
         </div>
-
-        <div class="cm-footer ">
-            <button class="btn btn-outline btn-sm " type="button " (click)="onCancel() ">
-        {{ cancelText || 'Cancel' }}
-      </button>
-            <button class="btn btn-primary btn-sm " type="button " [disabled]="!workspaceName?.trim() || isLoading" (click)="onConfirm() ">
-         {{ isLoading ? 'Creating...' : (confirmText || 'Create') }}
-      </button>
-        </div>
+      </form>
     </div>
+
+    <div class="cm-footer">
+      <button
+        class="btn btn-outline btn-sm"
+        type="button "
+        (click)="onCancel()"
+      >
+        {{ cancelText || "Cancel" }}
+      </button>
+      <button
+        class="btn btn-primary btn-sm"
+        type="button "
+        [disabled]="!workspaceName?.trim() || isLoading"
+        (click)="onConfirm()"
+      >
+        {{ isLoading ? "Creating..." : confirmText || "Create" }}
+      </button>
+    </div>
+  </div>
 </div>

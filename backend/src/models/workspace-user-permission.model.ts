@@ -32,14 +32,14 @@ export default class WorkspaceUserPermission extends Model {
   declare permissions: WORKSPACE_USER_PERMISSION;
 
   @ForeignKey(() => WorkspaceUser)
-  
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    onDelete: 'CASCADE',
   })
   declare workspace_user_id: number;
 
-  @BelongsTo(() => WorkspaceUser)
+  @BelongsTo(() => WorkspaceUser, { onDelete: 'CASCADE' })
   declare workspace_user: WorkspaceUser;
 }
 

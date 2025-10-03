@@ -13,7 +13,7 @@ import { PaymentCard } from './payment-card/payment-card';
 import { Profile } from './pages/profile/profile';
 import { ChangePassword } from './pages/change-password/change-password';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { GenerateFlashcardSection } from './landing-page/generate-flashcard-section/generate-flashcard-section';
+import { GenerateFlashcardSection } from './generate-flashcard-section/generate-flashcard-section';
 import { Settings } from './settings/settings';
 import { FlashcardDetailComponent } from './pages/flashcard-detail/flashcard-detail';
 import { CommonLayoutComponent } from './common-layout/common-layout';

@@ -73,13 +73,14 @@ export class FlashcardService {
       ...this.api.authorizationHeader,
     });
   }
-  generateFirstFlashCardByTempId(data: { tempId: string }): Observable<any> {
-    console.log('herererereer', data.tempId);
-    return this.api.post('/flashcard/generate/' + data.tempId, null, {
-      ...this.api.contentTypeHeader,
-      ...this.api.authorizationHeader,
-    });
-  }
+
+  // generateFirstFlashCardByTempId(data: { tempId: string }): Observable<any> {
+  //   console.log('herererereer', data.tempId);
+  //   return this.api.post('/flashcard/generate/' + data.tempId, null, {
+  //     ...this.api.contentTypeHeader,
+  //     ...this.api.authorizationHeader,
+  //   });
+  // }
 
   generateFirstFlashCard(data: { tempId: string | null }): Observable<any> {
     return this.api.put('/flashcard/first/generate', data, {
@@ -115,40 +116,29 @@ export class FlashcardService {
     });
   }
 
-  uploadAuthData(params: {
-    files: FileList | null;
-    language: string;
-    text?: string;
-    title?: string;
-    data_type?: string;
-    workspaceId?: number;
-  }): Observable<any> {
-    const { files, language, text, title, data_type, workspaceId } = params;
-    if (!files) {
-      throw new Error('No files selected');
-    }
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
-    formData.append('language', language);
-    if (text) formData.append('text', text);
-    if (title) formData.append('title', title);
-    if (data_type) formData.append('data_type', data_type);
-    if (workspaceId !== undefined)
-      formData.append('workspaceId', workspaceId.toString());
-    return this.api.post('/flashcard/authorized/upload-data', formData, {
-      ...this.api.authorizationHeader,
-    });
-  }
-
-  // uploadDataText(text: string,language:string): Observable<any> {
-  //   return this.api.post('/flashcard/upload-text', {text,language}, {
-  //     ...this.api.authorizationHeader,
-  //   });
-  // }
-  // uploadDataTextAuth(text: string,language:string,workspaceId?:number): Observable<any> {
-  //   return this.api.post('/flashcard/authorized/upload-text', {text,language,workspaceId}, {
+  // uploadAuthData(params: {
+  //   files: FileList | null;
+  //   language: string;
+  //   text?: string;
+  //   title?: string;
+  //   data_type?: string;
+  //   workspaceId?: number;
+  // }): Observable<any> {
+  //   const { files, language, text, title, data_type, workspaceId } = params;
+  //   if (!files) {
+  //     throw new Error('No files selected');
+  //   }
+  //   const formData = new FormData();
+  //   for (let i = 0; i < files.length; i++) {
+  //     formData.append('files', files[i]);
+  //   }
+  //   formData.append('language', language);
+  //   if (text) formData.append('text', text);
+  //   if (title) formData.append('title', title);
+  //   if (data_type) formData.append('data_type', data_type);
+  //   if (workspaceId !== undefined)
+  //     formData.append('workspaceId', workspaceId.toString());
+  //   return this.api.post('/flashcard/authorized/upload-data', formData, {
   //     ...this.api.authorizationHeader,
   //   });
   // }

@@ -59,7 +59,7 @@ export default class User extends Model {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    defaultValue:0
+    defaultValue: 0,
   })
   declare credits: number;
 
@@ -70,16 +70,16 @@ export default class User extends Model {
   })
   declare plan_id: number;
 
-  @HasMany(() => WorkSpace)
+  @HasMany(() => WorkSpace, { onDelete: 'CASCADE' })
   declare workspaces: WorkSpace[];
 
   @BelongsToMany(() => WorkSpace, () => WorkspaceUser)
   declare joined_workspaces: WorkSpace[];
 
-  @HasMany(() => FlashCard)
+  @HasMany(() => FlashCard, { onDelete: 'CASCADE' })
   declare flashcards: FlashCard[];
 
-  @HasMany(() => Invite)
+  @HasMany(() => Invite, { onDelete: 'CASCADE' })
   declare invites: Invite[];
 
   @BelongsTo(() => SubscriptionPlan)

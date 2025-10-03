@@ -1,23 +1,23 @@
-import { formatBytes } from './../../../utils/file.utils';
+import { formatBytes } from '../../utils/file.utils';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { ButtonToggle } from '../../components/buttons/button-toggle/button-toggle';
-import { ButtonPrimaryDropdown } from '../../components/buttons/button-primary-dropdown/button-primary-dropdown';
-import { ButtomPrimary } from '../../components/buttons/buttom-primary/buttom-primary';
+import { ButtonToggle } from '../components/buttons/button-toggle/button-toggle';
+import { ButtonPrimaryDropdown } from '../components/buttons/button-primary-dropdown/button-primary-dropdown';
+import { ButtomPrimary } from '../components/buttons/buttom-primary/buttom-primary';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { DATA_TYPE } from '../../../utils/enum';
-import { Api } from '../../../utils/api/api';
-import { FlashcardService } from '../../../services/flashcard/flashcard';
-import { notyf } from '../../../utils/notyf.utils';
+import { DATA_TYPE } from '../../utils/enum';
+import { Api } from '../../utils/api/api';
+import { FlashcardService } from '../../services/flashcard/flashcard';
+import { notyf } from '../../utils/notyf.utils';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ALL_LANGUAGES } from '../../../utils/constants/languages';
+import { ALL_LANGUAGES } from '../../utils/constants/languages';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { ProfileStoreService } from '../../services/profile-store.service';
+import { ProfileStoreService } from '../services/profile-store.service';
 
 @Component({
   selector: 'app-generate-flashcard-section',
@@ -90,18 +90,17 @@ export class GenerateFlashcardSection {
   }
 
   public ngOnInit(): void {
-    if (document.referrer && document.referrer.includes('/plans')) {
-    }
-    const match = this.router.url.match(/^\/workspace\/(\d+)/);
-    console.log('match', match);
-    if (match) {
-      const workspaceId = match[1]; // e.g. "299"
+    this.route.paramMap.subscribe((params) => {
+      this.workspaceId = Number(params.get('id'));
       this.isWorkspaceRoute = true;
-      console.log('Workspace ID:', workspaceId);
-    }
+      console.log('Workspace ID:', this.workspaceId);
+    });
 
     this.route.queryParamMap.subscribe((params) => {
       this.tempId = params.get('temp_id');
+      if (!this.workspaceId) {
+        this.workspaceId = Number(params.get('workspace_id'));
+      }
       const showButton = params.get('show');
       if (showButton && showButton === 'true') {
         this.showAddMoreFilesButton = true;
@@ -136,8 +135,6 @@ export class GenerateFlashcardSection {
             this.isLoading = false;
             this.isBytesSelected = false;
             notyf.error(err?.error?.message || err.message);
-
-            // notyf.error('error: ' + error.message);
           },
         });
       }
@@ -153,22 +150,12 @@ export class GenerateFlashcardSection {
     const textValue = this.textForm.value.text;
     const hasText =
       textValue !== null && textValue !== undefined && textValue.trim() !== '';
-    let uploadRes;
-    if (this.tempId) {
-      uploadRes = this.flashcardService.generateFirstFlashCardByTempId({
-        tempId: this.tempId,
-      });
-    } else if (this.workspaceId) {
-      uploadRes = this.flashcardService.uploadAuthData({
-        files: hasText ? null : this.filesSelected,
-        language: this.language,
-        text: hasText ? textValue : undefined,
-        title: '', // set if you have a title
-        data_type: this.activeState,
-        workspaceId: Number(this.workspaceId),
-      });
-    } else {
-      uploadRes = this.flashcardService.uploadData({
+
+    //no temp and no workspoace -> upload data -> register -> generate flashcard
+    // temp and workspace -> upload data -> generate flashcard
+
+    if (!this.tempId && !this.workspaceId) {
+      let uploadRes = this.flashcardService.uploadData({
         files: hasText ? null : this.filesSelected,
         language: this.language,
         text: hasText ? textValue : undefined,
@@ -176,41 +163,89 @@ export class GenerateFlashcardSection {
         data_type: this.activeState,
         workspaceId: this.workspaceId,
       });
-    }
 
-    uploadRes.subscribe({
-      next: (res) => {
-        console.log('res after upload', res);
-        if (res && res.data.temporary_flashcard_id) {
+      uploadRes.subscribe({
+        next: (res) => {
           this.isLoading = false;
           notyf.success(res.data.message || 'upload successfully');
-          this.profileStore.refetch();
 
           this.router.navigate(['/auth/register'], {
             queryParams: {
-              temp_id: res.data.temporary_flashcard_id,
+              temp_id: res.data.flashcard.temporary_flashcard_id,
               flashcard_id: res.data.flashcard_id,
             },
           });
-        } else if (res && (res.data.flash_card || res.data.flashcard_id)) {
+        },
+        error: (error) => {
           this.isLoading = false;
-          notyf.success(res.data.message || 'upload successfully');
+          notyf.error(
+            error?.error?.message ||
+              error.message ||
+              'flashcard proccessing failed.'
+          );
+        },
+      });
+    }
+
+    if (this.workspaceId && this.tempId) {
+      const generateFlashCardRes = this.flashcardService.generateFlashCard({
+        workspace_id: this.workspaceId,
+        temporary_flashcard_id: this.tempId,
+      });
+
+      generateFlashCardRes.subscribe({
+        next: (generateRes) => {
+          this.isLoading = false;
+          notyf.success(
+            generateRes.data.message || 'FlashCard has been generated'
+          );
           this.profileStore.refetch();
-          this.router.navigate([`/flashcard/${res.data.flash_card.id}`]);
-        } else {
+          this.router.navigate([`/flashcard/${generateRes.data.flashcard.id}`]);
+        },
+      });
+    }
+
+    if (this.workspaceId && !this.tempId) {
+      let uploadRes = this.flashcardService.uploadData({
+        files: hasText ? null : this.filesSelected,
+        language: this.language,
+        text: hasText ? textValue : undefined,
+        title: '', // set if you have a title
+        data_type: this.activeState,
+        workspaceId: this.workspaceId,
+      });
+
+      uploadRes.subscribe({
+        next: (res) => {
+          this.tempId = res.data.flashcard.temporary_flashcard_id;
+
+          const generateFlashCardRes = this.flashcardService.generateFlashCard({
+            workspace_id: this.workspaceId,
+            temporary_flashcard_id: res.data.flashcard.temporary_flashcard_id,
+          });
+
+          generateFlashCardRes.subscribe({
+            next: (generateRes) => {
+              this.isLoading = false;
+              notyf.success(res.data.message || 'FlashCard has been generated');
+              this.profileStore.refetch();
+              this.router.navigate([
+                `/flashcard/${generateRes.data.flashcard.id}`,
+              ]);
+            },
+          });
+        },
+        error: (error) => {
           this.isLoading = false;
-          notyf.error('No temporary_flashcard_id returned.');
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        notyf.error(
-          error?.error?.message ||
-            error.message ||
-            'flashcard proccessing failed.'
-        );
-      },
-    });
+          notyf.error(
+            error?.error?.message ||
+              error.message ||
+              'flashcard proccessing failed.'
+          );
+        },
+      });
+    }
+    this.isLoading = false;
   }
 
   async onFileSelected(event: any) {
@@ -255,8 +290,9 @@ export class GenerateFlashcardSection {
     // ...existing navigation logic...
 
     if (this.tempId) {
-      const res = this.flashcardService.generateFirstFlashCardByTempId({
-        tempId: this.tempId,
+      const res = this.flashcardService.generateFlashCard({
+        temporary_flashcard_id: this.tempId,
+        workspace_id: this.workspaceId,
       });
 
       res.subscribe({

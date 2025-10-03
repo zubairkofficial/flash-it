@@ -25,6 +25,7 @@ export class FlashcardController {
 
   @Put('generate')
   //@fix add jwt and roles guard
+  @UseGuards(JwtAuthGuard)
   async generateFlashCard(
     @Body() flashCardGenerateDTO: FlashCardGenerateDTO,
     @Req() req: any,
@@ -36,11 +37,11 @@ export class FlashcardController {
     );
   }
 
-  @Post('generate/:id')
-  @UseGuards(JwtAuthGuard)
-  async generateFirstFlashCard(@Param('id') id: string, @Req() req: any) {
-    return this.flashCardService.generateFirstFlashCard(id, req, null);
-  }
+  // @Post('generate/:id')
+  // @UseGuards(JwtAuthGuard)
+  // async generateFirstFlashCard(@Param('id') id: string, @Req() req: any) {
+  //   return this.flashCardService.generateFirstFlashCard(id, req, null);
+  // }
 
   @Post('upload-data')
   @UseInterceptors(FilesInterceptor('files'))
@@ -52,16 +53,16 @@ export class FlashcardController {
     return this.flashCardService.uploadRawData(files, input, req);
   }
 
-  @Post('authorized/upload-data')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FilesInterceptor('files'))
-  async uploadAuthRawData(
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    @Body() input: RawDataUploadDTO,
-    @Req() req: any,
-  ) {
-    return this.flashCardService.uploadRawData(files, input, req);
-  }
+  // @Post('authorized/upload-data')
+  // @UseGuards(JwtAuthGuard)
+  // @UseInterceptors(FilesInterceptor('files'))
+  // async uploadAuthRawData(
+  //   @UploadedFiles() files: Array<Express.Multer.File>,
+  //   @Body() input: RawDataUploadDTO,
+  //   @Req() req: any,
+  // ) {
+  //   return this.flashCardService.uploadRawData(files, input, req);
+  // }
 
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
@@ -92,7 +93,12 @@ export class FlashcardController {
     @Body() rawDataUploadDTO: RawDataUploadDTO,
     @Req() req: any,
   ) {
-    return this.flashCardService.addRawDataToFlashcard(+id, files, rawDataUploadDTO, req);
+    return this.flashCardService.addRawDataToFlashcard(
+      +id,
+      files,
+      rawDataUploadDTO,
+      req,
+    );
   }
 
   // Regenerate flashcard by id
@@ -110,6 +116,10 @@ export class FlashcardController {
     @Body('rawDataId') rawDataId: number,
     @Req() req: any,
   ) {
-    return this.flashCardService.deleteRawDataFromFlashcard(+id, rawDataId, req);
+    return this.flashCardService.deleteRawDataFromFlashcard(
+      +id,
+      rawDataId,
+      req,
+    );
   }
 }

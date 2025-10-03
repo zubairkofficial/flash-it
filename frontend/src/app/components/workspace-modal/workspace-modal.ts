@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {WORKSPACE_USER_PERMISSION } from '../../../utils/enum'
+import { WORKSPACE_USER_PERMISSION } from '../../../utils/enum';
 @Component({
   selector: 'app-workspace-modal',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './workspace-modal.html',
   styleUrl: './workspace-modal.css',
 })
@@ -16,16 +16,19 @@ export class WorkSpaceModal {
   @Input() public confirmText: string = 'Yes';
   @Input() public cancelText: string = 'Cancel';
   @Input() public initialName: string = '';
-  @Input() public intialWorkspaceRole: WORKSPACE_USER_PERMISSION = WORKSPACE_USER_PERMISSION.RE;
-  @Input() public credits: number = 0;
+  @Input() public intialWorkspaceRole: WORKSPACE_USER_PERMISSION =
+    WORKSPACE_USER_PERMISSION.RE;
+  public credits: number = 0;
   @Input() public isLoading: boolean = false;
   public workspaceName: string = '';
-  public workspaceCredits:number = 0;
+  public workspaceCredits: number = 0;
   public workspaceRole: string = '';
-  @Output() public confirmed = new EventEmitter<{ name: string; role: string,credits:number }>();
+  @Output() public confirmed = new EventEmitter<{
+    name: string;
+    credits: number;
+  }>();
 
   @Output() public cancelled = new EventEmitter<void>();
-public WORKSPACE_USER_PERMISSION=""
   public onBackdropClick(): void {
     this.cancelled.emit();
   }
@@ -37,8 +40,7 @@ public WORKSPACE_USER_PERMISSION=""
   public onConfirm(): void {
     this.confirmed.emit({
       name: this.workspaceName,
-      credits:this.workspaceCredits,
-      role: this.workspaceRole
+      credits: this.workspaceCredits,
     });
   }
 
@@ -48,11 +50,4 @@ public WORKSPACE_USER_PERMISSION=""
     this.workspaceRole = (this.intialWorkspaceRole as unknown as string) || '';
     this.workspaceCredits = Number(this.credits || 0);
   }
-
-  public permissionOptions = [
-    { label: 'Read & Export', value: WORKSPACE_USER_PERMISSION.RE },
-    { label: 'Full Access (CRUD + Export)', value: WORKSPACE_USER_PERMISSION.CRUDE },
-  ];
 }
-
-

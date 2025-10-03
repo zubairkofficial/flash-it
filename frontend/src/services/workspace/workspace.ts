@@ -22,15 +22,12 @@ export interface JoinedWorkspace {
   WorkspaceUser: WorkspaceUserPivot;
 }
 export interface PlanType {
-  id: number,
-  plan_type: SUBSCRIPTION_TYPE,
-  price: number,
-  features: [
-               string
-            ],
+  id: number;
+  plan_type: SUBSCRIPTION_TYPE;
+  price: number;
+  features: [string];
   createdAt: string;
   updatedAt: string;
-
 }
 
 export interface WorkspaceResponseItem {
@@ -43,7 +40,7 @@ export interface WorkspaceResponseItem {
   plan_id: number;
   createdAt: string;
   updatedAt: string;
-  plan:PlanType;
+  plan: PlanType;
   joined_workspaces: JoinedWorkspace[];
 }
 
@@ -53,7 +50,11 @@ export interface WorkspaceResponseItem {
 export class WorkspaceService {
   constructor(private api: Api) {}
 
-  public getWorkspaces(params?: { page?: number; pageSize?: number; q?: string }): Observable<WorkspaceResponseItem[]> {
+  public getWorkspaces(params?: {
+    page?: number;
+    pageSize?: number;
+    q?: string;
+  }): Observable<WorkspaceResponseItem[]> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
@@ -63,10 +64,16 @@ export class WorkspaceService {
     if (params?.pageSize) query.set('pageSize', String(params.pageSize));
     if (params?.q) query.set('q', params.q);
     const qs = query.toString();
-    return this.api.get<WorkspaceResponseItem[]>(`/workspace${qs ? '?' + qs : ''}`, headers);
+    return this.api.get<WorkspaceResponseItem[]>(
+      `/workspace${qs ? '?' + qs : ''}`,
+      headers
+    );
   }
 
-  public getWorkspaceById(id: number, params?: { page?: number; pageSize?: number; q?: string }): Observable<any> {
+  public getWorkspaceById(
+    id: number,
+    params?: { page?: number; pageSize?: number; q?: string }
+  ): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
@@ -93,15 +100,21 @@ export class WorkspaceService {
     };
     return this.api.get<any>(`/workspace/invited/${id}`, headers);
   }
-  public deleteWorkspaceUser(workspace_id: any,user_id: any): Observable<any> {
+  public deleteWorkspaceUser(workspace_id: any, user_id: any): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
     };
-    return this.api.delete<any>(`/workspace/${workspace_id}/${user_id}`, headers);
+    return this.api.delete<any>(
+      `/workspace/${workspace_id}/${user_id}`,
+      headers
+    );
   }
 
-  public createWorkspace(data: { name: string; role: string; credits: number; }): Observable<any> {
+  public createWorkspace(data: {
+    name: string;
+    credits: number;
+  }): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
@@ -109,7 +122,10 @@ export class WorkspaceService {
     return this.api.post<any>('/workspace', { ...data }, headers);
   }
 
-  public updateWorkspace(id: number, data:{name:string,role:string,credits:number}): Observable<any> {
+  public updateWorkspace(
+    id: number,
+    data: { name: string; credits?: number }
+  ): Observable<any> {
     const headers = {
       ...this.api.contentTypeHeader,
       ...this.api.authorizationHeader,
@@ -124,5 +140,3 @@ export class WorkspaceService {
     return this.api.delete<any>(`/workspace/${id}`, headers);
   }
 }
-
-

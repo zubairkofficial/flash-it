@@ -28,7 +28,6 @@ export default class WorkspaceUser extends Model {
   })
   declare id: number;
 
-  
   @Default(WORKSPACE_USER_ROLE.MEMBER)
   @Column({
     type: DataType.ENUM,
@@ -39,7 +38,6 @@ export default class WorkspaceUser extends Model {
 
   @Unique('workspace-user')
   @ForeignKey(() => User)
-  
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -48,20 +46,18 @@ export default class WorkspaceUser extends Model {
 
   @Unique('workspace-user')
   @ForeignKey(() => WorkSpace)
-  
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   declare workspace_id: number;
 
-  @HasOne(() => WorkspaceUserPermission)
+  @HasOne(() => WorkspaceUserPermission, { onDelete: 'CASCADE' })
   declare workspace_user_permissions: WorkspaceUserPermission;
 
- @BelongsTo(() => WorkSpace, 'workspace_id')
+  @BelongsTo(() => WorkSpace, 'workspace_id')
   declare workspace: WorkSpace;
 
   @BelongsTo(() => User, 'user_id')
   declare user: User;
-  
 }

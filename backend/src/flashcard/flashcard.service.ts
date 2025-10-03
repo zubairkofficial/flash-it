@@ -20,6 +20,7 @@ import User from 'src/models/user.model';
 import WorkSpace from 'src/models/workspace.model';
 import { SUBSCRIPTION_TYPE } from 'src/utils/subscription.enum';
 import { DATA_TYPE } from 'src/utils/data-type.enum';
+import { th } from 'zod/v4/locales';
 
 @Injectable()
 export class FlashcardService {
@@ -241,7 +242,7 @@ export class FlashcardService {
     tempId: string,
     userId: number,
     subscriptionType: SUBSCRIPTION_TYPE,
-    workspaceId?: number, // optional
+    workspaceId: number,
     transaction?: any,
   ) {
     const internalTransaction =
@@ -292,32 +293,24 @@ export class FlashcardService {
 
       await this.storeParsedSlides(extractedJson, flashCard.id, transaction);
 
-      let finalWorkspaceId = workspaceId;
-
-      // If workspace is not passed, fetch by user
-      if (!workspaceId) {
-        const workspace = await WorkSpace.findOne({
-          where: { admin_user_id: userId },
-          attributes: ['id'],
-        });
-        if (!workspace) {
-          throw new HttpException('Workspace not found.', HttpStatus.NOT_FOUND);
-        }
-
-        workspace.update({
-          credit: workspace.credit - 5,
-        });
-        finalWorkspaceId = workspace.id;
-      }
-
       await flashCard.update(
         {
           temporary_flashcard_id: null,
           user_id: userId,
-          workspace_id: finalWorkspaceId,
+          workspace_id: workspaceId,
         },
         { transaction: internalTransaction },
       );
+
+      const workspace = await WorkSpace.findByPk(workspaceId, {
+        transaction: internalTransaction,
+      });
+
+      const newCredits = workspace.credit - 5;
+
+      workspace.credit = newCredits >= 0 ? newCredits : 0;
+
+      await workspace.save({ transaction: internalTransaction });
 
       if (!transaction) {
         await internalTransaction.commit();
@@ -328,7 +321,7 @@ export class FlashcardService {
         success: true,
         data: {
           message: 'Flash card created successfully',
-          flash_card: flashCard,
+          flashcard: flashCard,
         },
       };
     } catch (error) {
@@ -373,13 +366,44 @@ export class FlashcardService {
     req: any,
     outsideTransaction?: any,
   ) {
-    const user = await User.findByPk(req.user.id, { attributes: ['plan_id'] });
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    // @fix optimize query
+    const IsUserMemberofWorkSpace = await WorkSpace.findOne({
+      where: {
+        id: dto.workspace_id,
+      },
+      plain: true,
+      include: [
+        {
+          required: true,
+          model: User,
+          as: 'members',
+          attributes: ['id', 'plan_id'],
+          where: {
+            id: req.user.id,
+          },
+        },
+      ],
+    });
+
+    if (!IsUserMemberofWorkSpace) {
+      throw new HttpException(
+        'You are not a member of this workspace',
+        HttpStatus.FORBIDDEN,
+      );
     }
+
+    if (IsUserMemberofWorkSpace.credit <= 0) {
+      throw new HttpException(
+        'Insufficient workspace credits',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const user = IsUserMemberofWorkSpace.members[0];
 
     const userPlan = await SubscriptionPlan.findByPk(user.plan_id, {
       attributes: ['plan_type'],
+      plain: true,
     });
 
     if (!userPlan) {
@@ -469,26 +493,27 @@ export class FlashcardService {
           );
         }
       }
-      if (input.workspaceId) {
-        await this.generateFlashCard(
-          {
-            temporary_flashcard_id: flashCard.temporary_flashcard_id,
-            workspace_id: +input.workspaceId,
-          },
-          req,
-          transaction,
-        );
-      }
+      // if (input.workspaceId) {
+      //   await this.generateFlashCard(
+      //     {
+      //       temporary_flashcard_id: flashCard.temporary_flashcard_id,
+      //       workspace_id: +input.workspaceId,
+      //     },
+      //     req,
+      //     transaction,
+      //   );
+      // }
       await transaction.commit();
       return {
         status: HttpStatus.OK,
         success: true,
         data: {
           message: 'Upload successful',
-          temporary_flashcard_id: input.workspaceId
-            ? null
-            : flashCard.temporary_flashcard_id,
-          flashcard_id: flashCard.id,
+          flashcard: flashCard,
+          // temporary_flashcard_id: input.workspaceId
+          //   ? null
+          //   : flashCard.temporary_flashcard_id,
+          // flashcard_id: flashCard.id,
         },
       };
     } catch (error) {

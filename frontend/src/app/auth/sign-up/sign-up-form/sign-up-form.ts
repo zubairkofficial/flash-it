@@ -75,6 +75,7 @@ export class SignUpForm {
               queryParams: {
                 temp_id: registerData.temporary_flashcard_id,
                 flashcard_id: this.flashcard_id,
+                workspace_id: res.data.workspace_id,
               },
             });
           } else {

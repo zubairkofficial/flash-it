@@ -36,6 +36,7 @@ export class PaymentCard implements OnInit {
   public amount: any = null;
   public tempId = '';
   public flashcardId: string = '';
+  public workspaceId: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -56,6 +57,7 @@ export class PaymentCard implements OnInit {
       const type = params.get('subscriptionType');
       this.tempId = params.get('temp_id') ?? '';
       this.flashcardId = params.get('flashcard_id') ?? '';
+      this.workspaceId = params.get('workspace_id') ?? '';
       if (type === 'free') {
         this.router.navigate(['dashboard']);
       }
@@ -118,6 +120,7 @@ export class PaymentCard implements OnInit {
                 flashcard_id: this.flashcardId,
                 temp_id: this.tempId,
                 show: true,
+                workspace_id: this.workspaceId,
               },
             });
           } else {
