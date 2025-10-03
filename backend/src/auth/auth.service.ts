@@ -66,7 +66,7 @@ export class AuthService {
           email,
           password: registerDTO.password,
           plan_id: plan.id,
-          credits: plan.credits,
+          credits: plan.credits - 15,
         },
         {
           transaction,
@@ -76,7 +76,7 @@ export class AuthService {
       const defaultWorkspace = await WorkSpace.create(
         {
           name: newUser.name + "'s " + 'WorkSpace',
-          credit: 0,
+          credit: 15,
           admin_user_id: newUser.id,
         },
         {
