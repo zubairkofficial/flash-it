@@ -6,7 +6,7 @@ class globals {
   // private DEV_URL: string = 'http://localhost:3001';
   private DEV_URL: string = 'http://192.168.18.29:3001';
   
-  private PROD_URL: string = 'http://ansbud.com/backend';
+  private PROD_URL: string = 'https://ansbud.com/backend';
   private URL: string =
     this.NODE_ENV === 'development' ? this.DEV_URL : this.PROD_URL;
 
