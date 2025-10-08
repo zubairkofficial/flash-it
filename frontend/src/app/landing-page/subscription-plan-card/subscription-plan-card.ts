@@ -21,6 +21,7 @@ export class SubscriptionPlanCard {
   public workspaceId: any = null;
   public isLoading: boolean = false;
   public errorMessage: string | null = null;
+  public isAuthenticated: boolean = false;
 
   @Input() availablePlan!: {
     id: number;
@@ -46,9 +47,22 @@ export class SubscriptionPlanCard {
       this.workspaceId = Number(params.get('workspace_id'));
       console.log('temId', tempId, 'flashcardId', flashcardId);
     });
+
+    const user = localStorage.getItem('authToken');
+    if (user) {
+      this.isAuthenticated = true;
+    } else {
+      this.isAuthenticated = false;
+    }
   }
 
   onClickPaymentPage(availablePlan: any) {
+    console.log('isAuthenticated', this.isAuthenticated);
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/auth/register']);
+      return;
+    }
+
     if (availablePlan.subscriptionType === 'free') {
       this.isLoading = true;
       this.planService
