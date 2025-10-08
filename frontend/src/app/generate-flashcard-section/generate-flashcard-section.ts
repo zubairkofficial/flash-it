@@ -35,6 +35,24 @@ import { ProfileStoreService } from '../services/profile-store.service';
   styleUrl: './generate-flashcard-section.css',
 })
 export class GenerateFlashcardSection {
+  onFilesDropped(event: DragEvent) {
+    event.preventDefault();
+    if (!event.dataTransfer?.files?.length) return;
+    const files: FileList = event.dataTransfer.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type !== 'application/pdf') continue;
+      const isAlreadySelected = this.selectedFiles.some(
+        (f) => f.name === file.name && f.size === file.size
+      );
+      if (isAlreadySelected) continue;
+      this.selectedFiles.push(file);
+    }
+    // Build a FileList (for existing service signature)
+    const dataTransfer = new DataTransfer();
+    this.selectedFiles.forEach((f: File) => dataTransfer.items.add(f));
+    this.filesSelected = dataTransfer.files;
+  }
   getFlashcardIdFromParams(): string | null {
     let flashcardId: string | null = null;
     this.route.queryParamMap.subscribe((params) => {

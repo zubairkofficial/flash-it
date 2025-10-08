@@ -39,10 +39,14 @@
         </div>
         <div
           class="flex gap-1 flex-col w-full min-h-[180px] md:min-h-[240px] lg:min-h-[300px] items-center justify-center bg-[#F3F1ED] border-[#DFDFDF] rounded-xl cursor-pointer overflow-auto"
+          (dragover)="$event.preventDefault()"
+          (drop)="onFilesDropped($event)"
         >
           @if (activeState === 'Documents') {
           <label
             class="flex flex-col items-center justify-center cursor-pointer w-full h-full"
+            (dragover)="$event.preventDefault()"
+            (drop)="onFilesDropped($event)"
           >
             @if(selectedFiles.length<=0) {
             <svg
@@ -57,7 +61,7 @@
               />
             </svg>
             <p class="text-[#8D8D8D] text-sm mb-2">
-              Click to upload PDF files.
+              Drag & Drop or Click to upload PDF files.
             </p>
             <input
               type="file"
