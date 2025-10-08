@@ -13,12 +13,17 @@
         class="flex flex-col justify-around md:justify-start gap-4 w-full md:w-[63%] h-auto min-h-[380px] md:min-h-[500px] rounded-xl p-4 sm:p-6 md:p-8 lg:p-10"
       >
         <div *ngIf="isWorkspaceRoute" class="w-full sm:w-auto">
-          <h3 class="font-extrabold mt-3 text-lg sm:text-xl">Details</h3>
+          <h3
+            class="font-bold mt-3 text-lg sm:text-xl flex text-center md:text-left"
+          >
+            Upload a document, paste or type your text to generate flashcards
+            with AI
+          </h3>
         </div>
         <div
           class="flex flex-row sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between"
         >
-          <div>
+          <div class="font-bold">
             <app-button-toggle
               [availableStates]="availableStates"
               [(active)]="activeState"
@@ -28,7 +33,7 @@
             [availableState]="popularLanguageCodes"
             [(active)]="activeLanguage"
             [(isOpen)]="isLanguageDropDownOpen"
-            text="Lang"
+            text="Language"
             (activeChange)="handleSelection($event)"
           ></app-button-primary-dropdown>
         </div>
@@ -41,7 +46,7 @@
           >
             @if(selectedFiles.length<=0) {
             <svg
-              height="49"
+              height="60"
               viewBox="0 0 71 49"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -51,9 +56,9 @@
                 fill="#DED9CE"
               />
             </svg>
-            <small class="text-[#8D8D8D] mb-2"
-              >Drag & drop or click to upload PDF files.</small
-            >
+            <p class="text-[#8D8D8D] text-sm mb-2">
+              Click to upload PDF files.
+            </p>
             <input
               type="file"
               accept="application/pdf"
@@ -177,6 +182,7 @@
             type="submit"
             text="Generate Flashcards"
             [isLoading]="isLoading"
+            [loadingText]="'Generating...'"
           />
         </div>
       </form>

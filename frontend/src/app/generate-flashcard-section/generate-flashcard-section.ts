@@ -64,13 +64,13 @@ export class GenerateFlashcardSection {
   @Input() width: number = 0;
   isWorkspaceRoute: boolean = false;
   availableStates = Object.values(DATA_TYPE);
-  activeLanguage = 'en';
+  activeLanguage = 'English';
   isLanguageDropDownOpen = false;
   isLoading = false;
   isBytesSelected = false;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   extractedText: string = '';
-  language: string = 'en';
+  language: string = 'English';
   filesSelected: FileList | null = null;
   selectedFiles: File[] = []; // Keep actual File objects for upload/UI
   textForm: FormGroup;

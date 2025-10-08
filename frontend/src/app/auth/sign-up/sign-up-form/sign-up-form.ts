@@ -121,4 +121,6 @@ export class SignUpForm {
       this.registerForm.markAllAsTouched();
     }
   }
+
+
 }

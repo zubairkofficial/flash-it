@@ -1,10 +1,14 @@
-<button [class]="concatClass" [disabled]="isLoading"  style="width: -webkit-fill-available;" [type]="type"  (click)="onClick()">
- 
+<button
+  [class]="concatClass"
+  [disabled]="isLoading"
+  style="width: -webkit-fill-available"
+  [type]="type"
+  (click)="onClick()"
+>
   <ng-container *ngIf="isLoading; else normalText">
-    <span class="spinner mr-2"></span> Loading...
+    <span class="spinner mr-2"></span> {{ loadingText }}
   </ng-container>
   <ng-template #normalText>
     {{ text }}
   </ng-template>
-
 </button>

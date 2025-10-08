@@ -1,7 +1,7 @@
 <nav
   class="flex flex-row items-center justify-around h-[75px] w-full bg-[#FBFBFB]"
 >
-  <div id="logo" class="">
+  <div id="logo" class="cursor-pointer" (click)="navigate('/')">
     <svg
       width="123"
       height="36"
@@ -34,17 +34,17 @@
     </svg>
   </div>
   <div class="hidden lg:flex" id="text">
-    <span class="text-xlg text-[#4A494A] font-semibold weight-700"
+    <span class="text-lg text-[#4A494A] font-semibold weight-700"
       >AI Flashcard Generator</span
     >
   </div>
   <div id="buttons" class="flex flex-row gap-2 items-center justify-evenly">
     <app-buttom-outlined
-      text="Log In"
+      text="Login"
       (click)="navigate('auth/login')"
     ></app-buttom-outlined>
     <app-buttom-primary
-      text="Sign up"
+      text="Signup"
       (click)="navigate('auth/register')"
     ></app-buttom-primary>
   </div>
